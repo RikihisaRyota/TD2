@@ -19,7 +19,6 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	viewProjection_.Initialize();
 	
-
 }
 
 void GameScene::Update() {
