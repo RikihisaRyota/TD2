@@ -16,7 +16,7 @@ public:
 	static void SetDevice(ID3D12Device* device);
 	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
 	static void PostDraw();
-	static CubeRenderer* Create(uint32_t IsLighting = 1,bool IsToon = false);
+	static CubeRenderer* Create(uint32_t IsLighting = 0,bool IsToon = false);
 	void Draw(
 		const WorldTransform& worldTransform, 
 		const ViewProjection& viewProjection,

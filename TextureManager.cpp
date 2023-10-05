@@ -46,7 +46,10 @@ void TextureManager::UnLoadInternal() {
 uint32_t TextureManager::LoadInternal(const std::string& filePath) {
 	// どこが空いているか探す
 	for (uint32_t i = static_cast<int>(TextureHandle::COUNT); i < kNumDescriptors; i++) {
-		if (!useTable_[i]) {
+		if (textures_[i].name == filePath) {
+			return i;
+		}
+		else if (!useTable_[i]) {
 			kNumDescriptorsCount = i;
 
 			useTable_[i] = true;
@@ -213,8 +216,8 @@ void TextureManager::Initialize(DirectXCommon* device) {
 	// 初期テクスチャ
 	const int InitialTexture = 2;
 	std::string filePath[InitialTexture]{};
-	filePath[0] = ("resources/white1x1.png");
-	filePath[1] = ("resources/toon.png");
+	filePath[0] = ("Resources/Images/white1x1.png");
+	filePath[1] = ("Resources/Images/toon.png");
 	for (uint32_t i = 0; i < InitialTexture; i++) {
 		kNumDescriptorsCount = i;
 

@@ -7,7 +7,7 @@ using namespace Microsoft::WRL;
 // 静的メンバ変数の実体化
 ID3D12Device* PrimitiveDrawer::sDevice = nullptr;
 Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> PrimitiveDrawer::cmdList_;
-UINT PrimitiveDrawer::darwCount = 0;
+UINT PrimitiveDrawer::drawCount_ = 0;
 std::vector<PrimitiveDrawer::Vertex> PrimitiveDrawer::vertices_;
 std::vector<uint16_t> PrimitiveDrawer::indices_;
 
@@ -29,7 +29,7 @@ void PrimitiveDrawer::PreDraw(ID3D12GraphicsCommandList* cmdList) {
 	// コマンドリストをセット
 	cmdList_ = cmdList;
 	// カウントリセット
-	darwCount = 0;
+	drawCount_ = 0;
 	vertices_.clear();
 	indices_.clear();
 }
@@ -52,10 +52,10 @@ void PrimitiveDrawer::Reset() {
 void PrimitiveDrawer::SetDraw(const Vector3& v1, const Vector3& v2, const Vector4& color) {
 	HRESULT result = S_FALSE;
 	vertices_.emplace_back(Vertex({ v1.x,v1.y,v1.z,1.0f }, { color }));
-	indices_.emplace_back(darwCount);
-	darwCount++;
+	indices_.emplace_back(drawCount_);
+	drawCount_++;
 	vertices_.emplace_back(Vertex({ v2.x,v2.y,v2.z,1.0f }, { color }));
-	indices_.emplace_back(darwCount);
+	indices_.emplace_back(drawCount_);
 	SetMappingVertex();
 	SetMappingIndex();
 }
@@ -66,7 +66,7 @@ void PrimitiveDrawer::Draw() {
 
 void PrimitiveDrawer::Initialize() {
 
-	darwCount = 0;
+	drawCount_ = 0;
 
 	lineGraphicsPipline_ = std::make_unique<LineGraphicsPipline>();
 	lineGraphicsPipline_->InitializeGraphicsPipeline();
