@@ -15,16 +15,39 @@ void GameScene::Initialize() {
 	// デバックカメラ
 	debugCamera_ = new DebugCamera();
 	// 入力
-	input_ = Input::GetInstans();
+	input_ = Input::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
-	
+#pragma region 生成
+	floor_ = std::make_unique<CubeRenderer>();
+	followCamera_ = std::make_unique<FollowCamera>();
+	player_ = std::make_unique<Player>();
+	playerModel_ = std::make_unique<Model>();
+#pragma endregion
+#pragma region 初期化
+	floor_.reset(CubeRenderer::Create());
+	floorWorldTransform_.Initialize();
+	floorWorldTransform_.translation_ = { 0.0f,-2.0f,0.0f };
+	floorWorldTransform_.scale_ = { 20.0f,1.0f,1.0f };
+	floorWorldTransform_.UpdateMatrix();
+
+	followCamera_->Initialize();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+
+	playerModel_.reset(Model::Create("Player"));
+	player_->Initialize(playerModel_.get());
+#pragma endregion
+
 }
 
 void GameScene::Update() {
 	// デバックカメラ
 	debugCamera_->Update(&viewProjection_);
 	
+	player_->Update();
+
+	followCamera_->Update();
+	viewProjection_ = followCamera_->GetViewProjection();
 }
 
 void GameScene::Draw() {
@@ -55,7 +78,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
+	floor_->Draw(floorWorldTransform_,viewProjection_);
+	player_->Draw(viewProjection_);
+
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
 	PrimitiveDrawer::PostDraw();

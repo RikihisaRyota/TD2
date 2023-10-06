@@ -14,6 +14,10 @@
 #include "SphereRenderer.h"
 #include "Sprite.h"
 
+// ここから下になるべくアルファベット順で
+#include "FollowCamera.h"
+#include "Player.h"
+
 class DirectXCommon;
 /// <summary>
 /// ゲームシーン
@@ -59,6 +63,10 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲーム用
 	/// </summary>
-
+	std::unique_ptr<CubeRenderer> floor_;
+	WorldTransform floorWorldTransform_;
+	std::unique_ptr<FollowCamera> followCamera_;
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> playerModel_;
 
 };
