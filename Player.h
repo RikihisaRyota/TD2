@@ -39,7 +39,8 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 private:
 	void Debug();
-	float kSpeed_ = 5.0f;
+	float kSpeed_ = 2.0f;
+	float kInertia = 0.5f;
 	float kGravity_ = 0.2f;
 	float kDropSpeed_ = 10.0f;
 	// ワールド変換データ
@@ -48,4 +49,7 @@ private:
 	Input* input_ = nullptr;
 	// モデル
 	Model* model_ = nullptr;
+
+	Vector3 velocity_;
+	Vector3 acceleration_;
 };

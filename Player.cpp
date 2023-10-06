@@ -33,23 +33,26 @@ void Player::Move() {
 	Vector3 move = { 0, 0, 0 };
 
 	if (input_->TriggerKey(DIK_A)) {
-		float angle = 215.0f;
-		float rad = (float)angle * (float)deg_to_rad(angle);
-		Vector3 direction = { cosf(rad), sinf(rad), 0 };
-		move = direction * kSpeed_;
+		float angle = 135.0f;
+		Vector3 direction = { cosf(DegToRad(angle)), sinf(DegToRad(angle)), 0 };
+		direction.Normalize();
+		move = direction;
 	}
 
 	if (input_->TriggerKey(DIK_D)) {
-		float angle = 260.0f;
-		float rad = (float)angle * (float)deg_to_rad(angle);
-		Vector3 direction = { cosf(rad), sinf(rad), 0 };
-		move = direction * -kSpeed_;
+		float angle = 45.0f;
+		Vector3 direction = { cosf(DegToRad(angle)), sinf(DegToRad(angle)), 0 };
+		direction.Normalize();
+		move = direction;
 	}
 	if (input_->PushKey(DIK_SPACE)) {
 		worldTransform_.translation_.y -= kDropSpeed_;
 	}
-
+	velocity_ += move * kSpeed_;
+	velocity_ *= kInertia;
+	// 重力
 	worldTransform_.translation_.y -= kGravity_;
+	worldTransform_.translation_ += velocity_;
 	// 地面
 	if (worldTransform_.translation_.y <= 0.0f) {
 		worldTransform_.translation_.y = 0.0f;
