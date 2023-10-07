@@ -39,11 +39,12 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 private:
 	void Debug();
-	float kDropMaxSpeed_ = 0.2f;
-	float kDropSpeed_ = 0.1f;
-	float kGravity_ = 0.03f;
+	float kDropMaxSpeed_ = 0.05f;
+	float kDropSpeed_ = 0.01f;
+	float kDropHorizontalSpeed_ = 0.4f;
+	float kGravity_ = 0.001f;
 	float kInertia_ = 0.9f;
-	float kSpeed_ = 0.2f;
+	float kSpeed_ = 0.01f;
 	float kRightAngle_= 45.0f;
 	float kLeftAngle_= 135.0f;
 	// ワールド変換データ
