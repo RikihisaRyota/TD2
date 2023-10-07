@@ -15,6 +15,7 @@
 #include "Sprite.h"
 
 // ここから下になるべくアルファベット順で
+#include "CSV.h"
 #include "FollowCamera.h"
 #include "Player.h"
 
@@ -63,6 +64,7 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲーム用
 	/// </summary>
+	std::unique_ptr<CSV> csv_;
 	std::unique_ptr<CubeRenderer> floor_;
 	WorldTransform floorWorldTransform_;
 	std::unique_ptr<FollowCamera> followCamera_;

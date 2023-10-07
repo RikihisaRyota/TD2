@@ -13,7 +13,7 @@ void FollowCamera::Update() {
 		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(viewProjection_.rotation_);
 
 		offset = TransformNormal(offset, rotateMatrix);
-		viewProjection_.translation_ = target_->translation_ + offset;
+		viewProjection_.translation_.y = target_->translation_.y/* + offset*/;
 	}
 
 	if (Input::GetInstance()->IsControllerConnected()) {

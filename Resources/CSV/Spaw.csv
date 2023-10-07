@@ -1,0 +1,20 @@
+// コマンド,x,y,z,
+// コマンド,(0~2)
+Position,0,0,0
+Type,0
+Position,10,0,0
+Type,1
+Position,10,5,0
+Type,2
+Position,-10,0,0
+Type,2
+Position,-10,5,0
+Type,1
+Position,-10,10,0
+Type,0
+Position,16,0,0
+Type,2
+Position,16,9,0
+Type,1
+
+

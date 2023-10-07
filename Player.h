@@ -39,10 +39,13 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 private:
 	void Debug();
-	float kSpeed_ = 2.0f;
-	float kInertia = 0.5f;
-	float kGravity_ = 0.2f;
-	float kDropSpeed_ = 10.0f;
+	float kDropMaxSpeed_ = 0.2f;
+	float kDropSpeed_ = 0.1f;
+	float kGravity_ = 0.03f;
+	float kInertia_ = 0.9f;
+	float kSpeed_ = 0.2f;
+	float kRightAngle_= 45.0f;
+	float kLeftAngle_= 135.0f;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	const ViewProjection* viewProjection_ = nullptr;

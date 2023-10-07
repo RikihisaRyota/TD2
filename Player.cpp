@@ -30,35 +30,46 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Move() {
-	Vector3 move = { 0, 0, 0 };
+    Vector3 move = { 0, 0, 0 };
 
-	if (input_->TriggerKey(DIK_A)) {
-		float angle = 135.0f;
-		Vector3 direction = { cosf(DegToRad(angle)), sinf(DegToRad(angle)), 0 };
-		direction.Normalize();
-		move = direction;
-	}
+    if (input_->TriggerKey(DIK_A)) {
+        Vector3 direction = { cosf(DegToRad(kLeftAngle_)), sinf(DegToRad(kLeftAngle_)), 0 };
+        direction.Normalize();
+        move += direction;
+        acceleration_.y = kSpeed_;
+    }
 
-	if (input_->TriggerKey(DIK_D)) {
-		float angle = 45.0f;
-		Vector3 direction = { cosf(DegToRad(angle)), sinf(DegToRad(angle)), 0 };
-		direction.Normalize();
-		move = direction;
-	}
-	if (input_->PushKey(DIK_SPACE)) {
-		worldTransform_.translation_.y -= kDropSpeed_;
-	}
-	velocity_ += move * kSpeed_;
-	velocity_ *= kInertia;
-	// 重力
-	worldTransform_.translation_.y -= kGravity_;
-	worldTransform_.translation_ += velocity_;
-	// 地面
-	if (worldTransform_.translation_.y <= 0.0f) {
-		worldTransform_.translation_.y = 0.0f;
-	}
-	worldTransform_.translation_ += move;
-	worldTransform_.UpdateMatrix();
+    if (input_->TriggerKey(DIK_D)) {
+        Vector3 direction = { cosf(DegToRad(kRightAngle_)), sinf(DegToRad(kRightAngle_)), 0 };
+        direction.Normalize();
+        move += direction;
+        acceleration_.y = kSpeed_;
+    }
+    // 斜め移動時の速度を正規化
+    if (move.Length() > 0) {
+        move.Normalize();
+        velocity_ = move;
+    }
+
+    // SPACE押している間も重力がかかり落下スピードが上がるかも
+    if (input_->PushKey(DIK_SPACE)) {
+        acceleration_.y -= kDropSpeed_;
+    }
+
+    // 重力を適用
+    if (acceleration_.y >= -kDropMaxSpeed_) {
+        acceleration_.y -= kGravity_;
+    }
+    // 移動
+    velocity_ += acceleration_;
+    velocity_ *= kInertia_;
+    worldTransform_.translation_ += velocity_;
+    // 地面に接触した場合、速度をリセット
+    if (worldTransform_.translation_.y <= 0.0f) {
+        worldTransform_.translation_.y = 0.0f;
+        acceleration_.y = 0.0f;
+    }
+    worldTransform_.UpdateMatrix();
 }
 
 Vector3 Player::GetWorldPosition() {
@@ -73,8 +84,15 @@ Vector3 Player::GetWorldPosition() {
 
 void Player::Debug() {
 	ImGui::Begin("Player");
-	ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 10.0f);
-	ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 2.0f);
-	ImGui::SliderFloat("DropSpeed", &kDropSpeed_, 0.0f, 20.0f);
+    ImGui::Text("velocity:x:%f,y:%f,z:%f", velocity_.x, velocity_.y, velocity_.z);
+    ImGui::Text("acceleration:x:%f,y:%f,z:%f", acceleration_.x, acceleration_.y, acceleration_.z);
+    ImGui::Text("pos:x:%f,y:%f:z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+    ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
+	ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 0.1f);
+	ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
+	ImGui::SliderFloat("DropSpeed", &kDropSpeed_, 0.0f, 1.0f);
+	ImGui::SliderFloat("DropMaxSpeed", &kDropMaxSpeed_, 0.0f, 1.0f);
+	ImGui::SliderFloat("RightAngle", &kRightAngle_, 0.0f, 90.0f);
+	ImGui::SliderFloat("LeftAngle", &kLeftAngle_, 90.0f, 180.0f);
 	ImGui::End();
 }
