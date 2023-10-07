@@ -14,6 +14,7 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	// デバックカメラ
 	debugCamera_ = new DebugCamera();
+	IsDebugCamera_ = false;
 	// 入力
 	input_ = Input::GetInstance();
 	// カメラの初期化
@@ -46,13 +47,20 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	// デバックカメラ
-	debugCamera_->Update(&viewProjection_);
-	
 	player_->Update();
 
-	//followCamera_->Update();
-	//viewProjection_ = followCamera_->GetViewProjection();
+	// 0を押すとカメラを切り替える
+	if (input_->TriggerKey(DIK_0)) {
+		IsDebugCamera_ ^= true;
+	}
+	if (IsDebugCamera_) {
+		// デバックカメラ
+		debugCamera_->Update(&viewProjection_);
+	}
+	else {
+		followCamera_->Update();
+		viewProjection_ = followCamera_->GetViewProjection();
+	}
 }
 
 void GameScene::Draw() {
@@ -83,7 +91,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	floor_->Draw(floorWorldTransform_,viewProjection_);
+	floor_->Draw(floorWorldTransform_, viewProjection_);
 	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
@@ -105,7 +113,7 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
-	
+
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
