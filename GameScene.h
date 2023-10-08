@@ -16,6 +16,7 @@
 
 // ここから下になるべくアルファベット順で
 #include "CSV.h"
+#include "Enemy.h"
 #include "FollowCamera.h"
 #include "Player.h"
 
@@ -71,5 +72,6 @@ private: // メンバ変数
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
-
+	std::unique_ptr<Enemy> enemy_;
+	std::unique_ptr<Model> enemyModel_;
 };

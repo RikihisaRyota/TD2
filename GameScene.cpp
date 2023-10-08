@@ -25,6 +25,8 @@ void GameScene::Initialize() {
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
 	playerModel_ = std::make_unique<Model>();
+	enemy_ = std::make_unique<Enemy>();
+	enemyModel_ = std::make_unique<Model>();
 #pragma endregion
 #pragma region 初期化
 	// CSV
@@ -42,12 +44,20 @@ void GameScene::Initialize() {
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
 	player_->Initialize(playerModel_.get());
+	enemyModel_.reset(Model::Create("Player"));
+	enemy_->Initialize(enemyModel_.get(), { 10,60,0 });
 #pragma endregion
 
 }
 
 void GameScene::Update() {
 	player_->Update();
+	enemy_->Update();
+
+	// 当たり判定
+	if (IsCollision(player_->GetOBB(), enemy_->GetObb())) {
+		enemy_->SetPosition(player_->GetWorldTransform().translation_);
+	}
 
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
@@ -93,6 +103,7 @@ void GameScene::Draw() {
 	/// </summary>
 	floor_->Draw(floorWorldTransform_, viewProjection_);
 	player_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();

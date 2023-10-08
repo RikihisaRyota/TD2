@@ -18,6 +18,8 @@ void Player::Initialize(Model* model) {
 	worldTransform_.Initialize();
 
 	input_ = Input::GetInstance();
+
+	obb_.size_ = { 0.01f,0.01f,0.01f };
 }
 
 void Player::Update() {
@@ -30,6 +32,8 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Move() {
+	obb_.center_ = worldTransform_.translation_;
+
 	Vector3 move = { 0, 0, 0 };
 
 	// SPACE押している間も重力がかかり落下スピードが上がるかも

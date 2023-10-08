@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "OBB.h"
 #include <cmath>
 #include <math.h>
 
@@ -37,6 +38,9 @@ public:
 	Vector3 GetWorldPosition();
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
+
+	OBB GetOBB() { return obb_; }
+
 private:
 	void Debug();
 	float kDropMaxSpeed_ = 0.05f;
@@ -56,4 +60,6 @@ private:
 
 	Vector3 velocity_;
 	Vector3 acceleration_;
+
+	OBB obb_;
 };
