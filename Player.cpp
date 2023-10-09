@@ -31,6 +31,7 @@ void Player::Draw(const ViewProjection& viewProjection) {
 
 void Player::Move() {
 	Vector3 move = { 0, 0, 0 };
+	float nowWeight = static_cast<float>((kWeightMax_ - weightCount_)) / static_cast<float> (kWeightMax_);
 
 	// SPACE押している間も重力がかかり落下スピードが上がるかも
 	if (input_->PushKey(DIK_SPACE)) {
@@ -50,14 +51,14 @@ void Player::Move() {
 		if (input_->TriggerKey(DIK_A)) {
 			Vector3 direction = { cosf(DegToRad(kLeftAngle_)), sinf(DegToRad(kLeftAngle_)), 0 };
 			direction.Normalize();
-			move += direction;
-			acceleration_.y = kSpeed_;
+			move += direction * nowWeight;
+			acceleration_.y = kSpeed_ * nowWeight;
 		}
 		if (input_->TriggerKey(DIK_D)) {
 			Vector3 direction = { cosf(DegToRad(kRightAngle_)), sinf(DegToRad(kRightAngle_)), 0 };
 			direction.Normalize();
-			move += direction;
-			acceleration_.y = kSpeed_;
+			move += direction * nowWeight;
+			acceleration_.y = kSpeed_ * nowWeight;
 		}
 		// 斜め移動時の速度を正規化
 		if (move.Length() > 0) {
@@ -104,5 +105,8 @@ void Player::Debug() {
 	ImGui::SliderFloat("DropMaxSpeed", &kDropMaxSpeed_, 0.0f, 1.0f);
 	ImGui::SliderFloat("RightAngle", &kRightAngle_, 0.0f, 90.0f);
 	ImGui::SliderFloat("LeftAngle", &kLeftAngle_, 90.0f, 180.0f);
+	float weight = static_cast<float>(weightCount_);
+	ImGui::SliderFloat("WeightCount", &weight, 0.0f, 10.0f);
+	weightCount_= static_cast<uint32_t>(weight);
 	ImGui::End();
 }
