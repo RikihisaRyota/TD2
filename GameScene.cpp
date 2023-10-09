@@ -44,7 +44,7 @@ void GameScene::Initialize() {
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
 	player_->Initialize(playerModel_.get());
-	enemyModel_.reset(Model::Create("Player"));
+	enemyModel_.reset(Model::Create("Enemy"));
 	enemy_->Initialize(enemyModel_.get(), { 10,60,0 });
 #pragma endregion
 
@@ -56,7 +56,7 @@ void GameScene::Update() {
 
 	// 当たり判定
 	if (IsCollision(player_->GetOBB(), enemy_->GetObb())) {
-		enemy_->SetPosition(player_->GetWorldTransform().translation_);
+		//enemy_->SetPosition(player_->GetWorldTransform().translation_);
 	}
 
 	// 0を押すとカメラを切り替える
