@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "OBB.h"
 #include <cmath>
 #include <math.h>
 
@@ -32,11 +33,15 @@ public:
 	/// <param name= "viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(const ViewProjection& viewProjection);
 
+	void OBJtoOBB();
 	void Move();
 
 	Vector3 GetWorldPosition();
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
+
+	OBB GetOBB() { return obb_; }
+
 private:
 	void Debug();
 	float kDropMaxSpeed_ = 0.05f;
@@ -56,5 +61,8 @@ private:
 	Model* model_ = nullptr;
 	Vector3 velocity_;
 	Vector3 acceleration_;
+  
+	OBB obb_;
+  
 	uint32_t weightCount_;
 };

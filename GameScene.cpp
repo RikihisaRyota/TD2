@@ -1,5 +1,6 @@
 #include "GameScene.h"
 
+#include "CSV.h"
 #include "DirectXCommon.h"
 #include "MyMath.h"
 #include "TextureManager.h"
@@ -8,7 +9,11 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	for (Enemy* enemy : enemy_) {
+		delete enemy;
+	}
+}
 
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -20,7 +25,6 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	viewProjection_.Initialize();
 #pragma region 生成
-	csv_ = std::make_unique<CSV>();
 	floor_ = std::make_unique<CubeRenderer>();
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
@@ -28,8 +32,7 @@ void GameScene::Initialize() {
 #pragma endregion
 #pragma region 初期化
 	// CSV
-	csv_->LoadCSV("Resources/CSV/Spaw.csv");
-	std::vector<CSV::Date> date = csv_->UpdataDateCommands();
+	LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
 	// 床
 	floor_.reset(CubeRenderer::Create());
 	floorWorldTransform_.Initialize();
@@ -42,12 +45,27 @@ void GameScene::Initialize() {
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
 	player_->Initialize(playerModel_.get());
+	enemyModel_.reset(Model::Create("Enemy"));
 #pragma endregion
 
 }
 
 void GameScene::Update() {
 	player_->Update();
+	
+	for (Enemy* enemy : enemy_) {
+		enemy->Update();
+
+		// 当たり判定
+		if (IsCollision(player_->GetOBB(), enemy->GetObb())) {
+			enemy->SetPosition(player_->GetWorldPosition());
+		}
+		else {
+
+		}
+	}
+
+	UpdateEnemyPopCommands();
 
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
@@ -93,6 +111,10 @@ void GameScene::Draw() {
 	/// </summary>
 	floor_->Draw(floorWorldTransform_, viewProjection_);
 	player_->Draw(viewProjection_);
+	
+	for (Enemy* enemy : enemy_) {
+		enemy->Draw(viewProjection_);
+	}
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
@@ -123,4 +145,61 @@ void GameScene::Draw() {
 
 void GameScene::Release() {
 	SafeDelete(debugCamera_);
+}
+
+void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands) {
+	std::ifstream file;
+
+	file.open(csvName);
+	assert(file.is_open());
+
+	*popCommands << file.rdbuf();
+
+	file.close();
+}
+
+void GameScene::UpdateEnemyPopCommands() {
+	std::string line;
+
+	while (getline(enemyPopCommands_, line)) {
+		std::istringstream line_stream(line);
+
+		std::string word;
+
+		getline(line_stream, word, ',');
+
+		if (word.find("//") == 0) {
+			continue;
+		}
+
+		float x = 0, y = 0, z = 0;
+		uint32_t type = 0u;
+
+		if (word.find("Position") == 0) {
+			getline(line_stream, word, ',');
+			x = (float)std::atof(word.c_str());
+
+			getline(line_stream, word, ',');
+			y = (float)std::atof(word.c_str());
+
+			getline(line_stream, word, ',');
+			z = (float)std::atof(word.c_str());
+
+		}
+
+		if (word.find("Type") == 0) {
+			getline(line_stream, word, ',');
+			type = (uint32_t)std::atof(word.c_str());
+		}
+
+		SpawnEnemy(Vector3(x, y, z), type);
+	}
+}
+
+void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {
+	Enemy* enemy = new Enemy();
+
+	enemy->Initialize(enemyModel_.get(), position, type);
+
+	enemy_.push_back(enemy);
 }

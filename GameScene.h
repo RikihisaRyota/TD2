@@ -16,6 +16,7 @@
 
 // ここから下になるべくアルファベット順で
 #include "CSV.h"
+#include "Enemy.h"
 #include "FollowCamera.h"
 #include "Player.h"
 
@@ -55,6 +56,11 @@ public: // メンバ関数
 	/// </summary>
 	void Release();
 
+	// エネミーリスポーン用
+	void LoadCSVData(const char* csvName, std::stringstream* popCommands);
+	void UpdateEnemyPopCommands();
+	void SpawnEnemy(const Vector3& position, uint32_t type);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -65,11 +71,13 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲーム用
 	/// </summary>
-	std::unique_ptr<CSV> csv_;
 	std::unique_ptr<CubeRenderer> floor_;
 	WorldTransform floorWorldTransform_;
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
+	std::list<Enemy*> enemy_;
+	std::unique_ptr<Model> enemyModel_;
 
+	std::stringstream enemyPopCommands_;
 };

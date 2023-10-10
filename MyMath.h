@@ -191,3 +191,6 @@ Vector3 CubicCatmullRom(
 void OBBIndex(const OBB& obb, std::vector<Vector3>& output_vertices);
 // 分離軸
 bool SeparationAxis(const Vector3 axis, const OBB obb_1, const OBB obb_2);
+
+// 外部引用
+void GetOrientations(const Matrix4x4& m, Vector3 orientations[3]);

@@ -17,16 +17,27 @@ void Player::Initialize(Model* model) {
 
 	worldTransform_.Initialize();
 
+	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
+
 	input_ = Input::GetInstance();
 }
 
 void Player::Update() {
+	OBJtoOBB();
 	Move();
 	Debug();
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection);
+}
+
+void Player::OBJtoOBB() {
+	// .objをOBBへ変更（当たり判定へ）
+	obb_.center_ = worldTransform_.translation_;
+	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
+	obb_.size_ = worldTransform_.scale_;
 }
 
 void Player::Move() {
