@@ -6,6 +6,8 @@
 #include "GameScene.h"
 #include "Vector3.h"
 
+// CSVはGameSceneへ移植しました //
+
 class CSV {
 public:
 	struct Data {

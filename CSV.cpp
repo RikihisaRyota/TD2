@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 
+// CSVはGameSceneへ移植しました //
 
 void CSV::LoadCSV(std::string fileName) {
 	// ファイルを開く

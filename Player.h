@@ -33,14 +33,15 @@ public:
 	/// <param name= "viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(const ViewProjection& viewProjection);
 
-	void OBJtoOBB();
-	void Move();
+	void OBJtoOBB(); // WorldTransformをOBBへ変換
+
+	void Move(); // プレイヤーの移動処理
 
 	Vector3 GetWorldPosition();
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
-	OBB GetOBB() { return obb_; }
+	OBB GetOBB() { return obb_; } // OBBの取得用
 
 private:
 	void Debug();
@@ -53,16 +54,18 @@ private:
 	float kRightAngle_= 45.0f;
 	float kLeftAngle_= 135.0f;
 	uint32_t kWeightMax_ = 10;
+
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	const ViewProjection* viewProjection_ = nullptr;
 	Input* input_ = nullptr;
+	
 	// モデル
 	Model* model_ = nullptr;
 	Vector3 velocity_;
 	Vector3 acceleration_;
   
-	OBB obb_;
+	OBB obb_; // 当たり判定用
   
 	uint32_t weightCount_;
 };
