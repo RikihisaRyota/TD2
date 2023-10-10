@@ -52,15 +52,17 @@ private:
 	float kSpeed_ = 0.01f;
 	float kRightAngle_= 45.0f;
 	float kLeftAngle_= 135.0f;
+	uint32_t kWeightMax_ = 10;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	const ViewProjection* viewProjection_ = nullptr;
 	Input* input_ = nullptr;
 	// モデル
 	Model* model_ = nullptr;
-
 	Vector3 velocity_;
 	Vector3 acceleration_;
-
+  
 	OBB obb_;
+  
+	uint32_t weightCount_;
 };
