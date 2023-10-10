@@ -54,12 +54,12 @@ void GameScene::Update() {
 	player_->Update();
 	enemy_->Update();
 
+	// 当たり判定
 	if (IsCollision(player_->GetOBB(), enemy_->GetObb())) {
-		enemy_->SetFlag(true);
 		enemy_->SetPosition(player_->GetWorldPosition());
 	}
 	else {
-		enemy_->SetFlag(false);
+		
 	}
 
 	// 0を押すとカメラを切り替える

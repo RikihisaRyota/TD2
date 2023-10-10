@@ -33,6 +33,7 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Move() {
+	// .objをOBBへ変更（当たり判定へ）
 	obb_.center_ = worldTransform_.translation_;
 	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
 	obb_.size_ = worldTransform_.scale_;
