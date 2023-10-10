@@ -10,9 +10,11 @@
 
 class Enemy {
 public:
-	void Initialize(Model* model, const Vector3& position);
+	void Initialize(Model* model, const Vector3& position, uint32_t type);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
+
+	void OBJtoOBB();
 
 	void SetPosition(const Vector3& position);
 
@@ -22,6 +24,7 @@ public:
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
+	uint32_t type_;
 
 	OBB obb_;
 	int isHit_ = false;

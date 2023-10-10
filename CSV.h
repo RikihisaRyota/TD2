@@ -3,11 +3,12 @@
 #include <sstream>
 #include <vector>
 
+#include "GameScene.h"
 #include "Vector3.h"
 
 class CSV {
 public:
-	struct Date {
+	struct Data {
 		Vector3 position;
 		uint32_t type;
 	};
@@ -21,7 +22,7 @@ public:
 	/// <summary>
 	/// データの更新
 	/// </summary>
-	std::vector<Date> UpdataDateCommands();
+	std::vector<Data> UpdateDataCommands();
 
 private:
 	// 発生コマンド

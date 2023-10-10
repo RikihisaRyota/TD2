@@ -24,6 +24,7 @@ void Player::Initialize(Model* model) {
 }
 
 void Player::Update() {
+	OBJtoOBB();
 	Move();
 	Debug();
 }
@@ -32,12 +33,14 @@ void Player::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection);
 }
 
-void Player::Move() {
+void Player::OBJtoOBB() {
 	// .objをOBBへ変更（当たり判定へ）
 	obb_.center_ = worldTransform_.translation_;
 	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
 	obb_.size_ = worldTransform_.scale_;
+}
 
+void Player::Move() {
 	Vector3 move = { 0, 0, 0 };
 
 	// SPACE押している間も重力がかかり落下スピードが上がるかも

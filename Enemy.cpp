@@ -1,9 +1,11 @@
 #include "Enemy.h"
 #include "ImGuiManager.h"
 
-void Enemy::Initialize(Model* model, const Vector3& position) {
+void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	assert(model);
 	model_ = model;
+
+	type_ = type;
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
@@ -13,10 +15,7 @@ void Enemy::Initialize(Model* model, const Vector3& position) {
 }
 
 void Enemy::Update() {
-	// .obj‚ğOBB‚Ö•ÏXi“–‚½‚è”»’è‚Öj
-	obb_.center_ = worldTransform_.translation_;
-	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
-	obb_.size_ = worldTransform_.scale_;
+	OBJtoOBB();
 
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.01f);
@@ -28,10 +27,17 @@ void Enemy::Update() {
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_,viewProjection);
+	model_->Draw(worldTransform_, viewProjection);
 }
 
-// “G‚Ìƒ|ƒWƒVƒ‡ƒ“‚ğƒvƒŒƒCƒ„[‚ÉŒÅ’è
+void Enemy::OBJtoOBB() {
+	// .objã‚’OBBã¸å¤‰æ›´ï¼ˆå½“ãŸã‚Šåˆ¤å®šã¸ï¼‰
+	obb_.center_ = worldTransform_.translation_;
+	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
+	obb_.size_ = worldTransform_.scale_;
+}
+
+// æ•µã®ãƒã‚¸ã‚·ãƒ§ãƒ³ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«å›ºå®š
 void Enemy::SetPosition(const Vector3& position) { 
 	worldTransform_.translation_.x = position.x; 
 	worldTransform_.translation_.y = position.y + -2; 

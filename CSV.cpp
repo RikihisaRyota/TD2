@@ -18,12 +18,12 @@ void CSV::LoadCSV(std::string fileName) {
 	file.close();
 }
 
-std::vector<CSV::Date> CSV::UpdataDateCommands() {
+std::vector<CSV::Data> CSV::UpdateDataCommands() {
 	// 1行分の文字列を入れる変数
 	std::string line;
 
-	std::vector<CSV::Date> result;
-	Date pop;
+	std::vector<CSV::Data> result;
+	Data pop;
 
 	// コマンド実行ループ
 	while (getline(dateCommands_, line)) {
@@ -53,6 +53,7 @@ std::vector<CSV::Date> CSV::UpdataDateCommands() {
 			// z座標
 			getline(line_stream, word, ',');
 			pop.position.z = (float)std::atof(word.c_str());
+
 		}
 
 		pop.type = 999;

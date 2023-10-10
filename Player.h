@@ -33,6 +33,7 @@ public:
 	/// <param name= "viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(const ViewProjection& viewProjection);
 
+	void OBJtoOBB();
 	void Move();
 
 	Vector3 GetWorldPosition();
