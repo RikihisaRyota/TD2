@@ -4,6 +4,7 @@
 #include "Model.h"
 #include "Player.h"
 #include "WorldTransform.h"
+#include "MyMath.h"
 #include "OBB.h"
 #include <functional>
 
@@ -13,15 +14,15 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
-	void SetPosition(const Vector3& position) { worldTransform_.translation_.x = position.x; worldTransform_.translation_.y = position.y + 1; worldTransform_.translation_.z = position.z; }
+	void SetPosition(const Vector3& position);
 
 	OBB GetObb() { return obb_; }
-	void SetFlag(int flag) { isCombined_ = flag; }
+	int SetFlag(int flag) { return isHit_ = flag; }
 
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 
 	OBB obb_;
-	int isCombined_ = false;
+	int isHit_ = false;
 };

@@ -17,9 +17,10 @@ void Player::Initialize(Model* model) {
 
 	worldTransform_.Initialize();
 
-	input_ = Input::GetInstance();
+	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
 
-	obb_.size_ = { 0.01f,0.01f,0.01f };
+	input_ = Input::GetInstance();
 }
 
 void Player::Update() {
@@ -33,6 +34,8 @@ void Player::Draw(const ViewProjection& viewProjection) {
 
 void Player::Move() {
 	obb_.center_ = worldTransform_.translation_;
+	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
+	obb_.size_ = worldTransform_.scale_;
 
 	Vector3 move = { 0, 0, 0 };
 

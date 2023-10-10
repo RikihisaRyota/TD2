@@ -878,3 +878,10 @@ bool SeparationAxis(const Vector3 axis, const OBB obb_1, const OBB obb_2) {// �
 	}
 	return false;
 }
+
+// 外部引用
+void GetOrientations(const Matrix4x4& m, Vector3 orientations[3]) {
+	orientations[0] = GetXAxis(m);
+	orientations[1] = GetYAxis(m);
+	orientations[2] = GetZAxis(m);
+}
