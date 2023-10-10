@@ -47,7 +47,6 @@ void GameScene::Initialize() {
 	player_->Initialize(playerModel_.get());
 	enemyModel_.reset(Model::Create("Enemy"));
 #pragma endregion
-
 }
 
 void GameScene::Update() {
