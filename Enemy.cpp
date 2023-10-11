@@ -20,7 +20,9 @@ void Enemy::Update() {
 	ImGui::Begin("Enemy");
 	ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.01f);
 	ImGui::DragFloat3("rotation", &worldTransform_.rotation_.x, 0.01f);
-	ImGui::DragInt("flag", &isHit_, 1);
+	int flag = isHit_;
+	ImGui::DragInt("flag", &flag, 1);
+	isHit_ = flag;
 	ImGui::End();
 
 	worldTransform_.UpdateMatrix();

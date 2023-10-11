@@ -43,6 +43,8 @@ public:
 
 	OBB GetOBB() { return obb_; } // OBBの取得用
 	bool GetIsDrop() { return isDrop_; }
+	void SetWeight(uint32_t count) { weightCount_ += count; }
+	void SetIsHitStop(bool flag) { isHitStop_ = flag; }
 
 	void SetWidth(float width) { kWidth_ = width; }
 	void SetHeight(float height) { kHeight_ = height; }
@@ -59,7 +61,7 @@ private:
 	float kWidth_ = 40.0f;
 	float kHeight_ = 300.0f;
 	uint32_t kLifeTimeMax_ = 360;
-	uint32_t kWeightMax_ = 10;
+	uint32_t kWeightMax_ = 5;
 
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -78,4 +80,8 @@ private:
 	uint32_t lifeTimeCount_;
 	// 落下中か
 	bool isDrop_;
+	// ヒットストップ
+	bool isHitStop_;
+	uint32_t hitStopCount_;
+	uint32_t hitStopMax_ = 5;
 };

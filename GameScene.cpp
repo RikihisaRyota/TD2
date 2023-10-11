@@ -44,26 +44,42 @@ void GameScene::Initialize() {
 	playerModel_.reset(Model::Create("Player"));
 	player_->Initialize(playerModel_.get());
 	enemyModel_.reset(Model::Create("Enemy"));
+	UpdateEnemyPopCommands();
 #pragma endregion
 }
 
 void GameScene::Update() {
 	frame_->Update();
 	player_->Update();
-	
+
 	for (Enemy* enemy : enemy_) {
 		enemy->Update();
 
 		// 当たり判定
 		if (IsCollision(player_->GetOBB(), enemy->GetObb())) {
-			enemy->SetPosition(player_->GetWorldPosition());
-		}
-		else {
-
+			// 落下中ではない
+			if (!player_->GetIsDrop()) {
+				if (!enemy->GetFlag()) {
+					enemy->SetPosition(player_->GetWorldPosition());
+					enemy->SetFlag(true);
+					player_->SetWeight(1);
+				}
+				else {
+					enemy->SetPosition(player_->GetWorldPosition());
+				}
+			}
+			else {
+				if (!enemy->GetFlag()) {
+					enemy->SetPosition(player_->GetWorldPosition());
+					enemy->SetFlag(true);
+					player_->SetIsHitStop(true);
+				}
+				else {
+					enemy->SetPosition(player_->GetWorldPosition());
+				}
+			}
 		}
 	}
-
-	UpdateEnemyPopCommands();
 
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
@@ -76,6 +92,14 @@ void GameScene::Update() {
 	else {
 		followCamera_->Update();
 		viewProjection_ = followCamera_->GetViewProjection();
+	}
+	if (input_->TriggerKey(DIK_R)) {
+		for (Enemy* enemy : enemy_) {
+			delete enemy;
+		}
+		enemy_.clear();
+		LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
+		UpdateEnemyPopCommands();
 	}
 }
 
@@ -109,7 +133,7 @@ void GameScene::Draw() {
 	/// </summary>
 	frame_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
-	
+
 	for (Enemy* enemy : enemy_) {
 		enemy->Draw(viewProjection_);
 	}
@@ -158,6 +182,8 @@ void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands)
 
 void GameScene::UpdateEnemyPopCommands() {
 	std::string line;
+	enemyPopCommands_.clear();
+	enemyPopCommands_.seekg(0, std::ios_base::beg);
 
 	while (getline(enemyPopCommands_, line)) {
 		std::istringstream line_stream(line);
@@ -189,8 +215,8 @@ void GameScene::UpdateEnemyPopCommands() {
 			getline(line_stream, word, ',');
 			type = (uint32_t)std::atof(word.c_str());
 		}
-
 		SpawnEnemy(Vector3(x, y, z), type);
+
 	}
 }
 

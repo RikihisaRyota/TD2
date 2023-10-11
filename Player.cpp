@@ -19,12 +19,23 @@ void Player::Initialize(Model* model) {
 	lifeTimeCount_ = 0;
 
 	isDrop_ = false;
+	
+	isHitStop_ = false;
 }
 
 void Player::Update() {
+	if (!isHitStop_) {
 	OBJtoOBB();
 	Move();
 	Debug();
+	}
+	else {
+		hitStopCount_++;
+		if (hitStopCount_ >= hitStopMax_) {
+			hitStopCount_ = 0;
+			isHitStop_ = false;
+		}
+	}
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
@@ -88,6 +99,7 @@ void Player::Move() {
 	if (worldTransform_.translation_.y <= 0.0f) {
 		worldTransform_.translation_.y = 0.0f;
 		acceleration_.y = 0.0f;
+		weightCount_ = 0;
 	}
 	// 枠内に収める処理
 	if (worldTransform_.translation_.x <= -kWidth_ + worldTransform_.scale_.x * 2.0f) {
@@ -137,6 +149,12 @@ void Player::Debug() {
 	ImGui::SliderFloat("ifeTimeMax_",&lifeTimeMax,0.0f,10.0f);
 	lifeTimeCount_ = static_cast<uint32_t> (lifeTime );
 	kLifeTimeMax_ = static_cast<uint32_t> (lifeTimeMax);
+	float hitStopCount = static_cast<float>(hitStopCount_);
+	float hitStopMax = static_cast<float>(hitStopMax_);
+	ImGui::SliderFloat("hitStopCount", &hitStopCount, 0.0f, hitStopMax);
+	ImGui::SliderFloat("hitStopMax", &hitStopMax, 0.0f, 10.0f);
+	hitStopCount_ = static_cast<uint32_t> (hitStopCount);
+	hitStopMax_ = static_cast<uint32_t> (hitStopMax);
 	if (ImGui::TreeNode("PlayerMove")) {
 		ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
 		ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 0.1f);

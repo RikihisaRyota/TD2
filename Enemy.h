@@ -20,7 +20,8 @@ public:
 
 	OBB GetObb() { return obb_; } 
 
-	int SetFlag(int flag) { return isHit_ = flag; } 
+	void SetFlag(bool flag) { isHit_ = flag; }
+	bool GetFlag() { return isHit_; }
 
 private:
 	WorldTransform worldTransform_;
@@ -28,5 +29,5 @@ private:
 	uint32_t type_;
 
 	OBB obb_;
-	int isHit_ = false;
+	bool isHit_ = false;
 };
