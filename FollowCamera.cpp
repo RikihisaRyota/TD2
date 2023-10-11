@@ -9,7 +9,7 @@ void FollowCamera::Initialize() {
 	viewProjection_.Initialize();
 	debugOffset_ = { 0.0f, 12.0f, -65.0f };
 	dropOffset_ = { 0.0f, -12.0f, -65.0f };
-	delayInterpolationLate_ = 0.02f;
+	delayInterpolationLate_ = 0.5f;
 	dropDelayInterpolationLate_ = 0.8f;
 }
 
