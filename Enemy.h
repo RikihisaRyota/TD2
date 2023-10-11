@@ -14,19 +14,19 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
-	void OBJtoOBB(); // WorldTransformをOBBへ変換
+	void OBJtoOBB();
 
 	void SetPosition(const Vector3& position);
 
-	OBB GetObb() { return obb_; } // OBBの取得用
+	OBB GetObb() { return obb_; } 
 
-	int SetFlag(int flag) { return isHit_ = flag; } // フラグセッタ（ImGui用にintです）
+	int SetFlag(int flag) { return isHit_ = flag; } 
 
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t type_;
 
-	OBB obb_; // 当たり判定用
+	OBB obb_;
 	int isHit_ = false;
 };

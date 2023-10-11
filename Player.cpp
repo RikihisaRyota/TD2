@@ -9,12 +9,16 @@ void Player::Initialize(Model* model) {
 	assert(model);
 	model_ = model;
 
+	input_ = Input::GetInstance();
+
 	worldTransform_.Initialize();
 
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
 
-	input_ = Input::GetInstance();
+	lifeTimeCount_ = 0;
+
+	isDrop_ = false;
 }
 
 void Player::Update() {
@@ -37,9 +41,9 @@ void Player::OBJtoOBB() {
 void Player::Move() {
 	Vector3 move = { 0, 0, 0 };
 	float nowWeight = static_cast<float>((kWeightMax_ - weightCount_)) / static_cast<float> (kWeightMax_);
-
 	// SPACE押している間も重力がかかり落下スピードが上がるかも
 	if (input_->PushKey(DIK_SPACE)) {
+		isDrop_ = true;
 		acceleration_.y -= kDropSpeed_;
 		if (input_->PushKey(DIK_A)) {
 			move.x = -1.0f;
@@ -53,6 +57,7 @@ void Player::Move() {
 		velocity_.x = move.x;
 	}
 	else {
+		isDrop_ = false;
 		if (input_->TriggerKey(DIK_A)) {
 			Vector3 direction = { cosf(DegToRad(kLeftAngle_)), sinf(DegToRad(kLeftAngle_)), 0 };
 			direction.Normalize();
@@ -84,6 +89,30 @@ void Player::Move() {
 		worldTransform_.translation_.y = 0.0f;
 		acceleration_.y = 0.0f;
 	}
+	// 枠内に収める処理
+	if (worldTransform_.translation_.x <= -kWidth_ + worldTransform_.scale_.x * 2.0f) {
+		worldTransform_.translation_.x = -kWidth_ + worldTransform_.scale_.x * 2.0f;
+	}
+	else if (worldTransform_.translation_.x >= kWidth_ - worldTransform_.scale_.x * 2.0f) {
+		worldTransform_.translation_.x = kWidth_ - worldTransform_.scale_.x * 2.0f;
+	}
+	// 地面以外にいたら
+	if (worldTransform_.translation_.y > 0.0f) {
+		lifeTimeCount_++;
+		float t = static_cast<float>(kLifeTimeMax_ - lifeTimeCount_) / static_cast<float>(kLifeTimeMax_);
+		model_->GetMaterial(0)->SetColor(Vector4(t, t, t, 1.0f));
+	}
+	else {
+		lifeTimeCount_ = 0;
+		float t = static_cast<float>(kLifeTimeMax_ - lifeTimeCount_) / static_cast<float>(kLifeTimeMax_);
+		model_->GetMaterial(0)->SetColor(Vector4(t, t, t, 1.0f));
+	}
+	if (lifeTimeCount_ >= kLifeTimeMax_) {
+		lifeTimeCount_ = 0;
+		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
+		velocity_ = { 0.0f,0.0f,0.0f };
+		acceleration_ = { 0.0f,0.0f,0.0f };
+	}
 	worldTransform_.UpdateMatrix();
 }
 
@@ -102,16 +131,25 @@ void Player::Debug() {
 	ImGui::Text("velocity:x:%f,y:%f,z:%f", velocity_.x, velocity_.y, velocity_.z);
 	ImGui::Text("acceleration:x:%f,y:%f,z:%f", acceleration_.x, acceleration_.y, acceleration_.z);
 	ImGui::Text("pos:x:%f,y:%f:z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
-	ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
-	ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 0.1f);
-	ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
-	ImGui::SliderFloat("DropSpeed", &kDropSpeed_, 0.0f, 1.0f);
-	ImGui::SliderFloat("DropHorizontalSpeed", &kDropHorizontalSpeed_, 0.1f, 0.5f);
-	ImGui::SliderFloat("DropMaxSpeed", &kDropMaxSpeed_, 0.0f, 1.0f);
-	ImGui::SliderFloat("RightAngle", &kRightAngle_, 0.0f, 90.0f);
-	ImGui::SliderFloat("LeftAngle", &kLeftAngle_, 90.0f, 180.0f);
-	float weight = static_cast<float>(weightCount_);
-	ImGui::SliderFloat("WeightCount", &weight, 0.0f, 10.0f);
-	weightCount_= static_cast<uint32_t>(weight);
+	float lifeTime = static_cast<float>(lifeTimeCount_);
+	float lifeTimeMax= static_cast<float>(kLifeTimeMax_);
+	ImGui::SliderFloat("lifeTime",&lifeTime,0.0f, lifeTimeMax);
+	ImGui::SliderFloat("ifeTimeMax_",&lifeTimeMax,0.0f,10.0f);
+	lifeTimeCount_ = static_cast<uint32_t> (lifeTime );
+	kLifeTimeMax_ = static_cast<uint32_t> (lifeTimeMax);
+	if (ImGui::TreeNode("PlayerMove")) {
+		ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
+		ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 0.1f);
+		ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
+		ImGui::SliderFloat("DropSpeed", &kDropSpeed_, 0.0f, 1.0f);
+		ImGui::SliderFloat("DropHorizontalSpeed", &kDropHorizontalSpeed_, 0.1f, 0.5f);
+		ImGui::SliderFloat("DropMaxSpeed", &kDropMaxSpeed_, 0.0f, 1.0f);
+		ImGui::SliderFloat("RightAngle", &kRightAngle_, 0.0f, 90.0f);
+		ImGui::SliderFloat("LeftAngle", &kLeftAngle_, 90.0f, 180.0f);
+		float weight = static_cast<float>(weightCount_);
+		ImGui::SliderFloat("WeightCount", &weight, 0.0f, 10.0f);
+		weightCount_ = static_cast<uint32_t>(weight);
+		ImGui::TreePop();
+	}
 	ImGui::End();
 }

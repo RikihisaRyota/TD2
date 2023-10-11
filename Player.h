@@ -42,7 +42,10 @@ public:
 	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 	OBB GetOBB() { return obb_; } // OBBの取得用
+	bool GetIsDrop() { return isDrop_; }
 
+	void SetWidth(float width) { kWidth_ = width; }
+	void SetHeight(float height) { kHeight_ = height; }
 private:
 	void Debug();
 	float kDropMaxSpeed_ = 0.05f;
@@ -53,6 +56,9 @@ private:
 	float kSpeed_ = 0.01f;
 	float kRightAngle_= 45.0f;
 	float kLeftAngle_= 135.0f;
+	float kWidth_ = 40.0f;
+	float kHeight_ = 300.0f;
+	uint32_t kLifeTimeMax_ = 360;
 	uint32_t kWeightMax_ = 10;
 
 	// ワールド変換データ
@@ -66,6 +72,10 @@ private:
 	Vector3 acceleration_;
   
 	OBB obb_; // 当たり判定用
-  
+	// 何体敵が引っ付いているかカウント用
 	uint32_t weightCount_;
+	// 酸素ゲージ
+	uint32_t lifeTimeCount_;
+	// 落下中か
+	bool isDrop_;
 };

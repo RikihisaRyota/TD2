@@ -25,7 +25,7 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	viewProjection_.Initialize();
 #pragma region 生成
-	floor_ = std::make_unique<CubeRenderer>();
+	frame_ = std::make_unique<Frame>();
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
 	playerModel_ = std::make_unique<Model>();
@@ -33,15 +33,13 @@ void GameScene::Initialize() {
 #pragma region 初期化
 	// CSV
 	LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
-	// 床
-	floor_.reset(CubeRenderer::Create());
-	floorWorldTransform_.Initialize();
-	floorWorldTransform_.translation_ = { 0.0f,-2.0f,0.0f };
-	floorWorldTransform_.scale_ = { 20.0f,1.0f,1.0f };
-	floorWorldTransform_.UpdateMatrix();
+	// 枠組み
+	frame_->SetPlayer(player_.get());
+	frame_->Initialize();
 	// カメラ
-	followCamera_->Initialize();
 	followCamera_->SetTarget(&player_->GetWorldTransform());
+	followCamera_->SetPlayer(player_.get());
+	followCamera_->Initialize();
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
 	player_->Initialize(playerModel_.get());
@@ -50,6 +48,7 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	frame_->Update();
 	player_->Update();
 	
 	for (Enemy* enemy : enemy_) {
@@ -108,7 +107,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	floor_->Draw(floorWorldTransform_, viewProjection_);
+	frame_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	
 	for (Enemy* enemy : enemy_) {
