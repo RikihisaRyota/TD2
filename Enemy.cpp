@@ -16,15 +16,6 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 
 void Enemy::Update() {
 	OBJtoOBB();
-
-	ImGui::Begin("Enemy");
-	ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.01f);
-	ImGui::DragFloat3("rotation", &worldTransform_.rotation_.x, 0.01f);
-	int flag = isHit_;
-	ImGui::DragInt("flag", &flag, 1);
-	isHit_ = flag;
-	ImGui::End();
-
 	worldTransform_.UpdateMatrix();
 }
 
@@ -40,8 +31,8 @@ void Enemy::OBJtoOBB() {
 }
 
 // 敵のポジションをプレイヤーに固定
-void Enemy::SetPosition(const Vector3& position) { 
-	worldTransform_.translation_.x = position.x; 
-	worldTransform_.translation_.y = position.y + -2; 
-	worldTransform_.translation_.z = position.z; 
+void Enemy::SetPosition(const Vector3& position) {
+	worldTransform_.translation_.x = position.x;
+	worldTransform_.translation_.y = position.y + -2;
+	worldTransform_.translation_.z = position.z;
 }

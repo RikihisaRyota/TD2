@@ -13,7 +13,7 @@ public:
 	void Initialize(Model* model, const Vector3& position, uint32_t type);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
-
+	
 	void OBJtoOBB();
 
 	void SetPosition(const Vector3& position);
@@ -22,7 +22,15 @@ public:
 
 	void SetFlag(bool flag) { isHit_ = flag; }
 	bool GetFlag() { return isHit_; }
-
+	WorldTransform GetWorldTransform() {return worldTransform_;}
+	void SetTranslation(const Vector3& translation) { 
+		worldTransform_.translation_ = translation;
+		worldTransform_.UpdateMatrix();
+	}
+	void SetRotate(const Vector3& rotate) {	
+		worldTransform_.rotation_ = rotate;
+		worldTransform_.UpdateMatrix();
+	}
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
