@@ -53,9 +53,9 @@ private:
 	float kDropMaxSpeed_ = 0.05f;
 	float kDropSpeed_ = 0.01f;
 	float kDropHorizontalSpeed_ = 0.4f;
-	float kGravity_ = 0.001f;
+	float kGravity_ = 0.1f;
 	float kInertia_ = 0.9f;
-	float kSpeed_ = 0.01f;
+	float kSpeed_ = 0.5f;
 	float kRightAngle_= 45.0f;
 	float kLeftAngle_= 135.0f;
 	float kWidth_ = 40.0f;
@@ -84,4 +84,9 @@ private:
 	bool isHitStop_;
 	uint32_t hitStopCount_;
 	uint32_t hitStopMax_ = 5;
+
+	float angle_ = 90.0f;
+	float addAngle_ = 5.0f;
+	float kDashSpeed_ = 0.5f;
+	float kJumpSpeed_ = 0.6f;
 };

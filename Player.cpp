@@ -19,15 +19,15 @@ void Player::Initialize(Model* model) {
 	lifeTimeCount_ = 0;
 
 	isDrop_ = false;
-	
+
 	isHitStop_ = false;
 }
 
 void Player::Update() {
 	if (!isHitStop_) {
-	OBJtoOBB();
-	Move();
-	Debug();
+		OBJtoOBB();
+		Move();
+		Debug();
 	}
 	else {
 		hitStopCount_++;
@@ -55,43 +55,54 @@ void Player::Move() {
 	// SPACE押している間も重力がかかり落下スピードが上がるかも
 	if (input_->PushKey(DIK_SPACE)) {
 		isDrop_ = true;
-		acceleration_.y -= kDropSpeed_;
 		if (input_->PushKey(DIK_A)) {
-			move.x = -1.0f;
-			move *= kDropHorizontalSpeed_;
+			angle_ += addAngle_;
 		}
 
 		if (input_->PushKey(DIK_D)) {
-			move.x = 1.0f;
-			move *= kDropHorizontalSpeed_;
+			angle_ -= addAngle_;
 		}
-		velocity_.x = move.x;
+		float angle = DegToRad(angle_);
+		move.x = std::cosf(angle);
+		move.y = std::sinf(angle);
+		// 斜め移動時の速度を正規化
+		if (move.Length() > 0) {
+			move.Normalize();
+			velocity_ = move * kDashSpeed_;
+		}
+	}
+	else if (input_->IsKeyReleased(DIK_SPACE)) {
+		float angle = DegToRad(angle_);
+		move.x = std::cosf(angle);
+		move.y = std::sinf(angle);
+		acceleration_.x = move.x * kJumpSpeed_;
+		acceleration_.y = move.y * kJumpSpeed_;
+		// 斜め移動時の速度を正規化
+		if (move.Length() > 0) {
+			move.Normalize();
+			velocity_ = move * kDashSpeed_;
+		}
 	}
 	else {
 		isDrop_ = false;
-		if (input_->TriggerKey(DIK_A)) {
-			Vector3 direction = { cosf(DegToRad(kLeftAngle_)), sinf(DegToRad(kLeftAngle_)), 0 };
-			direction.Normalize();
-			move += direction * nowWeight;
-			acceleration_.y = kSpeed_ * nowWeight;
+		if (input_->PushKey(DIK_A)) {
+			move = Vector3(-1.0f, 0.0f, 0.0f);
 		}
-		if (input_->TriggerKey(DIK_D)) {
-			Vector3 direction = { cosf(DegToRad(kRightAngle_)), sinf(DegToRad(kRightAngle_)), 0 };
-			direction.Normalize();
-			move += direction * nowWeight;
-			acceleration_.y = kSpeed_ * nowWeight;
+		if (input_->PushKey(DIK_D)) {
+			move = Vector3(1.0f, 0.0f, 0.0f);
 		}
 		// 斜め移動時の速度を正規化
 		if (move.Length() > 0) {
 			move.Normalize();
-			velocity_ = move;
+			velocity_ = move * kSpeed_;
+		}
+		// 重力を適用
+		if (acceleration_.y >= -kDropMaxSpeed_) {
+			acceleration_.y -= kGravity_;
 		}
 	}
-	// 重力を適用
-	if (acceleration_.y >= -kDropMaxSpeed_) {
-		acceleration_.y -= kGravity_;
-	}
 	// 移動
+	acceleration_.x *= 0.8f;
 	velocity_ += acceleration_;
 	velocity_ *= kInertia_;
 	worldTransform_.translation_ += velocity_;
@@ -100,6 +111,9 @@ void Player::Move() {
 		worldTransform_.translation_.y = 0.0f;
 		acceleration_.y = 0.0f;
 		weightCount_ = 0;
+		if (!input_->PushKey(DIK_SPACE)) {
+			angle_ = 90.0f;
+		}
 	}
 	// 枠内に収める処理
 	if (worldTransform_.translation_.x <= -kWidth_ + worldTransform_.scale_.x * 2.0f) {
@@ -108,23 +122,7 @@ void Player::Move() {
 	else if (worldTransform_.translation_.x >= kWidth_ - worldTransform_.scale_.x * 2.0f) {
 		worldTransform_.translation_.x = kWidth_ - worldTransform_.scale_.x * 2.0f;
 	}
-	// 地面以外にいたら
-	if (worldTransform_.translation_.y > 0.0f) {
-		lifeTimeCount_++;
-		float t = static_cast<float>(kLifeTimeMax_ - lifeTimeCount_) / static_cast<float>(kLifeTimeMax_);
-		model_->GetMaterial(0)->SetColor(Vector4(t, t, t, 1.0f));
-	}
-	else {
-		lifeTimeCount_ = 0;
-		float t = static_cast<float>(kLifeTimeMax_ - lifeTimeCount_) / static_cast<float>(kLifeTimeMax_);
-		model_->GetMaterial(0)->SetColor(Vector4(t, t, t, 1.0f));
-	}
-	if (lifeTimeCount_ >= kLifeTimeMax_) {
-		lifeTimeCount_ = 0;
-		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
-		velocity_ = { 0.0f,0.0f,0.0f };
-		acceleration_ = { 0.0f,0.0f,0.0f };
-	}
+
 	worldTransform_.UpdateMatrix();
 }
 
@@ -144,10 +142,10 @@ void Player::Debug() {
 	ImGui::Text("acceleration:x:%f,y:%f,z:%f", acceleration_.x, acceleration_.y, acceleration_.z);
 	ImGui::Text("pos:x:%f,y:%f:z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
 	float lifeTime = static_cast<float>(lifeTimeCount_);
-	float lifeTimeMax= static_cast<float>(kLifeTimeMax_);
-	ImGui::SliderFloat("lifeTime",&lifeTime,0.0f, lifeTimeMax);
-	ImGui::SliderFloat("ifeTimeMax_",&lifeTimeMax,0.0f,10.0f);
-	lifeTimeCount_ = static_cast<uint32_t> (lifeTime );
+	float lifeTimeMax = static_cast<float>(kLifeTimeMax_);
+	ImGui::SliderFloat("lifeTime", &lifeTime, 0.0f, lifeTimeMax);
+	ImGui::SliderFloat("ifeTimeMax_", &lifeTimeMax, 0.0f, 10.0f);
+	lifeTimeCount_ = static_cast<uint32_t> (lifeTime);
 	kLifeTimeMax_ = static_cast<uint32_t> (lifeTimeMax);
 	float hitStopCount = static_cast<float>(hitStopCount_);
 	float hitStopMax = static_cast<float>(hitStopMax_);
@@ -167,6 +165,9 @@ void Player::Debug() {
 		float weight = static_cast<float>(weightCount_);
 		ImGui::SliderFloat("WeightCount", &weight, 0.0f, 10.0f);
 		weightCount_ = static_cast<uint32_t>(weight);
+		ImGui::SliderFloat("AddAngle", &addAngle_, 0.0f, 10.0f);
+		ImGui::SliderFloat("DashSpeed", &kDashSpeed_, 0.0f, 1.0f);
+		ImGui::SliderFloat("JumpSpeed", &kJumpSpeed_, 0.0f, 2.0f);
 		ImGui::TreePop();
 	}
 	ImGui::End();
