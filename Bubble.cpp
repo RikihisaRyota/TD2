@@ -12,27 +12,31 @@ Bubble* Bubble::GetInstance()
 
 void Bubble::Create(const Vector3& position, const Vector2& velocity, const ViewProjection& viewProjection)
 {
-	Vector3 position2D = position;
+	if (time_ == 0) {
+		Vector3 position2D = position;
 
-	// ビューポート行列
-	Matrix4x4 matViewport =
-		MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
-	// ビュー行列とプロジェクション行列、ビューポート行列を合成する
-	Matrix4x4 matViewProjectionViewport =
-		Mul(Mul(viewProjection.matView_, viewProjection.matProjection_), matViewport);
-	// ワールド→スクリーン座標変換(ここで3Dから2Dになる)
-	position2D = Transform(position2D, matViewProjectionViewport);
+		// ビューポート行列
+		Matrix4x4 matViewport =
+			MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+		// ビュー行列とプロジェクション行列、ビューポート行列を合成する
+		Matrix4x4 matViewProjectionViewport =
+			Mul(Mul(viewProjection.matView_, viewProjection.matProjection_), matViewport);
+		// ワールド→スクリーン座標変換(ここで3Dから2Dになる)
+		position2D = Transform(position2D, matViewProjectionViewport);
 
-	BubleStatus* newBubble = new BubleStatus;
-	newBubble->position = Vector2(position2D.x, position2D.y);
-	newBubble->velocity = velocity;
-	newBubble->velocity.y *= 10.0f;
-	newBubble->velocity.x *= 10.0f;
-	newBubble->sprite = Sprite::Create(
-		textureHandle_, newBubble->position, newBubble->color, newBubble->anchorpoint);
-	newBubble->size = newBubble->sprite->GetSize();
-	bubbles_.push_back(newBubble);
+		BubleStatus* newBubble = new BubleStatus;
+		newBubble->position = Vector2(position2D.x, position2D.y);
+		newBubble->velocity = velocity;
+		newBubble->velocity.y *= 10.0f;
+		newBubble->velocity.x *= 10.0f;
+		newBubble->sprite = Sprite::Create(
+			textureHandle_, newBubble->position, newBubble->color, newBubble->anchorpoint);
+		newBubble->size = newBubble->sprite->GetSize();
+		bubbles_.push_back(newBubble);
+		time_ = 5;
+	}
 	
+	time_--;
 }
 
 void Bubble::Initialize()
@@ -50,7 +54,7 @@ void Bubble::Update()
 		bubble->position.y += bubble->velocity.y;
 
 		
-		bubble->velocity.y -= 0.2f;
+		bubble->velocity.y -= 0.1f;
 		
 		// サイズ(小さくなる)
 		bubble->size.x -= 0.2f;

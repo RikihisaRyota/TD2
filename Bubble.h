@@ -65,5 +65,6 @@ private:
 private:
 	std::list<BubleStatus*> bubbles_;
 	uint32_t textureHandle_;
+	uint32_t time_;
 };
 
