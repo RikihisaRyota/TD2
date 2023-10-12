@@ -17,6 +17,7 @@
 // ここから下になるべくアルファベット順で
 #include "CSV.h"
 #include "FollowCamera.h"
+#include "ParticleManager.h"
 #include "Player.h"
 
 class DirectXCommon;
@@ -69,6 +70,7 @@ private: // メンバ変数
 	std::unique_ptr<CubeRenderer> floor_;
 	WorldTransform floorWorldTransform_;
 	std::unique_ptr<FollowCamera> followCamera_;
+	std::unique_ptr<ParticleManager> particleManager_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<Model> playerModel_;
 

@@ -2,8 +2,11 @@
 
 #include <cassert>
 
+#include "Bubble.h"
 #include "MyMath.h"
 #include "ImGuiManager.h"
+
+
 
 #ifndef M_PI
 #define M_PI 3.14
@@ -53,18 +56,24 @@ void Player::Move() {
 			direction.Normalize();
 			move += direction * nowWeight;
 			acceleration_.y = kSpeed_ * nowWeight;
+			//Bubble::GetInstance()->Create(Vector3(worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1], worldTransform_.matWorld_.m[3][2]), Vector2(-move.x, -move.y), *viewProjection_);
 		}
 		if (input_->TriggerKey(DIK_D)) {
 			Vector3 direction = { cosf(DegToRad(kRightAngle_)), sinf(DegToRad(kRightAngle_)), 0 };
 			direction.Normalize();
 			move += direction * nowWeight;
 			acceleration_.y = kSpeed_ * nowWeight;
+			//Bubble::GetInstance()->Create(Vector3(worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1], worldTransform_.matWorld_.m[3][2]), Vector2(-move.x, -move.y), *viewProjection_);
 		}
 		// 斜め移動時の速度を正規化
 		if (move.Length() > 0) {
 			move.Normalize();
 			velocity_ = move;
 		}
+	}
+	// 
+	if (acceleration_.y > 0.0f) {
+		Bubble::GetInstance()->Create(Vector3(worldTransform_.matWorld_.m[3][0], worldTransform_.matWorld_.m[3][1], worldTransform_.matWorld_.m[3][2]), Vector2(-velocity_.x, velocity_.y), *viewProjection_);
 	}
 	// 重力を適用
 	if (acceleration_.y >= -kDropMaxSpeed_) {
@@ -107,6 +116,6 @@ void Player::Debug() {
 	ImGui::SliderFloat("LeftAngle", &kLeftAngle_, 90.0f, 180.0f);
 	float weight = static_cast<float>(weightCount_);
 	ImGui::SliderFloat("WeightCount", &weight, 0.0f, 10.0f);
-	weightCount_= static_cast<uint32_t>(weight);
+	weightCount_ = static_cast<uint32_t>(weight);
 	ImGui::End();
 }

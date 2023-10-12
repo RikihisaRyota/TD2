@@ -92,6 +92,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="BasicGraphicsPipline.cpp" />
+    <ClCompile Include="Bubble.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ConvertString.cpp" />
     <ClCompile Include="CSV.cpp" />
@@ -111,6 +112,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="MyMath.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PrimitiveDrawer.cpp" />
     <ClCompile Include="LineGraphicsPipline.cpp" />
@@ -136,6 +138,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Audio.h" />
     <ClInclude Include="BasicGraphicsPipline.h" />
     <ClInclude Include="BillParticle.h" />
+    <ClInclude Include="Bubble.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="ConvertString.h" />
     <ClInclude Include="CSV.h" />
@@ -160,6 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Line.h" />
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="OBB.h" />
+    <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PrimitiveDrawer.h" />

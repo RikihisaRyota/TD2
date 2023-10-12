@@ -6,9 +6,13 @@
 #include "ImGuiManager.h"
 #include "Draw.h"
 
+#include "Bubble.h"
+
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	//Bubble::GetInstance()->Finalize();
+}
 
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -23,6 +27,7 @@ void GameScene::Initialize() {
 	csv_ = std::make_unique<CSV>();
 	floor_ = std::make_unique<CubeRenderer>();
 	followCamera_ = std::make_unique<FollowCamera>();
+	particleManager_ = std::make_unique<ParticleManager>();
 	player_ = std::make_unique<Player>();
 	playerModel_ = std::make_unique<Model>();
 #pragma endregion
@@ -41,7 +46,10 @@ void GameScene::Initialize() {
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
+	player_->SetViewProjection(&viewProjection_);
 	player_->Initialize(playerModel_.get());
+	// パーティクルマネージャー
+	particleManager_->Initialize();
 #pragma endregion
 
 }
@@ -61,6 +69,7 @@ void GameScene::Update() {
 		followCamera_->Update();
 		viewProjection_ = followCamera_->GetViewProjection();
 	}
+	particleManager_->Update();
 }
 
 void GameScene::Draw() {
@@ -75,7 +84,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-
+	particleManager_->BackDraw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
@@ -112,8 +121,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-	Sprite::SetBlendState(Sprite::BlendState::kNormal);
-
+	particleManager_->ForeDraw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -123,4 +131,6 @@ void GameScene::Draw() {
 
 void GameScene::Release() {
 	SafeDelete(debugCamera_);
+	Bubble::GetInstance()->Finalize();
+	
 }
