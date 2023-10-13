@@ -36,13 +36,13 @@ void Frame::Draw(const ViewProjection& viewProjection) {
 }
 
 void Frame::Debug() {
-	ImGui::Begin("Frame");
+	/*ImGui::Begin("Frame");
 	ImGui::SliderFloat("width", &width_, 20.0f, 100.0f);
 	player_->SetWidth(width_);
 	ImGui::SliderFloat("height", &height_, 20.0f, 100.0f);
 	player_->SetHeight(height_);
 	ImGui::End();
-	UpdateMatrix();
+	UpdateMatrix();*/
 }
 
 void Frame::UpdateMatrix() {

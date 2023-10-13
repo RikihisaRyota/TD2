@@ -57,37 +57,35 @@ void GameScene::Update() {
 	frame_->Update();
 	player_->Update();
 
-	uint32_t enemyCount = 0;
-	for (Enemy* enemy : enemy_) {
-		enemy->Update();
-		// 当たり判定
-		if (IsCollision(player_->GetOBB(), enemy->GetObb())) {
-			// 落下中ではない
-			if (!player_->GetIsDrop()) {
-				if (!enemy->GetFlag()) {
-					enemy->SetPosition(player_->GetWorldPosition());
-					/// プレイヤーに当たったか
-					enemy->SetFlag(true);
-					// プレイヤーにおもりを追加
-					player_->SetWeight(1);
-				}
-				else {
-					enemy->SetPosition(player_->GetWorldPosition());
-				}
-			}
-			else {
-				if (!enemy->GetFlag()) {
-					enemy->SetPosition(player_->GetWorldPosition());
-					enemy->SetFlag(true);
-					player_->SetIsHitStop(true);
-				}
-				else {
-					enemy->SetPosition(player_->GetWorldPosition());
-				}
-			}
-		}
-		enemyCount++;
-	}
+	//for (Enemy* enemy : enemy_) {
+	//	enemy->Update();
+	//	// 当たり判定
+	//	if (IsCollision(player_->GetOBB(), enemy->GetObb())) {
+	//		// 落下中ではない
+	//		if (!player_->GetIsDrop()) {
+	//			if (!enemy->GetFlag()) {
+	//				enemy->SetPosition(player_->GetWorldPosition());
+	//				/// プレイヤーに当たったか
+	//				enemy->SetFlag(true);
+	//				// プレイヤーにおもりを追加
+	//				player_->SetWeight(1);
+	//			}
+	//			else {
+	//				enemy->SetPosition(player_->GetWorldPosition());
+	//			}
+	//		}
+	//		else {
+	//			if (!enemy->GetFlag()) {
+	//				enemy->SetPosition(player_->GetWorldPosition());
+	//				enemy->SetFlag(true);
+	//				player_->SetIsHitStop(true);
+	//			}
+	//			else {
+	//				enemy->SetPosition(player_->GetWorldPosition());
+	//			}
+	//		}
+	//	}
+	//}
 	// 敵生成
 	enemyEditor_->Update(enemy_,enemyModel_.get());
 	// 0を押すとカメラを切り替える
@@ -145,9 +143,9 @@ void GameScene::Draw() {
 	frame_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 
-	for (Enemy* enemy : enemy_) {
+	/*for (Enemy* enemy : enemy_) {
 		enemy->Draw(viewProjection_);
-	}
+	}*/
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
