@@ -55,10 +55,10 @@ void GameScene::Update() {
 	
 	for (Enemy* enemy : enemy_) {
 		enemy->Update();
-
+		
 		// 当たり判定
 		if (IsCollision(player_->GetOBB(), enemy->GetObb())) {
-			enemy->SetPosition(player_->GetWorldPosition());
+			enemy->SetParent(&player_->GetWorldTransform());
 		}
 		else {
 
@@ -111,7 +111,7 @@ void GameScene::Draw() {
 	/// </summary>
 	floor_->Draw(floorWorldTransform_, viewProjection_);
 	player_->Draw(viewProjection_);
-	
+
 	for (Enemy* enemy : enemy_) {
 		enemy->Draw(viewProjection_);
 	}

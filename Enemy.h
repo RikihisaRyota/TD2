@@ -16,7 +16,8 @@ public:
 
 	void OBJtoOBB();
 
-	void SetPosition(const Vector3& position);
+	void SetParent(const WorldTransform* worldTransform);
+	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	OBB GetObb() { return obb_; }
 	int SetFlag(int flag) { return isHit_ = flag; }

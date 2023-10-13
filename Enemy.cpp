@@ -38,8 +38,6 @@ void Enemy::OBJtoOBB() {
 }
 
 // 敵のポジションをプレイヤーに固定
-void Enemy::SetPosition(const Vector3& position) { 
-	worldTransform_.translation_.x = position.x; 
-	worldTransform_.translation_.y = position.y + -2; 
-	worldTransform_.translation_.z = position.z; 
+void Enemy::SetParent(const WorldTransform* parent) { 
+	worldTransform_.parent_ = parent;
 }
