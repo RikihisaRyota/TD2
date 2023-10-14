@@ -15,6 +15,7 @@ public:
 	void SetAcceleration(const Vector3& acceleration) { acceleration_ = acceleration; }
 	void Debug();
 private:
+	void MoveLimit();
 	float kSpeed_ = 0.4f;
 	float kGravity_ = 0.1f;
 	float kGravityMax_ = -1.5f;

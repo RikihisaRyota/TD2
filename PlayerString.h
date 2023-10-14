@@ -23,7 +23,7 @@ private:
 	float kAddAngle_ = 3.5f;
 	uint32_t kExtendCountMax_ = 50;
 	float kSpeed_ = 0.3f;
-	float kInitialAngle_ = 90.0f;
+	float kInitialAngle_ = 0.0f;
 	uint32_t kSetStringWorldTransformInterval = 4;
 	float kPlaneSize_ = 2.0f;
 	uint32_t kShrinkCountMax_ = 30;

@@ -16,7 +16,7 @@ void Player::Initialize(Model* model) {
 
 	playerJump_ = std::make_unique<PlayerJump>();
 	playerJump_->SetPlayer(this);
-	playerJump_->Initialize({0.0f,0.0f,0.0f});
+	playerJump_->Initialize({ 0.0f,0.0f,0.0f });
 	playerMove_ = std::make_unique<PlayerMove>();
 	playerMove_->SetPlayer(this);
 	playerMove_->Initialize();
@@ -37,6 +37,7 @@ void Player::Update() {
 		playerJump_->Update();
 		break;
 	}
+	MoveLimit();
 	playerMove_->Debug();
 	playerString_->Debug();
 	playerJump_->Debug();
@@ -89,6 +90,13 @@ void Player::BehaviorInitialize() {
 		// ふるまいリクエストをリセット
 		behaviorRequest_ = std::nullopt;
 	}
+}
+
+void Player::MoveLimit() {
+	float playerSize = 2.0f;
+	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kWidth_+playerSize, kWidth_- playerSize);
+	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kHeight_+ playerSize, kHeight_- playerSize);
+	worldTransform_.UpdateMatrix();
 }
 
 void Player::SetScale(const Vector3& scale) {

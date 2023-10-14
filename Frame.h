@@ -1,11 +1,20 @@
 #pragma once
 
-#include <vector>
+#include <array>
 
 #include "CubeRenderer.h"
 
 class Player;
 class Frame {
+public:
+	enum Wall {
+		kFloor,
+		kCeiling,
+		kTop,
+		kBottom,
+
+		kCount,
+	};
 public:
 	void Initialize();
 	void Update();
@@ -17,11 +26,8 @@ private:
 	float width_;
 	float height_;
 	Player* player_;
-	std::unique_ptr<CubeRenderer> floor_;
-	WorldTransform floorWorldTransform_;
-	std::unique_ptr<CubeRenderer> rightWall_;
-	WorldTransform rightWallWorldTransform_;
-	std::unique_ptr<CubeRenderer> leftWall_;
-	WorldTransform leftWallWorldTransform_;
+
+	std::array<std::unique_ptr<CubeRenderer>, Wall::kCount> walls_;
+	std::array<WorldTransform, Wall::kCount> worldTransforms_;
 };
 

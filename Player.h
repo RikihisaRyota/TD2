@@ -62,8 +62,13 @@ public:
 	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 	void SetBehavior(const std::optional<Behavior>& behaviorRequest);
 	Behavior GetBehavior() const { return behavior_; }
+	void SetHeight(float height) { kHeight_ = height; }
+	float GetHeight() { return kHeight_; }
+	void SetWidth(float width) { kWidth_ = width; }
+	float GetWidth() {return kWidth_; }
 private:
 	void BehaviorInitialize();
+	void MoveLimit();
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	OBB obb_; // 当たり判定用
@@ -72,8 +77,11 @@ private:
 	// ふるまい
 	Behavior behavior_ = Behavior::kMove;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
-
+	// プレイヤーの動き
 	std::unique_ptr<PlayerJump> playerJump_;
 	std::unique_ptr<PlayerMove> playerMove_;
 	std::unique_ptr<PlayerString> playerString_;
+	// プレイヤーの行動範囲
+	float kWidth_ = 100.0f;
+	float kHeight_ = 50.0f;
 };
