@@ -71,6 +71,7 @@ public:
 private:
 	void BehaviorInitialize();
 	void MoveLimit();
+	Input* input_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	OBB obb_; // 当たり判定用
@@ -87,4 +88,6 @@ private:
 	// プレイヤーの行動範囲
 	float kWidth_ = 100.0f;
 	float kHeight_ = 50.0f;
+	// デバック用
+	bool isPulling_;
 };

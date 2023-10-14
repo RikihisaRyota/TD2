@@ -4,10 +4,13 @@
 
 #include "MyMath.h"
 #include "ImGuiManager.h"
+#include "Input.h"
 
 void Player::Initialize(Model* model) {
 	assert(model);
 	model_ = model;
+
+	input_ = Input::GetInstance();
 
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
@@ -26,9 +29,22 @@ void Player::Initialize(Model* model) {
 	playerString_ = std::make_unique<PlayerString>();
 	playerString_->SetPlayer(this);
 	playerString_->Initialize();
+
+	// デバック用
+	isPulling_ = false;
 }
 
 void Player::Update() {
+	if (input_->TriggerKey(DIK_LSHIFT)) {
+		if (isPulling_) {
+			behaviorRequest_ = kPullingMove;
+		}
+		else {
+			behaviorRequest_ = kMove;
+		}
+		BehaviorInitialize();
+		isPulling_ ^= true;
+	}
 	switch (behavior_) {
 	case Player::kMove:
 		playerMove_->Update();
