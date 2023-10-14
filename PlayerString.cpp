@@ -113,7 +113,11 @@ void PlayerString::Shrink() {
 
 	if (shrinkCount_ >= kShrinkCountMax_ || stringWorldTransform_.size() < 4) {
 		size_t endIndex = stringWorldTransform_.size() - 1;
-		shootOutVector_ = stringWorldTransform_[endIndex].translation_ - stringWorldTransform_[endIndex - 1].translation_;
+		uint32_t count = 1;
+		while (shootOutVector_.Length() <= 0.0f) {
+			shootOutVector_ = stringWorldTransform_[endIndex].translation_ - stringWorldTransform_[endIndex - count].translation_;
+			count++;
+		}
 		shootOutVector_.Normalize();
 		player_->SetBehavior(Player::Behavior::kJump);
 	}
