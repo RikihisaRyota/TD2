@@ -17,7 +17,7 @@ public:
 private:
 	float kSpeed_ = 0.4f;
 	float kGravity_ = 0.1f;
-	float kGravityMax_ = -1.0f;
+	float kGravityMax_ = -1.5f;
 	
 	
 	Player* player_;

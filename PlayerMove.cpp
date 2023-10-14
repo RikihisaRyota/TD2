@@ -39,7 +39,8 @@ void PlayerMove::Update() {
 	// 重力
 	if (worldTransform_.translation_.y > 0.0f) {
 		acceleration_.y -= kGravity_;
-		acceleration_.y = std::clamp(acceleration_.y, kGravityMax_, 2.0f);
+		// 上限なし
+		acceleration_.y = std::clamp(acceleration_.y, kGravityMax_, 100.0f);
 	}
 	velocity_ += acceleration_;
 	worldTransform_.translation_ += velocity_;
