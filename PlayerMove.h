@@ -16,7 +16,7 @@ public:
 	void Debug();
 private:
 	float kPower_ = 0.5f;
-	float kInertia_ = 0.95f;
+	float kInertia_ = 0.5f;
 
 	Player* player_;
 	Input* input_;

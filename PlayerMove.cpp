@@ -32,8 +32,8 @@ void PlayerMove::Update() {
 			move = { std::cosf(angle),std::sinf(angle),0.0f};
 		}
 		direction_ ^= true;
+		velocity_ = move;
 	}
-	velocity_ = move;
 	velocity_ += acceleration_;
 	acceleration_ *= kInertia_;
 	worldTransform_.translation_ += velocity_;
@@ -42,6 +42,11 @@ void PlayerMove::Update() {
 }
 
 void PlayerMove::Debug() {
+	if (input_->TriggerKey(DIK_P)) {
+		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
+		worldTransform_.UpdateMatrix();
+		player_->SetTranslation(worldTransform_.translation_);
+	}
 	ImGui::Begin("Player");
 	if (ImGui::TreeNode("kMove")) {
 		ImGui::Text("velocity\nx:%.4f,y:%.4f,z:%.4f", velocity_.x, velocity_.y, velocity_.z);
