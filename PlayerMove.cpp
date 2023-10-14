@@ -23,18 +23,14 @@ void PlayerMove::Update() {
 		// direction_がtrueで左
 		if (direction_) {
 			float angle = DegToRad(45.0f);
-			acceleration_.x = std::cosf(angle);
-			acceleration_.y = std::sinf(angle);
-			move = { 0.0f,1.0f,0.0f };
+			acceleration_.x = kPower_;
+			move = { std::cosf(angle),std::sinf(angle),0.0f};
 		}
 		else {
 			float angle = DegToRad(-45.0f);
-			acceleration_.x = std::cosf(angle);
-			acceleration_.y = std::sinf(angle);
-			move = { 0.0f,-1.0f,0.0f };
+			acceleration_.x = kPower_;
+			move = { std::cosf(angle),std::sinf(angle),0.0f};
 		}
-		acceleration_.Normalize();
-		acceleration_ *= kPower_;
 		direction_ ^= true;
 	}
 	velocity_ = move;

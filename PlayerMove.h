@@ -15,8 +15,8 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 	void Debug();
 private:
-	float kPower_ = 2.0f;
-	float kInertia_ = 0.9f;
+	float kPower_ = 0.5f;
+	float kInertia_ = 0.95f;
 
 	Player* player_;
 	Input* input_;
