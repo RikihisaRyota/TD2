@@ -18,7 +18,7 @@ void PlayerJump::Initialize(const Vector3& outPutVector) {
 void PlayerJump::Update() {
 	Vector3 acceleration = outPutVector_ * kSpeed_;
 	player_->GetPlayerMove()->SetAcceleration(acceleration);
-	player_->SetBehavior(Player::Behavior::kMove);
+	player_->SetBehavior(Player::Behavior::kPullingMove);
 }
 
 void PlayerJump::Debug() {

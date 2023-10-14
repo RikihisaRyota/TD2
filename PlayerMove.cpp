@@ -1,58 +1,48 @@
 #include "PlayerMove.h"
 
-#include <algorithm>
-
-#include "ImGuiManager.h"
 #include "Input.h"
+#include "ImGuiManager.h"
+#include "MyMath.h"
 #include "Player.h"
 
 PlayerMove::PlayerMove() {
 	input_ = Input::GetInstance();
 	worldTransform_.Initialize();
-	acceleration_ = { 0.0f,0.0f,0.0f };
 }
 
 PlayerMove::~PlayerMove() {}
 
 void PlayerMove::Initialize() {
-	worldTransform_ = player_->GetWorldTransform();
-	velocity_ = { 0.0f,0.0f,0.0f };
-
+	worldTransform_.translation_ = player_->GetTranslation();
+	direction_ = false;
 }
 
 void PlayerMove::Update() {
 	Vector3 move{};
-	if (input_->PushKey(DIK_A)) {
-		move += { 0.0f, 1.0f, 0.0f };
-	}
-	if (input_->PushKey(DIK_D)) {
-		move += { 0.0f, -1.0f, 0.0f };
-	}
 	if (input_->TriggerKey(DIK_SPACE)) {
-		player_->SetBehavior(Player::Behavior::kString);
+		// direction_がtrueで左
+		if (direction_) {
+			float angle = DegToRad(45.0f);
+			acceleration_.x = std::cosf(angle);
+			acceleration_.y = std::sinf(angle);
+			move = { 0.0f,1.0f,0.0f };
+		}
+		else {
+			float angle = DegToRad(-45.0f);
+			acceleration_.x = std::cosf(angle);
+			acceleration_.y = std::sinf(angle);
+			move = { 0.0f,-1.0f,0.0f };
+		}
+		acceleration_.Normalize();
+		acceleration_ *= kPower_;
+		direction_ ^= true;
 	}
-	if (move.Length() > 0) {
-		move.Normalize();
-	}
-	// 左右移動
-	velocity_ = move * kSpeed_;
-	// 重力
-	if (worldTransform_.translation_.x > 0.0f) {
-		acceleration_.x -= kGravity_;
-		// 上限なし
-		acceleration_.x = std::clamp(acceleration_.x, kGravityMax_, 100.0f);
-	}
+	velocity_ = move;
 	velocity_ += acceleration_;
+	acceleration_ *= kInertia_;
 	worldTransform_.translation_ += velocity_;
-	acceleration_.y *= 0.9f;
-	// 地面に着いたら
-	if (worldTransform_.translation_.x <= 0.0f) {
-		worldTransform_.translation_.x = 0.0f;
-		acceleration_ = { 0.0f ,0.0f ,0.0f };
-	}
-	MoveLimit();
 	worldTransform_.UpdateMatrix();
-	player_->SetWorldTransform(worldTransform_);
+	player_->SetTranslation(worldTransform_.translation_);
 }
 
 void PlayerMove::Debug() {
@@ -60,18 +50,9 @@ void PlayerMove::Debug() {
 	if (ImGui::TreeNode("kMove")) {
 		ImGui::Text("velocity\nx:%.4f,y:%.4f,z:%.4f", velocity_.x, velocity_.y, velocity_.z);
 		ImGui::Text("acceleration\nx:%.4f,y:%.4f,z:%.4f", acceleration_.x, acceleration_.y, acceleration_.z);
-		ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
-		ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 1.0f);
-		ImGui::SliderFloat("GravityMax_", &kGravityMax_, -5.0f, -1.0f);
-
+		ImGui::SliderFloat("Power", &kPower_, 0.0f, 10.0f);
+		ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
 		ImGui::TreePop();
 	}
 	ImGui::End();
-}
-
-void PlayerMove::MoveLimit() {
-	float playerSize = 2.0f;
-	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -player_->GetWidth() + playerSize, player_->GetWidth() - playerSize);
-	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -player_->GetHeight() + playerSize, player_->GetHeight() - playerSize);
-	worldTransform_.UpdateMatrix();
 }

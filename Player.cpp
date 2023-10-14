@@ -20,6 +20,9 @@ void Player::Initialize(Model* model) {
 	playerMove_ = std::make_unique<PlayerMove>();
 	playerMove_->SetPlayer(this);
 	playerMove_->Initialize();
+	playerPullingMove = std::make_unique<PlayerPullingMove>();
+	playerPullingMove->SetPlayer(this);
+	playerPullingMove->Initialize();
 	playerString_ = std::make_unique<PlayerString>();
 	playerString_->SetPlayer(this);
 	playerString_->Initialize();
@@ -30,6 +33,9 @@ void Player::Update() {
 	case Player::kMove:
 		playerMove_->Update();
 		break;
+	case Player::kPullingMove:
+		playerPullingMove->Update();
+		break;
 	case Player::kString:
 		playerString_->Update();
 		break;
@@ -39,6 +45,7 @@ void Player::Update() {
 	}
 	MoveLimit();
 	playerMove_->Debug();
+	playerPullingMove->Debug();
 	playerString_->Debug();
 	playerJump_->Debug();
 	Debug();
@@ -47,6 +54,8 @@ void Player::Update() {
 void Player::Draw(const ViewProjection& viewProjection) {
 	switch (behavior_) {
 	case Player::kMove:
+		break;
+	case Player::kPullingMove:
 		break;
 	case Player::kString:
 		playerString_->Draw(viewProjection);
@@ -77,8 +86,11 @@ void Player::BehaviorInitialize() {
 		behavior_ = behaviorRequest_.value();
 		// 各ふるまいごとの初期化を実行
 		switch (behavior_) {
-		case Behavior::kMove:
+		case Player::kMove:
 			playerMove_->Initialize();
+			break;
+		case Behavior::kPullingMove:
+			playerPullingMove->Initialize();
 			break;
 		case Behavior::kString:
 			playerString_->Initialize();

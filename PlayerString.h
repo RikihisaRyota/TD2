@@ -27,7 +27,7 @@ private:
 	uint32_t kSetStringWorldTransformInterval = 4;
 	float kPlaneSize_ = 2.0f;
 	uint32_t kShrinkCountMax_ = 30;
-
+	float kGravity_=0.1f;
 
 	Player* player_;
 	Input* input_;
@@ -35,7 +35,8 @@ private:
 
 	PlaneRenderer* head_;
 	
-	WorldTransform worldTransform_;
+	WorldTransform headWorldTransform_;
+	WorldTransform playerWorldTransform_;
 	Vector3 velocity_;
 	Vector3 acceleration_;
 	Vector3 shootOutVector_;

@@ -9,6 +9,7 @@
 #include "OBB.h"
 #include "PlayerJump.h"
 #include "PlayerMove.h"
+#include "PlayerPullingMove.h"
 #include "PlayerString.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
@@ -21,6 +22,7 @@ class Player {
 public:
 	enum Behavior {
 		kMove,
+		kPullingMove,
 		kString,
 		kJump,
 
@@ -50,7 +52,7 @@ public:
 	void OBJtoOBB(); // WorldTransformをOBBへ変換
 
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
-	PlayerMove* GetPlayerMove() { return playerMove_.get(); }
+	PlayerPullingMove* GetPlayerMove() { return playerPullingMove.get(); }
 	PlayerString* GetPlayerString() { return playerString_.get(); }
 	void SetScale(const Vector3& scale);
 	const Vector3 GetScale() const { return worldTransform_.scale_; }
@@ -80,6 +82,7 @@ private:
 	// プレイヤーの動き
 	std::unique_ptr<PlayerJump> playerJump_;
 	std::unique_ptr<PlayerMove> playerMove_;
+	std::unique_ptr<PlayerPullingMove> playerPullingMove;
 	std::unique_ptr<PlayerString> playerString_;
 	// プレイヤーの行動範囲
 	float kWidth_ = 100.0f;

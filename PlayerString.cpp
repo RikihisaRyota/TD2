@@ -11,7 +11,7 @@
 
 PlayerString::PlayerString() {
 	input_ = Input::GetInstance();
-	worldTransform_.Initialize();
+
 	head_ = PlaneRenderer::Create();
 }
 
@@ -25,9 +25,13 @@ PlayerString::~PlayerString() {
 }
 
 void PlayerString::Initialize() {
-	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
-	worldTransform_.translation_ = player_->GetTranslation();
-	worldTransform_.UpdateMatrix();
+	playerWorldTransform_.Initialize();
+	playerWorldTransform_.translation_ = player_->GetTranslation();
+	playerWorldTransform_.UpdateMatrix();
+	headWorldTransform_.Initialize();
+	headWorldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	headWorldTransform_.translation_ = player_->GetTranslation();
+	headWorldTransform_.UpdateMatrix();
 	velocity_ = { 0.0f,0.0f,0.0f };
 	acceleration_ = { 0.0f,0.0f,0.0f };
 	shootOutVector_ = { 0.0f,0.0f,0.0f };
@@ -63,13 +67,13 @@ void PlayerString::Extend() {
 		// 最後の位置を保存
 		WorldTransform saveWorldTransform;
 		saveWorldTransform.Initialize();
-		saveWorldTransform.scale_ = worldTransform_.scale_;
-		saveWorldTransform.translation_ = worldTransform_.translation_;
+		saveWorldTransform.scale_ = headWorldTransform_.scale_;
+		saveWorldTransform.translation_ = headWorldTransform_.translation_;
 		saveWorldTransform.UpdateMatrix();
 		stringWorldTransform_.emplace_back(saveWorldTransform);
 		plane_.emplace_back(PlaneRenderer::Create());
 		// プレイヤーのいる場所に戻す
-		worldTransform_.translation_ = player_->GetTranslation();
+		headWorldTransform_.translation_ = player_->GetTranslation();
 		return;
 	}
 	if (input_->PushKey(DIK_A)) {
@@ -85,17 +89,29 @@ void PlayerString::Extend() {
 		move.Normalize();
 	}
 	velocity_ = move * kSpeed_;
-	worldTransform_.translation_ += velocity_;
+	headWorldTransform_.translation_ += velocity_;
+	if (playerWorldTransform_.translation_.x > 0.0f) {
+		playerWorldTransform_.translation_.x -= kGravity_;
+		for (auto& string : stringWorldTransform_) {
+			string.translation_.x -= kGravity_;
+			string.UpdateMatrix();
+		}
+	}
+	else {
+		playerWorldTransform_.translation_.x = 0.0f;
+	}
 	// 徐々にサイズを大きくしていく
 	float scale = kPlaneSize_ * static_cast<float>(extendCount_) / static_cast<float>(kExtendCountMax_);
-	worldTransform_.scale_ = { scale,scale,1.0f };
-	worldTransform_.UpdateMatrix();
+	headWorldTransform_.scale_ = { scale,scale,1.0f };
+	headWorldTransform_.UpdateMatrix();
+	playerWorldTransform_.UpdateMatrix();
+	player_->SetTranslation(playerWorldTransform_.translation_);
 	// 場所を保存
 	if (setStringWorldTransformCount_ % kSetStringWorldTransformInterval == 0) {
 		WorldTransform saveWorldTransform;
 		saveWorldTransform.Initialize();
-		saveWorldTransform.scale_ = worldTransform_.scale_;
-		saveWorldTransform.translation_ = worldTransform_.translation_;
+		saveWorldTransform.scale_ = headWorldTransform_.scale_;
+		saveWorldTransform.translation_ = headWorldTransform_.translation_;
 		saveWorldTransform.UpdateMatrix();
 		stringWorldTransform_.emplace_back(saveWorldTransform);
 		plane_.emplace_back(PlaneRenderer::Create());
@@ -132,10 +148,10 @@ void PlayerString::Shrink() {
 		float tInSegment = t * (numPoints - 1) - startIndex;
 
 		// 線形補間して位置を設定
-		worldTransform_.translation_ = Lerp(stringWorldTransform_[startIndex].translation_, stringWorldTransform_[endIndex].translation_, tInSegment);
-		worldTransform_.UpdateMatrix();
+		headWorldTransform_.translation_ = Lerp(stringWorldTransform_[startIndex].translation_, stringWorldTransform_[endIndex].translation_, tInSegment);
+		headWorldTransform_.UpdateMatrix();
 		// プレイヤーのワールド変換を設定
-		player_->SetTranslation(worldTransform_.translation_);
+		player_->SetTranslation(headWorldTransform_.translation_);
 	}
 
 }
@@ -146,14 +162,14 @@ void PlayerString::Draw(const ViewProjection& viewProjection) {
 		plane_.at(i)->Draw(stringWorldTransform_.at(i), viewProjection);
 	}
 	if (isExtend_) {
-		head_->Draw(worldTransform_, viewProjection);
+		head_->Draw(headWorldTransform_, viewProjection);
 	}
 }
 
 void PlayerString::Debug() {
 	ImGui::Begin("Player");
 	if (ImGui::TreeNode("kString")) {
-		ImGui::Text("position\nx:%.4f,y:%.4f,z:%.4f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+		ImGui::Text("position\nx:%.4f,y:%.4f,z:%.4f", headWorldTransform_.translation_.x, headWorldTransform_.translation_.y, headWorldTransform_.translation_.z);
 		ImGui::Text("velocity\nx:%.4f,y:%.4f,z:%.4f", velocity_.x, velocity_.y, velocity_.z);
 		ImGui::Text("acceleration\nx:%.4f,y:%.4f,z:%.4f", acceleration_.x, acceleration_.y, acceleration_.z);
 		ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
@@ -164,6 +180,7 @@ void PlayerString::Debug() {
 		ImGui::SliderFloat("ExtendCountMax", &extendCountMax, 0.0f, 600.0f);
 		extendCount_ = static_cast<uint32_t>(extendCount);
 		kExtendCountMax_ = static_cast<uint32_t>(extendCountMax);
+		ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 0.5f);
 		if (stringWorldTransform_.empty()) {
 			if (ImGui::TreeNode("String")) {
 				uint32_t count = 0;
