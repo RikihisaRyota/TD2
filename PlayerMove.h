@@ -15,8 +15,10 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 	void Debug();
 private:
-	float kPower_ = 0.5f;
-	float kInertia_ = 0.5f;
+	void MoveLimit();
+	float kPower_ = 0.2f;
+	float kInertia_ = 0.9f;
+	float kAngle_ = 45.0f;
 
 	Player* player_;
 	Input* input_;
