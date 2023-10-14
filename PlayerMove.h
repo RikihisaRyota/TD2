@@ -16,8 +16,8 @@ public:
 	void Debug();
 private:
 	void MoveLimit();
-	float kPower_ = 0.2f;
-	float kInertia_ = 0.9f;
+	float kPower_ = 0.002f;
+	float kInertia_ = 0.98f;
 	float kAngle_ = 45.0f;
 
 	Player* player_;
