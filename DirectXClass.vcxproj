@@ -118,6 +118,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerBullet.cpp" />
+    <ClCompile Include="PlayerBulletManager.cpp" />
     <ClCompile Include="PlayerJump.cpp" />
     <ClCompile Include="PlayerMove.cpp" />
     <ClCompile Include="PlayerPullingMove.cpp" />
@@ -179,6 +181,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="OBB.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerBullet.h" />
+    <ClInclude Include="PlayerBulletManager.h" />
     <ClInclude Include="PlayerJump.h" />
     <ClInclude Include="PlayerMove.h" />
     <ClInclude Include="PlayerPullingMove.h" />

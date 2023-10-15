@@ -8,6 +8,7 @@
 #include "Collider.h"
 #include "Model.h"
 #include "OBB.h"
+#include "PlayerBulletManager.h"
 #include "PlayerJump.h"
 #include "PlayerMove.h"
 #include "PlayerPullingMove.h"
@@ -59,6 +60,8 @@ public:
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 
+	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager;	}
+	PlayerBulletManager* GetPlayerBulletManager() { return playerBulletManager_; }
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
 	PlayerPullingMove* GetPlayerMove() { return playerPullingMove.get(); }
 	PlayerString* GetPlayerString() { return playerString_.get(); }
@@ -80,7 +83,7 @@ private:
 	void BehaviorInitialize();
 	void MoveLimit();
 	float radius_ = 1.0f;
-
+	PlayerBulletManager* playerBulletManager_;
 	Input* input_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;

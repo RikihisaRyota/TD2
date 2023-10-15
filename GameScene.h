@@ -23,6 +23,7 @@
 #include "FollowCamera.h"
 #include "Frame.h"
 #include "Player.h"
+#include "PlayerBulletManager.h"
 #include "Uvula.h"
 
 class DirectXCommon;
@@ -81,7 +82,9 @@ private: // メンバ変数
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Frame> frame_;
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<PlayerBulletManager> playerBulletManager_;
 	std::unique_ptr<Model> playerModel_;
+	std::unique_ptr<Model> playerBulletModel_;
 	std::list<Enemy*> enemy_;
 	std::unique_ptr<EnemyEditor> enemyEditor_;
 	std::unique_ptr<Model> enemyModel_;

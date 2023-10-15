@@ -32,7 +32,9 @@ void GameScene::Initialize() {
 	frame_ = std::make_unique<Frame>();
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
+	playerBulletManager_ = std::make_unique<PlayerBulletManager>();
 	playerModel_ = std::make_unique<Model>();
+	playerBulletModel_ = std::make_unique<Model>();
 	uvula_ = std::make_unique<Uvula>();
 	uvulaHead_ = std::make_unique<Model>();
 	uvulaBody_= std::make_unique<Model>();
@@ -51,7 +53,12 @@ void GameScene::Initialize() {
 	followCamera_->Initialize();
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
+	playerBulletModel_.reset(Model::Create("playerBullet"));
+	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_.get());
+	playerBulletManager_->Initialize(playerBulletModel_.get());
+	
+	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
 	UpdateEnemyPopCommands();
 	// ベロ
@@ -65,6 +72,7 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	frame_->Update();
 	player_->Update();
+	playerBulletManager_->Update();
 	uvula_->Update();
 	//for (Enemy* enemy : enemy_) {
 	//	enemy->Update();
@@ -152,8 +160,8 @@ void GameScene::Draw() {
 	backGround_->Draw(viewProjection_);
 	frame_->Draw(viewProjection_);
 	uvula_->Draw(viewProjection_);
+	playerBulletManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
-
 	/*for (Enemy* enemy : enemy_) {
 		enemy->Draw(viewProjection_);
 	}*/

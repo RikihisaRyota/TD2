@@ -34,6 +34,8 @@ void PlayerMove::Update() {
 		acceleration_ = { std::cosf(angle),std::sinf(angle),0.0f };
 		velocity_ = move;
 		acceleration_ *= kPower_;
+		// 弾生成
+		player_->GetPlayerBulletManager()->CreateBullet(worldTransform_.translation_);
 		direction_ ^= true;
 	}
 	velocity_ += acceleration_;
