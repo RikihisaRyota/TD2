@@ -27,11 +27,15 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
+	collisionManager_ = std::make_unique<CollisionManager>();
 	enemyEditor_ = std::make_unique<EnemyEditor>();
 	frame_ = std::make_unique<Frame>();
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
 	playerModel_ = std::make_unique<Model>();
+	uvula_ = std::make_unique<Uvula>();
+	uvulaHead_ = std::make_unique<Model>();
+	uvulaBody_= std::make_unique<Model>();
 #pragma endregion
 #pragma region 初期化
 	// CSV
@@ -50,13 +54,18 @@ void GameScene::Initialize() {
 	player_->Initialize(playerModel_.get());
 	enemyModel_.reset(Model::Create("Enemy"));
 	UpdateEnemyPopCommands();
+	// ベロ
+	uvulaHead_.reset(Model::Create("uvulaHead"));
+	uvulaBody_.reset(Model::Create("uvulaBody"));
+	uvula_->SetPlayer(player_.get());
+	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 #pragma endregion
 }
 
 void GameScene::Update() {
 	frame_->Update();
 	player_->Update();
-
+	uvula_->Update();
 	//for (Enemy* enemy : enemy_) {
 	//	enemy->Update();
 	//	// 当たり判定
@@ -88,6 +97,7 @@ void GameScene::Update() {
 	//}
 	// 敵生成
 	enemyEditor_->Update(enemy_,enemyModel_.get());
+	collisionManager_->Update(player_.get(),uvula_.get());
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
 		IsDebugCamera_ ^= true;
@@ -141,6 +151,7 @@ void GameScene::Draw() {
 	/// </summary>
 	backGround_->Draw(viewProjection_);
 	frame_->Draw(viewProjection_);
+	uvula_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 
 	/*for (Enemy* enemy : enemy_) {

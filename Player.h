@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 
+#include "Collider.h"
 #include "Model.h"
 #include "OBB.h"
 #include "PlayerJump.h"
@@ -18,7 +19,7 @@
 /// <summary>
 /// 自キャラ
 /// </summary>
-class Player {
+class Player : public Collider{
 public:
 	enum Behavior {
 		kMove,
@@ -47,9 +48,16 @@ public:
 	/// <param name= "viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(const ViewProjection& viewProjection);
 
+	void Reset();
+
 	void Debug();
 
 	void OBJtoOBB(); // WorldTransformをOBBへ変換
+	// 当たり判定
+	void OnCollision()override;
+	void HitBoxInitialize() override;
+	void HitBoxUpdate() override;
+	void HitBoxDraw(const ViewProjection& viewProjection) override;
 
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
 	PlayerPullingMove* GetPlayerMove() { return playerPullingMove.get(); }
@@ -71,6 +79,8 @@ public:
 private:
 	void BehaviorInitialize();
 	void MoveLimit();
+	float radius_ = 1.0f;
+
 	Input* input_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;

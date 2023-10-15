@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include "Draw.h"
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "Input.h"
@@ -12,30 +13,41 @@ void Player::Initialize(Model* model) {
 
 	input_ = Input::GetInstance();
 
-	worldTransform_.Initialize();
-	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
-	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
-	worldTransform_.UpdateMatrix();
-
 	playerJump_ = std::make_unique<PlayerJump>();
 	playerJump_->SetPlayer(this);
-	playerJump_->Initialize({ 0.0f,0.0f,0.0f });
+	
 	playerMove_ = std::make_unique<PlayerMove>();
 	playerMove_->SetPlayer(this);
-	playerMove_->Initialize();
+	
 	playerPullingMove = std::make_unique<PlayerPullingMove>();
 	playerPullingMove->SetPlayer(this);
-	playerPullingMove->Initialize();
+	
 	playerString_ = std::make_unique<PlayerString>();
 	playerString_->SetPlayer(this);
-	playerString_->Initialize();
-
+	
+	Reset();
+	HitBoxInitialize();
 	// デバック用
 	isPulling_ = false;
 }
 
+void Player::Reset() {
+	worldTransform_.Initialize();
+	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
+	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
+	worldTransform_.translation_ = { 20.0f,0.0f,0.0f };
+	worldTransform_.UpdateMatrix();
+
+	playerJump_->Initialize({ 0.0f,0.0f,0.0f });
+	playerMove_->Initialize();
+	playerPullingMove->Initialize();
+	playerString_->Initialize();
+	HitBoxUpdate();
+}
+
 void Player::Update() {
 	if (input_->TriggerKey(DIK_LSHIFT)) {
+		isPulling_ ^= true;
 		if (isPulling_) {
 			behaviorRequest_ = kPullingMove;
 		}
@@ -43,7 +55,6 @@ void Player::Update() {
 			behaviorRequest_ = kMove;
 		}
 		BehaviorInitialize();
-		isPulling_ ^= true;
 	}
 	switch (behavior_) {
 	case Player::kMove:
@@ -60,6 +71,7 @@ void Player::Update() {
 		break;
 	}
 	MoveLimit();
+	HitBoxUpdate();
 	playerMove_->Debug();
 	playerPullingMove->Debug();
 	playerString_->Debug();
@@ -96,6 +108,35 @@ void Player::OBJtoOBB() {
 	obb_.size_ = worldTransform_.scale_;
 }
 
+void Player::OnCollision() {
+	behaviorRequest_ = kPullingMove;
+	BehaviorInitialize();
+}
+
+void Player::HitBoxInitialize() {
+	// 衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributePlayer);
+	// 衝突対象を自分以外に設定
+	SetCollisionMask(~kCollisionAttributePlayer);
+	// Sphere
+	sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_ },
+	};
+}
+
+void Player::HitBoxUpdate() {
+	// Sphere
+	sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_ },
+	};
+}
+
+void Player::HitBoxDraw(const ViewProjection& viewProjection) {
+	DrawSphere(sphere_,viewProjection,Vector4(0.0f,1.0f,0.0f,1.0f));
+}
+
 void Player::BehaviorInitialize() {
 	if (behaviorRequest_) {
 		// ふるまいを変更
@@ -125,6 +166,10 @@ void Player::MoveLimit() {
 	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kWidth_+playerSize, kWidth_- playerSize);
 	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kHeight_+ playerSize, kHeight_- playerSize);
 	worldTransform_.UpdateMatrix();
+	if (worldTransform_.translation_.x <= 0.0f) {
+		behaviorRequest_ = kMove;
+		BehaviorInitialize();
+	}
 }
 
 void Player::SetScale(const Vector3& scale) {

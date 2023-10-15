@@ -93,7 +93,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="BasicGraphicsPipline.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="ConvertString.cpp" />
     <ClCompile Include="CSV.cpp" />
     <ClCompile Include="CubeRenderer.cpp" />
@@ -135,6 +137,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="SpriteGraphicsPipline.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="ToonGraphicsPipline.cpp" />
+    <ClCompile Include="Uvula.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="WorldTransform.cpp" />
@@ -145,7 +148,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="BackGround.h" />
     <ClInclude Include="BasicGraphicsPipline.h" />
     <ClInclude Include="BillParticle.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="ConvertString.h" />
     <ClInclude Include="CSV.h" />
     <ClInclude Include="CubeRenderer.h" />
@@ -195,6 +200,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="ToonGraphicsPipline.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Uvula.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
