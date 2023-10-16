@@ -108,7 +108,7 @@ void Player::OBJtoOBB() {
 	obb_.size_ = worldTransform_.scale_;
 }
 
-void Player::OnCollision() {
+void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	behaviorRequest_ = kPullingMove;
 	BehaviorInitialize();
 }

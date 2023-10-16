@@ -3,15 +3,28 @@
 #include <vector>
 
 #include "Collider.h"
+#include "EnemyManager.h"
+#include "EnemyBulletManager.h"
 #include "Player.h"
+#include "PlayerBulletManager.h"
 #include "Uvula.h"
 
 class CollisionManager {
 public:
-	void Update(Player* player, Uvula* uvula);
+	enum class Type {
+		kPlayerVSEnemy,
+		kPlayerBulletVSEnemy,
+		kPlayerBulletVSEnemyBullet,
+		kPlayerVSEnemyBullet,
+		kEnemyVSEnemyBullet,
+		kPlayerVSBoss,
+
+		kCount,
+	};
+	void Update(Player* player, PlayerBulletManager* playerBullet, EnemyManager* enemyManager, EnemyBulletManager* EnemyBulletManager, Uvula* uvula);
 private:
 	// メンバ関数
-	void CheckAllCollisions(Player* player, Uvula* uvula);
+	void CheckAllCollisions(Player* player, PlayerBulletManager* playerBullet,EnemyManager* enemyManager, EnemyBulletManager* EnemyBulletManager,Uvula* uvula);
 	/// <summary>
 	/// コライダー2つの衝突判定と応答
 	/// </summary>

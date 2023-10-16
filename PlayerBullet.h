@@ -10,11 +10,14 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void Reset();
+	
+	bool GetIsAlive() { return isAlive_; }
 	void SetViewProjection(const ViewProjection& viewProjection) { viewProjection_ = viewProjection; }
+
 private:
 	float kSpeed_ = 2.0f;
 	// 当たり判定
-	void OnCollision()override;
+	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
@@ -23,4 +26,5 @@ private:
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 	float radius_;
+	bool isAlive_;
 };

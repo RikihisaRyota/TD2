@@ -20,6 +20,8 @@
 #include "CSV.h"
 #include "Enemy.h"
 #include "EnemyEditor.h"
+#include "EnemyManager.h"
+#include "EnemyBulletManager.h"
 #include "FollowCamera.h"
 #include "Frame.h"
 #include "Player.h"
@@ -85,8 +87,9 @@ private: // メンバ変数
 	std::unique_ptr<PlayerBulletManager> playerBulletManager_;
 	std::unique_ptr<Model> playerModel_;
 	std::unique_ptr<Model> playerBulletModel_;
-	std::list<Enemy*> enemy_;
 	std::unique_ptr<EnemyEditor> enemyEditor_;
+	std::unique_ptr<EnemyManager> enemyManager_;
+	std::unique_ptr<EnemyBulletManager> enemyBulletManager_;
 	std::unique_ptr<Model> enemyModel_;
 	std::unique_ptr<Uvula> uvula_;
 	std::unique_ptr<Model> uvulaHead_;

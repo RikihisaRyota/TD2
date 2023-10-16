@@ -8,11 +8,13 @@ const uint32_t kCollisionAttributePlayer = 0b1;
 const uint32_t kCollisionAttributePlayerBullet = 0b1 << 1;
 // 敵陣営
 const uint32_t kCollisionAttributeEnemy = 0b1 << 2;
+const uint32_t kCollisionAttributeEnemyBullet = 0b1 << 3;
 
+const uint32_t kCollisionAttributeBoss = 0b1 << 4;
 class Collider {
 public:
 	// 衝突時に呼ばれる関数
-	virtual void OnCollision() = 0;
+	virtual void OnCollision(uint32_t type,Sphere* sphere) = 0;
 
 	// 衝突属性の取得
 	virtual uint32_t GetCollisionAttribute() { return collisionAttribute_; }

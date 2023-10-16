@@ -55,7 +55,7 @@ public:
 
 	void OBJtoOBB(); // WorldTransformをOBBへ変換
 	// 当たり判定
-	void OnCollision()override;
+	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;

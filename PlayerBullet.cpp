@@ -9,14 +9,16 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	worldTransform_.translation_ = position;
 	worldTransform_.UpdateMatrix();
 	radius_ = 2.0f;
+	isAlive_ = true;
 }
 
 void PlayerBullet::Update() {
 	worldTransform_.translation_.x += kSpeed_;
 	worldTransform_.UpdateMatrix();
-	if (!IsInsideFrustum(sphere_, viewProjection_)) {
-		Reset();
-	}
+	HitBoxUpdate();
+	/*if (!IsInsideFrustum(sphere_,viewProjection_)) {
+		isAlive_ = false;
+	}*/
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {
@@ -27,7 +29,7 @@ void PlayerBullet::Reset() {
 	delete this;
 }
 
-void PlayerBullet::OnCollision() {
+void PlayerBullet::OnCollision(uint32_t type, Sphere* sphere) {
 	delete this;
 }
 

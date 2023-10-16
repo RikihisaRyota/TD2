@@ -16,7 +16,7 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 	void Reset();
 	// 当たり判定
-	void OnCollision()override;
+	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;

@@ -9,12 +9,7 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {
-	for (Enemy* enemy : enemy_) {
-		delete enemy;
-	}
-	enemy_.clear();
-}
+GameScene::~GameScene() {}
 
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -29,6 +24,8 @@ void GameScene::Initialize() {
 	backGround_ = std::make_unique<BackGround>();
 	collisionManager_ = std::make_unique<CollisionManager>();
 	enemyEditor_ = std::make_unique<EnemyEditor>();
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyBulletManager_ = std::make_unique<EnemyBulletManager>();
 	frame_ = std::make_unique<Frame>();
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
@@ -61,6 +58,8 @@ void GameScene::Initialize() {
 	
 	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
+	enemyBulletManager_->Initialize(enemyModel_.get());
+	enemyManager_->Initialize(enemyModel_.get());
 	UpdateEnemyPopCommands();
 	// ベロ
 	uvulaHead_.reset(Model::Create("uvulaHead"));
@@ -73,40 +72,13 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	frame_->Update();
 	player_->Update();
+	enemyManager_->Update();
 	playerBulletManager_->Update();
+	enemyBulletManager_->Update();
 	uvula_->Update();
-	//for (Enemy* enemy : enemy_) {
-	//	enemy->Update();
-	//	// 当たり判定
-	//	if (IsCollision(player_->GetOBB(), enemy->GetObb())) {
-	//		// 落下中ではない
-	//		if (!player_->GetIsDrop()) {
-	//			if (!enemy->GetFlag()) {
-	//				enemy->SetPosition(player_->GetWorldPosition());
-	//				/// プレイヤーに当たったか
-	//				enemy->SetFlag(true);
-	//				// プレイヤーにおもりを追加
-	//				player_->SetWeight(1);
-	//			}
-	//			else {
-	//				enemy->SetPosition(player_->GetWorldPosition());
-	//			}
-	//		}
-	//		else {
-	//			if (!enemy->GetFlag()) {
-	//				enemy->SetPosition(player_->GetWorldPosition());
-	//				enemy->SetFlag(true);
-	//				player_->SetIsHitStop(true);
-	//			}
-	//			else {
-	//				enemy->SetPosition(player_->GetWorldPosition());
-	//			}
-	//		}
-	//	}
-	//}
 	// 敵生成
-	enemyEditor_->Update(enemy_,enemyModel_.get());
-	collisionManager_->Update(player_.get(),uvula_.get());
+	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
+	collisionManager_->Update(player_.get(),playerBulletManager_.get(),enemyManager_.get(),enemyBulletManager_.get(), uvula_.get());
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
 		IsDebugCamera_ ^= true;
@@ -121,10 +93,7 @@ void GameScene::Update() {
 	}
 	// リセット
 	if (input_->TriggerKey(DIK_R)) {
-		for (Enemy* enemy : enemy_) {
-			delete enemy;
-		}
-		enemy_.clear();
+		enemyManager_->Reset();
 		LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
 		UpdateEnemyPopCommands();
 	}
@@ -161,11 +130,10 @@ void GameScene::Draw() {
 	backGround_->Draw(viewProjection_);
 	frame_->Draw(viewProjection_);
 	uvula_->Draw(viewProjection_);
-	playerBulletManager_->Draw(viewProjection_);
+	enemyManager_->Draw(viewProjection_);
+	enemyBulletManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
-	/*for (Enemy* enemy : enemy_) {
-		enemy->Draw(viewProjection_);
-	}*/
+	playerBulletManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
@@ -250,9 +218,5 @@ void GameScene::UpdateEnemyPopCommands() {
 }
 
 void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {
-	Enemy* enemy = new Enemy();
-
-	enemy->Initialize(enemyModel_.get(), position, type);
-
-	enemy_.push_back(enemy);
+	enemyManager_->Create(position,type);
 }

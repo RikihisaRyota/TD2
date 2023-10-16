@@ -10,8 +10,19 @@ void PlayerBulletManager::Initialize(Model* model) {
 }
 
 void PlayerBulletManager::Update() {
-	for (auto& bullet : bullets_) {
+	for (auto it = bullets_.begin(); it != bullets_.end();) {
+		PlayerBullet* bullet = *it;
+
 		bullet->Update();
+
+		if (!bullet->GetIsAlive()) {
+			bullet->Reset();
+			it = bullets_.erase(it); // 削除し、次の要素を指すイテレータを取得
+			//delete bullet;
+		}
+		else {
+			++it; // 次の要素へ進む
+		}
 	}
 }
 

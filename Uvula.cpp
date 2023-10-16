@@ -60,16 +60,16 @@ void Uvula::Draw(const ViewProjection& viewProjection) {
 	}
 }
 
-void Uvula::OnCollision() {
-	Reset();
+void Uvula::OnCollision(uint32_t type, Sphere* sphere) {
+ 	Reset();
 	isPlayerChase_ = false;
 }
 
 void Uvula::HitBoxInitialize() {
 	// 衝突属性を設定
-	SetCollisionAttribute(kCollisionAttributeEnemy);
+	SetCollisionAttribute(kCollisionAttributeBoss);
 	// 衝突対象を自分以外に設定
-	SetCollisionMask(~kCollisionAttributeEnemy);
+	SetCollisionMask(~kCollisionAttributeBoss);
 	// Sphere
 	sphere_ = {
 		.center_{headWorldTransform_.translation_},
