@@ -114,7 +114,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GlobalVariables.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
+    <ClCompile Include="InGameScene.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="IScene.cpp" />
     <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PrimitiveDrawer.cpp" />
@@ -131,6 +133,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteGraphicsPipline.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="ToonGraphicsPipline.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
@@ -165,8 +168,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GlobalVariables.h" />
     <ClInclude Include="ImGuiManager.h" />
+    <ClInclude Include="InGameScene.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="cMaterial.h" />
+    <ClInclude Include="IScene.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="OBB.h" />
@@ -187,6 +192,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteGraphicsPipline.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="ToonGraphicsPipline.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vector2.h" />

@@ -55,6 +55,7 @@ void GameScene::Initialize() {
 	for (CSV::Data data : datas) {
 		SpawnEnemy(data.position, data.type);
 	}
+
 #pragma endregion
 }
 

@@ -23,6 +23,11 @@
 #include "Frame.h"
 #include "Player.h"
 
+// シーンクラス
+#include "IScene.h"
+#include "TitleScene.h"
+#include "InGameScene.h"
+
 class DirectXCommon;
 /// <summary>
 /// ゲームシーン
@@ -82,4 +87,11 @@ private: // メンバ変数
 	std::unique_ptr<Model> enemyModel_;
 
 	std::stringstream enemyPopCommands_;
+
+private:
+	std::unique_ptr<IScene> sceneArr_[3];
+
+	// どのステージを呼び出すかを管理する変数
+	int sceneNo_;
+	int prevSceneNo_;
 };
