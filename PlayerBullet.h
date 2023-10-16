@@ -10,6 +10,7 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void Reset();
+	void SetViewProjection(const ViewProjection& viewProjection) { viewProjection_ = viewProjection; }
 private:
 	float kSpeed_ = 2.0f;
 	// 当たり判定
@@ -20,5 +21,6 @@ private:
 	
 	Model* model_;
 	WorldTransform worldTransform_;
+	ViewProjection viewProjection_;
 	float radius_;
 };

@@ -23,6 +23,7 @@ void PlayerBulletManager::Draw(const ViewProjection& viewProjection) {
 
 void PlayerBulletManager::CreateBullet(const Vector3& position) {
 	PlayerBullet* bullet = new PlayerBullet();
+	bullet->SetViewProjection(viewProjection_);
 	bullet->Initialize(model_,position);
 	bullets_.emplace_back(bullet);
 }

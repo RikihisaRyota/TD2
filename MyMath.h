@@ -5,6 +5,8 @@
 #include "AABB.h"
 #include "Matrix4x4.h"
 #include "OBB.h"
+#include "Sphere.h"
+#include "Plane.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Vector4.h"
@@ -194,3 +196,6 @@ bool SeparationAxis(const Vector3 axis, const OBB obb_1, const OBB obb_2);
 
 // 外部引用
 void GetOrientations(const Matrix4x4& m, Vector3 orientations[3]);
+
+// し錐台カリング
+bool IsInsideFrustum(const Sphere& sphere, const ViewProjection& viewProjection);

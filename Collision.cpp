@@ -15,7 +15,7 @@ bool IsCollision(const Sphere& s1, const Sphere& s2) {
 }
 
 bool IsCollision(const Sphere& sphere, const Plane& plane) {
-	float k = Dot(plane.normal_, sphere.center_) - plane.distanse_;
+	float k = Dot(plane.normal_, sphere.center_) - plane.distance_;
 	if (std::abs(k) <= sphere.radius_) {
 		return true;
 	}
@@ -30,7 +30,7 @@ bool IsCollision(const Plane& plane, const Segment& segment) {
 		return false;
 	}
 	// 線分と平面の当たり判定
-	float t = (plane.distanse_ - Dot(segment.origin, plane.normal_)) / d;
+	float t = (plane.distance_ - Dot(segment.origin, plane.normal_)) / d;
 	if (t >= 0.0f && t <= 1.0f) {
 		return true;
 	}
@@ -45,7 +45,7 @@ bool IsCollision(const Plane& plane, const Ray& ray) {
 		return false;
 	}
 	// 半直線と平面の当たり判定
-	float t = (plane.distanse_ - Dot(ray.origin, plane.normal_)) / d;
+	float t = (plane.distance_ - Dot(ray.origin, plane.normal_)) / d;
 	if (t >= 0.0f) {
 		return true;
 	}
@@ -80,7 +80,7 @@ bool IsCollision(const Triangle& triangle, const Segment& segment) {
 	// 線分と平面の当たり判定
 	float t = (distance - Dot(segment.origin, normal)) / d;
 	// 当り判定用の平面
-	Plane tmp{.normal_{normal}, .distanse_{distance}};
+	Plane tmp{.normal_{normal}, .distance_{distance}};
 	if (!IsCollision(tmp, segment)) {
 		return false;
 	}
@@ -120,7 +120,7 @@ bool IsCollision(const Triangle& triangle, const Ray& ray) {
 	// 半直線と平面の当たり判定
 	float t = (distance - Dot(ray.origin, normal)) / d;
 	// 当り判定用の平面
-	Plane tmp{.normal_{normal}, .distanse_{distance}};
+	Plane tmp{.normal_{normal}, .distance_{distance}};
 	if (!IsCollision(tmp, ray)) {
 		return false;
 	}
@@ -160,7 +160,7 @@ bool IsCollision(const Triangle& triangle, const Line& line) {
 	// 半直線と平面の当たり判定
 	float t = (distance - Dot(line.origin, normal)) / d;
 	// 当り判定用の平面
-	Plane tmp{.normal_{normal}, .distanse_{distance}};
+	Plane tmp{.normal_{normal}, .distance_{distance}};
 	if (!IsCollision(tmp, line)) {
 		return false;
 	}

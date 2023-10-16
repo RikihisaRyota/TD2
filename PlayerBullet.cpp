@@ -1,6 +1,7 @@
 #include "PlayerBullet.h"
 
 #include "Draw.h"
+#include "MyMath.h"
 
 void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	model_ = model;
@@ -13,6 +14,9 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 void PlayerBullet::Update() {
 	worldTransform_.translation_.x += kSpeed_;
 	worldTransform_.UpdateMatrix();
+	if (!IsInsideFrustum(sphere_, viewProjection_)) {
+		Reset();
+	}
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection) {
