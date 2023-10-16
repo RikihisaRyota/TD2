@@ -51,8 +51,10 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	UpdateEnemyPopCommands();
+
 	player_->Update();
-	
+
 	for (Enemy* enemy : enemy_) {
 		enemy->Update();
 		
@@ -64,8 +66,6 @@ void GameScene::Update() {
 
 		}
 	}
-
-	UpdateEnemyPopCommands();
 
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
