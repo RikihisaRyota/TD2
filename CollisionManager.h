@@ -13,11 +13,12 @@ class CollisionManager {
 public:
 	enum class Type {
 		kPlayerVSEnemy,
+		kPlayerVSEnemyBullet,
+		kPlayerVSBoss,
 		kPlayerBulletVSEnemy,
 		kPlayerBulletVSEnemyBullet,
-		kPlayerVSEnemyBullet,
+		kEnemyVSEnemy,
 		kEnemyVSEnemyBullet,
-		kPlayerVSBoss,
 
 		kCount,
 	};

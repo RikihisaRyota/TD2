@@ -3,6 +3,7 @@
 #include "Draw.h"
 #include "MyMath.h"
 #include "Player.h"
+#include "CollisionManager.h"
 
 void Uvula::Initialize(Model* head, Model* body) {
 	headModel_ = head;
@@ -61,8 +62,46 @@ void Uvula::Draw(const ViewProjection& viewProjection) {
 }
 
 void Uvula::OnCollision(uint32_t type, Sphere* sphere) {
- 	Reset();
-	isPlayerChase_ = false;
+	switch (type) {
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
+	{
+    	Reset();
+		isPlayerChase_ = false;
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemyBullet):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemy):
+	{
+		
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
+	{
+		
+	}
+	break;
+	default:
+		break;
+	}
 }
 
 void Uvula::HitBoxInitialize() {

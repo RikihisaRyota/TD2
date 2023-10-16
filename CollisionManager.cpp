@@ -66,7 +66,14 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 				 collisionAttributeB & kCollisionAttributeEnemyBullet) {
 			colliderA->OnCollision(static_cast<uint32_t>(Type::kPlayerVSEnemyBullet), b);
 			colliderB->OnCollision(static_cast<uint32_t>(Type::kPlayerVSEnemyBullet), a);
-		}// プレイヤーの弾対敵
+		}
+		// プレイヤー対ボス
+		else if (collisionAttributeA & kCollisionAttributePlayer &&
+				 collisionAttributeB & kCollisionAttributeBoss) {
+ 			colliderA->OnCollision(static_cast<uint32_t>(Type::kPlayerVSBoss), b);
+			colliderB->OnCollision(static_cast<uint32_t>(Type::kPlayerVSBoss), a);
+		}
+		// プレイヤーの弾対敵
 		else if (collisionAttributeA & kCollisionAttributePlayerBullet &&
 				 collisionAttributeB & kCollisionAttributeEnemy) {
 			colliderA->OnCollision(static_cast<uint32_t>(Type::kPlayerBulletVSEnemy), b);
@@ -76,15 +83,17 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 				collisionAttributeB & kCollisionAttributeEnemyBullet) {
 			colliderA->OnCollision(static_cast<uint32_t>(Type::kPlayerBulletVSEnemyBullet), b);
 			colliderB->OnCollision(static_cast<uint32_t>(Type::kPlayerBulletVSEnemyBullet), a);
-		}// 敵対敵の弾
-		else if (collisionAttributeA & kCollisionAttributeEnemy &&
+		}
+		// 敵対敵
+		else if (collisionAttributeA & kCollisionAttributePlayerBullet &&
 				 collisionAttributeB & kCollisionAttributeEnemyBullet) {
+			colliderA->OnCollision(static_cast<uint32_t>(Type::kEnemyVSEnemy), b);
+			colliderB->OnCollision(static_cast<uint32_t>(Type::kEnemyVSEnemy), a);
+		}
+		// 敵対敵の弾
+		else  {
 			colliderA->OnCollision(static_cast<uint32_t>(Type::kEnemyVSEnemyBullet), b);
 			colliderB->OnCollision(static_cast<uint32_t>(Type::kEnemyVSEnemyBullet), a);
-		}// プレイヤー対ボス
-		else {
-			colliderA->OnCollision(static_cast<uint32_t>(Type::kPlayerVSBoss),b);
-			colliderB->OnCollision(static_cast<uint32_t>(Type::kPlayerVSBoss),a);
 		}
 	}
 }

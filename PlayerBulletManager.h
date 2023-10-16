@@ -8,11 +8,11 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	void CreateBullet(const Vector3& position);
 	void Reset();
-	void SetViewProjection(const ViewProjection& viewProjection) { viewProjection_ = viewProjection; }
+	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	std::vector<PlayerBullet*>& GetPlayerBullets() { return bullets_; }
 private:
 	Model* model_;
 	std::vector<PlayerBullet*> bullets_;
-	ViewProjection viewProjection_;
+	ViewProjection* viewProjection_;
 };
 

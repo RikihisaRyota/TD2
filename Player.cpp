@@ -2,10 +2,12 @@
 
 #include <cassert>
 
+#include "CollisionManager.h"
 #include "Draw.h"
 #include "MyMath.h"
 #include "ImGuiManager.h"
 #include "Input.h"
+
 
 void Player::Initialize(Model* model) {
 	assert(model);
@@ -109,8 +111,46 @@ void Player::OBJtoOBB() {
 }
 
 void Player::OnCollision(uint32_t type, Sphere* sphere) {
-	behaviorRequest_ = kPullingMove;
-	BehaviorInitialize();
+	switch (type) {
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
+	{
+		behaviorRequest_ = kPullingMove;
+		BehaviorInitialize();
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemyBullet):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemy):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
+	{
+
+	}
+	break;
+	default:
+		break;
+	}
 }
 
 void Player::HitBoxInitialize() {

@@ -12,7 +12,7 @@ public:
 	void Reset();
 	
 	bool GetIsAlive() { return isAlive_; }
-	void SetViewProjection(const ViewProjection& viewProjection) { viewProjection_ = viewProjection; }
+	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 
 private:
 	float kSpeed_ = 2.0f;
@@ -24,7 +24,7 @@ private:
 	
 	Model* model_;
 	WorldTransform worldTransform_;
-	ViewProjection viewProjection_;
+	ViewProjection* viewProjection_;
 	float radius_;
 	bool isAlive_;
 };

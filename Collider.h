@@ -11,6 +11,7 @@ const uint32_t kCollisionAttributeEnemy = 0b1 << 2;
 const uint32_t kCollisionAttributeEnemyBullet = 0b1 << 3;
 
 const uint32_t kCollisionAttributeBoss = 0b1 << 4;
+
 class Collider {
 public:
 	// 衝突時に呼ばれる関数

@@ -15,6 +15,7 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
 	worldTransform_.UpdateMatrix();
+	HitBoxInitialize();
 }
 
 void Enemy::Update() {

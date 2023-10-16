@@ -8,6 +8,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position) {
 	worldTransform_.translation_ = position;
 	worldTransform_.UpdateMatrix();
 	isAlive_ = true;
+	HitBoxInitialize();
 }
 
 void EnemyBullet::Update() {

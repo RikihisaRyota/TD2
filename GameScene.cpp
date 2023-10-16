@@ -53,7 +53,7 @@ void GameScene::Initialize() {
 	playerBulletModel_.reset(Model::Create("playerBullet"));
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_.get());
-	playerBulletManager_->SetViewProjection(viewProjection_);
+	playerBulletManager_->SetViewProjection(&viewProjection_);
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 	
 	// 敵
