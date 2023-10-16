@@ -34,8 +34,6 @@ void GameScene::Initialize() {
 	playerModel_ = std::make_unique<Model>();
 #pragma endregion
 #pragma region 初期化
-	// CSV
-	LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
 	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
 	backGround_->Initialize(textureHandle);
 	// 枠組み
@@ -49,7 +47,14 @@ void GameScene::Initialize() {
 	playerModel_.reset(Model::Create("Player"));
 	player_->Initialize(playerModel_.get());
 	enemyModel_.reset(Model::Create("Enemy"));
-	UpdateEnemyPopCommands();
+	// CSVからデータの読み込み
+	std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+	csv->LoadCSV("Resources/CSV/Spaw.csv");
+	std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+	// 読み込んだデータから生成
+	for (CSV::Data data : datas) {
+		SpawnEnemy(data.position, data.type);
+	}
 #pragma endregion
 }
 
@@ -108,8 +113,14 @@ void GameScene::Update() {
 			delete enemy;
 		}
 		enemy_.clear();
-		LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
-		UpdateEnemyPopCommands();
+		// CSVからデータの読み込み
+		std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+		csv->LoadCSV("Resources/CSV/Spaw.csv");
+		std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+		// 読み込んだデータから生成
+		for (CSV::Data data : datas) {
+			SpawnEnemy(data.position, data.type);
+		}
 	}
 }
 
@@ -180,56 +191,6 @@ void GameScene::Release() {
 	SafeDelete(debugCamera_);
 }
 
-void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands) {
-	std::ifstream file;
-
-	file.open(csvName);
-	assert(file.is_open());
-
-	*popCommands << file.rdbuf();
-
-	file.close();
-}
-
-void GameScene::UpdateEnemyPopCommands() {
-	std::string line;
-	enemyPopCommands_.clear();
-	enemyPopCommands_.seekg(0, std::ios_base::beg);
-
-	while (getline(enemyPopCommands_, line)) {
-		std::istringstream line_stream(line);
-
-		std::string word;
-
-		getline(line_stream, word, ',');
-
-		if (word.find("//") == 0) {
-			continue;
-		}
-
-		float x = 0, y = 0, z = 0;
-		uint32_t type = 0u;
-
-		if (word.find("Position") == 0) {
-			getline(line_stream, word, ',');
-			x = (float)std::atof(word.c_str());
-
-			getline(line_stream, word, ',');
-			y = (float)std::atof(word.c_str());
-
-			getline(line_stream, word, ',');
-			z = (float)std::atof(word.c_str());
-
-		}
-
-		if (word.find("Type") == 0) {
-			getline(line_stream, word, ',');
-			type = (uint32_t)std::atof(word.c_str());
-		}
-		SpawnEnemy(Vector3(x, y, z), type);
-
-	}
-}
 
 void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {
 	Enemy* enemy = new Enemy();

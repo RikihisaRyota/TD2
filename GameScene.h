@@ -60,8 +60,6 @@ public: // メンバ関数
 	void Release();
 
 	// エネミーリスポーン用
-	void LoadCSVData(const char* csvName, std::stringstream* popCommands);
-	void UpdateEnemyPopCommands();
 	void SpawnEnemy(const Vector3& position, uint32_t type);
 
 private: // メンバ変数
