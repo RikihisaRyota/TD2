@@ -60,6 +60,7 @@ void GameScene::Initialize() {
 	enemyModel_.reset(Model::Create("Enemy"));
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->Initialize(enemyModel_.get());
+	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	UpdateEnemyPopCommands();
 	// ベロ
 	uvulaHead_.reset(Model::Create("uvulaHead"));

@@ -2,22 +2,24 @@
 
 #include "Draw.h"
 
-void EnemyBullet::Initialize(Model* model, const Vector3& position) {
+void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& scale) {
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
+	worldTransform_.scale_ = scale;
 	worldTransform_.UpdateMatrix();
 	isAlive_ = true;
 	HitBoxInitialize();
 }
 
 void EnemyBullet::Update() {
+	worldTransform_.translation_.x += 0.1f;
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_,viewProjection);
+	model_->Draw(worldTransform_, viewProjection);
 }
 
 void EnemyBullet::Reset() {

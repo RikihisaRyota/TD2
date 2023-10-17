@@ -30,6 +30,8 @@ void EnemyManager::Reset() {
 
 void EnemyManager::Create(const Vector3& position, uint32_t type) {
 	Enemy* enemy = new Enemy();
-	enemy->Initialize(model_,position,type);
+	enemy->Initialize(model_, position, type);
+	enemy->SetEnemyBulletManager(enemyBulletManager_);
 	enemies_.emplace_back(enemy);
 }
+
