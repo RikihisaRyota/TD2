@@ -28,8 +28,8 @@ void Uvula::Update() {
 	if (isPlayerChase_) {
 		// プレイヤーを追っている最中
 		angle_ += 0.1f;
-		headWorldTransform_.translation_ = Lerp(headWorldTransform_.translation_, player_->GetTranslation(), 0.02f);
-		headWorldTransform_.translation_.y += std::sinf(angle_) * 0.5f;
+		float chase = Lerp(kChaseMin_, kChaseMax_,player_->GetTranslation().x / kWidth_);
+		headWorldTransform_.translation_ = Lerp(headWorldTransform_.translation_, player_->GetTranslation(), chase);
 		if (createModelCount_ >= kCreateModelInterval_) {
 			WorldTransform bodyWorldTransform{};
 			bodyWorldTransform.Initialize();

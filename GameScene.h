@@ -16,6 +16,7 @@
 
 // ここから下になるべくアルファベット順で
 #include "BackGround.h"
+#include "Boss.h"
 #include "CollisionManager.h"
 #include "CSV.h"
 #include "Enemy.h"
@@ -80,6 +81,8 @@ private: // メンバ変数
 	/// ゲーム用
 	/// </summary>
 	std::unique_ptr<BackGround> backGround_;
+	std::unique_ptr<Boss> boss_;
+	std::unique_ptr<Model> bossModel_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Frame> frame_;

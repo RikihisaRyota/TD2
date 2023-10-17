@@ -29,11 +29,12 @@ void Player::Initialize(Model* model) {
 	
 	Reset();
 	HitBoxInitialize();
-	// デバック用
+	
 	isPulling_ = false;
 }
 
 void Player::Reset() {
+	weightCount_ = 0;
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
@@ -48,16 +49,6 @@ void Player::Reset() {
 }
 
 void Player::Update() {
-	if (input_->TriggerKey(DIK_LSHIFT)) {
-		isPulling_ ^= true;
-		if (isPulling_) {
-			behaviorRequest_ = kPullingMove;
-		}
-		else {
-			behaviorRequest_ = kMove;
-		}
-		BehaviorInitialize();
-	}
 	switch (behavior_) {
 	case Player::kMove:
 		playerMove_->Update();
@@ -70,6 +61,8 @@ void Player::Update() {
 		break;
 	case Player::kJump:
 		playerJump_->Update();
+		break;
+	case Player::kLanding:
 		break;
 	}
 	MoveLimit();
@@ -92,6 +85,8 @@ void Player::Draw(const ViewProjection& viewProjection) {
 		break;
 	case Player::kJump:
 		break;
+	case Player::kLanding:
+		break;
 	}
 	model_->Draw(worldTransform_, viewProjection);
 }
@@ -100,6 +95,12 @@ void Player::Debug() {
 	ImGui::Begin("Player");
 	ImGui::Text("translation\n");
 	ImGui::Text("x:%.4f,y:%.4f,z:%.4f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	float count = static_cast<float>(weightCount_);
+	float max = static_cast<float>(kWeightMax_);
+	ImGui::SliderFloat("weightCount",&count,0.0f, max);
+	ImGui::SliderFloat("weightMax",&max,0.0f,20.0f);
+	weightCount_ = static_cast<uint32_t>(count);
+	kWeightMax_ = static_cast<uint32_t>(max);
 	ImGui::End();
 }
 
@@ -114,7 +115,10 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-
+		// 引っ張られていたら
+		if (isPulling_) {
+			weightCount_++;
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
@@ -185,6 +189,7 @@ void Player::BehaviorInitialize() {
 		switch (behavior_) {
 		case Player::kMove:
 			playerMove_->Initialize();
+			weightCount_ = 0;
 			break;
 		case Behavior::kPullingMove:
 			playerPullingMove->Initialize();
@@ -206,10 +211,6 @@ void Player::MoveLimit() {
 	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kWidth_+playerSize, kWidth_- playerSize);
 	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kHeight_+ playerSize, kHeight_- playerSize);
 	worldTransform_.UpdateMatrix();
-	if (worldTransform_.translation_.x <= 0.0f) {
-		behaviorRequest_ = kMove;
-		BehaviorInitialize();
-	}
 }
 
 void Player::SetScale(const Vector3& scale) {

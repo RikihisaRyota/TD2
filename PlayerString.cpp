@@ -85,15 +85,16 @@ void PlayerString::Extend() {
 	float RadAngle = DegToRad(angle_);
 	move.x = std::cosf(RadAngle);
 	move.y = std::sinf(RadAngle);
-	if (move.Length()) {
+	if (move.Length() > 0.0f) {
 		move.Normalize();
 	}
 	velocity_ = move * kSpeed_;
 	headWorldTransform_.translation_ += velocity_;
+	float gravity = Lerp(kGravityMin_, kGravityMax_,static_cast<float>(player_->GetWeightNum())/ static_cast<float>(player_->GetWeightMax()));
 	if (playerWorldTransform_.translation_.x > 0.0f) {
-		playerWorldTransform_.translation_.x -= kGravity_;
+		playerWorldTransform_.translation_.x -= gravity;
 		for (auto& string : stringWorldTransform_) {
-			string.translation_.x -= kGravity_;
+			string.translation_.x -= gravity;
 			string.UpdateMatrix();
 		}
 	}
@@ -180,7 +181,8 @@ void PlayerString::Debug() {
 		ImGui::SliderFloat("ExtendCountMax", &extendCountMax, 0.0f, 600.0f);
 		extendCount_ = static_cast<uint32_t>(extendCount);
 		kExtendCountMax_ = static_cast<uint32_t>(extendCountMax);
-		ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 0.5f);
+		ImGui::SliderFloat("GravityMin", &kGravityMin_, 0.0f, kGravityMax_);
+		ImGui::SliderFloat("GravityMax", &kGravityMax_, kGravityMin_, 1.0f);
 		if (stringWorldTransform_.empty()) {
 			if (ImGui::TreeNode("String")) {
 				uint32_t count = 0;

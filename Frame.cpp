@@ -5,9 +5,10 @@
 
 #include "Player.h"
 #include "ImGuiManager.h"
+#include "Uvula.h"
 
 void Frame::Initialize() {
-	width_ = 300.0f;
+	width_ = 1000.0f;
 	height_ = 50.0f;
 	// 床
 	for (size_t i = 0; i < walls_.size(); i++) {
@@ -31,7 +32,7 @@ void Frame::Draw(const ViewProjection& viewProjection) {
 
 void Frame::Debug() {
 	ImGui::Begin("Frame");
-	ImGui::SliderFloat("width", &width_, 20.0f, 500.0f);
+	ImGui::SliderFloat("width", &width_, 20.0f, 1000.0f);
 	ImGui::SliderFloat("height", &height_, 20.0f, 100.0f);
 	if (ImGui::TreeNode("Walls")) {
 	for (size_t i = 0; i < walls_.size(); i++) {
@@ -76,4 +77,5 @@ void Frame::UpdateMatrix() {
 	worldTransforms_[Wall::kBottom].UpdateMatrix();
 	player_->SetHeight(height_);
 	player_->SetWidth(width_);
+	uvula_->SetWidth(width_);
 }

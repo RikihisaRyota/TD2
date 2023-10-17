@@ -5,6 +5,7 @@
 #include "ImGuiManager.h"
 #include "Input.h"
 #include "Player.h"
+#include "MyMath.h"
 
 PlayerPullingMove::PlayerPullingMove() {
 	input_ = Input::GetInstance();
@@ -38,18 +39,17 @@ void PlayerPullingMove::Update() {
 	velocity_ = move * kSpeed_;
 	// 重力
 	if (worldTransform_.translation_.x > 0.0f) {
-		acceleration_.x -= kGravity_;
-		// 上限なし
-		acceleration_.x = std::clamp(acceleration_.x, kGravityMax_, 100.0f);
+		float gravity = Lerp(kGravityMin_, kGravityMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
+		float gravityLimit= Lerp(kGravityLimitMin_, kGravityLimitMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
+		Vector3 vector = -worldTransform_.translation_;
+		vector.Normalize();
+		acceleration_ += vector * gravity;
+		acceleration_.x = std::clamp(acceleration_.x,-gravityLimit, 10.0f);
 	}
 	velocity_ += acceleration_;
 	worldTransform_.translation_ += velocity_;
 	acceleration_.y *= 0.9f;
-	// 地面に着いたら
-	if (worldTransform_.translation_.x <= 0.0f) {
-		worldTransform_.translation_.x = 0.0f;
-		acceleration_ = { 0.0f ,0.0f ,0.0f };
-	}
+	
 	MoveLimit();
 	worldTransform_.UpdateMatrix();
 	player_->SetWorldTransform(worldTransform_);
@@ -62,7 +62,10 @@ void PlayerPullingMove::Debug() {
 		ImGui::Text("acceleration\nx:%.4f,y:%.4f,z:%.4f", acceleration_.x, acceleration_.y, acceleration_.z);
 		ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
 		ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 1.0f);
-		ImGui::SliderFloat("GravityMax_", &kGravityMax_, -5.0f, -1.0f);
+		ImGui::SliderFloat("GravityMax_", &kGravityMax_, kGravityMin_,5.0f);
+		ImGui::SliderFloat("GravityMin_", &kGravityMin_, 0.0f, kGravityMax_);
+		ImGui::SliderFloat("GravityLimitMax", &kGravityLimitMax_, kGravityLimitMin_, 5.0f);
+		ImGui::SliderFloat("GravityLimitMin", &kGravityLimitMin_, 0.0f, kGravityLimitMax_);
 
 		ImGui::TreePop();
 	}
@@ -74,4 +77,10 @@ void PlayerPullingMove::MoveLimit() {
 	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -player_->GetWidth() + playerSize, player_->GetWidth() - playerSize);
 	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -player_->GetHeight() + playerSize, player_->GetHeight() - playerSize);
 	worldTransform_.UpdateMatrix();
+	// 地面に着いたら
+	if (worldTransform_.translation_.x <= 0.0f) {
+		worldTransform_.translation_.x = 0.0f;
+		acceleration_ = { 0.0f ,0.0f ,0.0f };
+		player_->SetBehavior(Player::Behavior::kLanding);
+	}
 }

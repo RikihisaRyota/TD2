@@ -27,6 +27,7 @@ public:
 		kPullingMove,
 		kString,
 		kJump,
+		kLanding,
 
 		kCount
 	};
@@ -60,6 +61,10 @@ public:
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 
+	uint32_t GetWeightNum() { return weightCount_; }
+	uint32_t GetWeightMax() { return kWeightMax_; }
+	bool GetIsPulling() { return isPulling_; }
+	bool GetIsLanding() { return isLanding_; }
 	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager;	}
 	PlayerBulletManager* GetPlayerBulletManager() { return playerBulletManager_; }
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
@@ -82,6 +87,9 @@ public:
 private:
 	void BehaviorInitialize();
 	void MoveLimit();
+
+	uint32_t kWeightMax_ = 20;
+
 	float radius_ = 1.0f;
 	PlayerBulletManager* playerBulletManager_;
 	Input* input_;
@@ -101,6 +109,9 @@ private:
 	// プレイヤーの行動範囲
 	float kWidth_ = 100.0f;
 	float kHeight_ = 50.0f;
-	// デバック用
+	// 引っ張られている
 	bool isPulling_;
+	bool isLanding_;
+	// プレイヤーについているおもりの数
+	uint32_t weightCount_;
 };

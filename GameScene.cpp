@@ -22,6 +22,8 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
+	boss_ = std::make_unique<Boss>();
+	bossModel_ = std::make_unique<Model>();
 	collisionManager_ = std::make_unique<CollisionManager>();
 	enemyEditor_ = std::make_unique<EnemyEditor>();
 	enemyManager_ = std::make_unique<EnemyManager>();
@@ -43,6 +45,7 @@ void GameScene::Initialize() {
 	backGround_->Initialize(textureHandle);
 	// 枠組み
 	frame_->SetPlayer(player_.get());
+	frame_->SetUvula(uvula_.get());
 	frame_->Initialize();
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
@@ -66,6 +69,10 @@ void GameScene::Initialize() {
 	uvulaBody_.reset(Model::Create("uvulaBody"));
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
+	// ボス
+	bossModel_.reset(Model::Create("boss"));
+	boss_->SetPlayer(player_.get());
+	boss_->Initialize(bossModel_.get());
 #pragma endregion
 }
 
@@ -76,6 +83,7 @@ void GameScene::Update() {
 	playerBulletManager_->Update();
 	enemyBulletManager_->Update();
 	uvula_->Update();
+	boss_->Update();
 	// 敵生成
 	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
 	collisionManager_->Update(player_.get(),playerBulletManager_.get(),enemyManager_.get(),enemyBulletManager_.get(), uvula_.get());
@@ -134,7 +142,7 @@ void GameScene::Draw() {
 	enemyBulletManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	playerBulletManager_->Draw(viewProjection_);
-
+	boss_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
 	PrimitiveDrawer::PostDraw();

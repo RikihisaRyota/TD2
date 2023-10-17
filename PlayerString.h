@@ -21,13 +21,14 @@ public:
 	void Debug();
 private:
 	float kAddAngle_ = 3.5f;
-	uint32_t kExtendCountMax_ = 50;
+	uint32_t kExtendCountMax_ = 40;
 	float kSpeed_ = 0.3f;
 	float kInitialAngle_ = 0.0f;
 	uint32_t kSetStringWorldTransformInterval = 4;
 	float kPlaneSize_ = 2.0f;
 	uint32_t kShrinkCountMax_ = 30;
-	float kGravity_=0.1f;
+	float kGravityMin_ = 0.2f;
+	float kGravityMax_ = 0.5f;
 
 	Player* player_;
 	Input* input_;
