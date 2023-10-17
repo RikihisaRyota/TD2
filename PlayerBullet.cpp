@@ -31,7 +31,7 @@ void PlayerBullet::Reset() {
 }
 
 void PlayerBullet::OnCollision(uint32_t type, Sphere* sphere) {
-	delete this;
+	isAlive_ = false;
 }
 
 void PlayerBullet::HitBoxInitialize() {
