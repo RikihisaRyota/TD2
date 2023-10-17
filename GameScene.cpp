@@ -77,9 +77,9 @@ void GameScene::Update() {
 	sceneNo_ = sceneArr_[sceneNo_]->GetSceneNo();
 
 	// シーン変更チェック
-	/*if (prevSceneNo_ != sceneNo_) {
+	if (prevSceneNo_ != sceneNo_) {
 		sceneArr_[sceneNo_]->Initialize();
-	}*/
+	}
 
 	sceneArr_[sceneNo_]->Update();
 
