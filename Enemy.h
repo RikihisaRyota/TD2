@@ -5,9 +5,9 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "EnemyBulletManager.h"
-
 #include "Input.h"
 
+class EnemyManager;
 class Enemy :public Collider {
 public:
 	enum class EnemyType {
@@ -29,7 +29,12 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
+	void Add() { worldTransform_.translation_.x -= 1.0f; }
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
+
+	bool GetEnemyCreateFlag() { return EnemyCreateFlag; }
+	Vector3 GetSplitPos() { return splitPos_; }
+	uint32_t GetType() { return type_; }
 private:
 	// 当たり判定
 	// 衝突したら呼び出される処理
@@ -64,13 +69,19 @@ private:
 	Behavior behavior_ = Behavior::kStandby;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
-	// 弾を発射を管理するための変数
-	EnemyBulletManager* enemyBulletManager_;
+
 
 	// 時間管理用の変数
-	const uint32_t ShotTime_ = 60;
+	const uint32_t ShotTime_ = 180;
 	const uint32_t DamageTime_ = 60;
 	std::vector<uint32_t> times_;
+
+	// 弾発生用の変数
+	EnemyBulletManager* enemyBulletManager_;
+
+	// 分裂用の変数
+	bool EnemyCreateFlag = false;
+	Vector3 splitPos_;
 
 	// 仮に動かすため
 	Input* input_;

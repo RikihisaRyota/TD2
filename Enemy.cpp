@@ -1,8 +1,11 @@
 #include "Enemy.h"
 #include "ImGuiManager.h"
 
+
 #include "CollisionManager.h"
 #include "Draw.h"
+#include "EnemyManager.h"
+#include "MyMath.h"
 
 void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	assert(model);
@@ -29,13 +32,17 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 }
 
 void Enemy::Update() {
+	EnemyCreateFlag = false;
+	if (worldTransform_.scale_.x >= 5.0f) {
+		behaviorRequest_ = Behavior::kSplit;
+	}
 	if (input_->PushKey(DIK_0)) {
 		behaviorRequest_ = Behavior::kStandby;
 	}
 	if (input_->PushKey(DIK_1)) {
 		behaviorRequest_ = Behavior::kShot;
 	}
-	if (input_->PushKey(DIK_2)) {
+	if (input_->ExitKey(DIK_2)) {
 		behaviorRequest_ = Behavior::kSplit;
 	}
 	if (input_->PushKey(DIK_3)) {
@@ -88,11 +95,6 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 
 	}
 	break;
-	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
-	{
-
-	}
-	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
 	{
 		behaviorRequest_ = Behavior::kGrow;
@@ -110,7 +112,7 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
 	{
-		//behaviorRequest_ = Behavior::kGrow;
+		behaviorRequest_ = Behavior::kGrow;
 	}
 	break;
 	default:
@@ -126,7 +128,7 @@ void Enemy::HitBoxInitialize() {
 	// Sphere
 	sphere_ = {
 		.center_{worldTransform_.translation_},
-		.radius_{radius_ },
+		.radius_{worldTransform_.scale_.x },
 	};
 }
 
@@ -134,7 +136,7 @@ void Enemy::HitBoxUpdate() {
 	// Sphere
 	sphere_ = {
 		.center_{worldTransform_.translation_},
-		.radius_{radius_ },
+		.radius_{worldTransform_.scale_.x },
 	};
 }
 
@@ -186,6 +188,7 @@ void Enemy::ShotInitialize()
 void Enemy::SplitInitialize()
 {
 	times_[Behavior::kSplit] = 0;
+	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
 }
 
 void Enemy::DamageInitialize()
@@ -215,15 +218,26 @@ void Enemy::StandbyUpdate()
 
 void Enemy::ShotUpdate()
 {
-	enemyBulletManager_->CreateBullet(worldTransform_.translation_, worldTransform_.scale_);
+	/*Vector3 shotPos_ = { worldTransform_.translation_.x, worldTransform_.translation_.y - 5.0f * worldTransform_.scale_.x, worldTransform_.translation_.z };
+	enemyBulletManager_->CreateBullet(shotPos_, worldTransform_.scale_);*/
 	behaviorRequest_ = Behavior::kStandby;
 
 }
 
 void Enemy::SplitUpdate()
 {
-
-
+	EnemyCreateFlag = true;
+	float degree = float(rand() / 360);
+	splitPos_ = {
+		.x{cosf(degree) * 10.0f},
+		.y{sinf(degree) * 10.0f},
+		.z{0}
+	};
+	Vector3 Center = worldTransform_.translation_;
+	worldTransform_.translation_ = { splitPos_ + Center};
+	splitPos_ *= -1.0f;
+	splitPos_ += Center;
+	behaviorRequest_ = Behavior::kStandby;
 }
 
 void Enemy::DamageUpdate()
@@ -244,8 +258,11 @@ void Enemy::ClingUpdate()
 
 void Enemy::GrowUpdate()
 {
-	worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
-	behaviorRequest_ = Behavior::kStandby;
-
-
+	if (worldTransform_.scale_.x < 5.0f) {
+		worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
+		behaviorRequest_ = Behavior::kStandby;
+	}
+	else {
+		behaviorRequest_ = Behavior::kSplit;
+	}
 }
