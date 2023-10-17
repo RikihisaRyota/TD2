@@ -218,8 +218,8 @@ void Enemy::StandbyUpdate()
 
 void Enemy::ShotUpdate()
 {
-	/*Vector3 shotPos_ = { worldTransform_.translation_.x, worldTransform_.translation_.y - 5.0f * worldTransform_.scale_.x, worldTransform_.translation_.z };
-	enemyBulletManager_->CreateBullet(shotPos_, worldTransform_.scale_);*/
+	Vector3 shotPos_ = { worldTransform_.translation_.x, worldTransform_.translation_.y - 5.0f * worldTransform_.scale_.x, worldTransform_.translation_.z };
+	enemyBulletManager_->CreateBullet(shotPos_, worldTransform_.scale_);
 	behaviorRequest_ = Behavior::kStandby;
 
 }
