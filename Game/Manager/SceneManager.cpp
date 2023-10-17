@@ -18,7 +18,6 @@ void SceneManager::Run() {
 		if (win->ProcessMessage()) {
 			break;
 		}
-
 		// ステートパターン化
 		preSceneNumber_ = sceneNumber_;
 		sceneNumber_ = sceneArray_[sceneNumber_]->GetSceneNumber();
@@ -27,16 +26,23 @@ void SceneManager::Run() {
 			sceneArray_[preSceneNumber_]->Finalize();
 			sceneArray_[sceneNumber_]->Finalize();
 		}
+		
+		imguiManager->Begin();
+		input->Update();
+		audio->Update();
 
 		sceneArray_[sceneNumber_]->Update();
+		imguiManager->End();
+
+		TextureManager::GetInstance()->PreDraw();
+		dxCommon->PreDraw();
+		imguiManager->Draw();
+		dxCommon->PostDraw();
+
 		sceneArray_[sceneNumber_]->Draw();
 
-		gameScene->Draw();
+		sceneArray_[sceneNumber_]->Finalize();
 	}
-
-	// ゲームシーン解放
-	gameScene->Release();
-	SafeDelete(gameScene);
 
 	// スプライト
 	Sprite::Release();
@@ -117,11 +123,6 @@ void SceneManager::Init() {
 	// Audio
 	Audio* audio = Audio::GetInstance();
 	audio->Initialize();
-
-	// ゲームシーンの初期化
-	GameScene* gameScene = nullptr;
-	gameScene = new GameScene();
-	gameScene->Initialize();
 
 	sceneArray_[TITLE_SCENE] = std::make_unique<TitleScene>();
 	sceneArray_[GAME_SCENE] = std::make_unique<GameScene>();

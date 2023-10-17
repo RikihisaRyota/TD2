@@ -6,10 +6,10 @@ void GameOver::Initialize() {
 }
 
 void GameOver::Update() {
-	ImGui::Begin("SceneManage");
+	/*ImGui::Begin("SceneManage");
 	ImGui::InputInt("SceneNumber", &sceneNumber_);
 	ImGui::Text("GameOver Scene");
-	ImGui::End();
+	ImGui::End();*/
 
 	if (input_->PushKey(DIK_0)) {
 		sceneNumber_ = TITLE_SCENE;

@@ -167,11 +167,11 @@ void GameScene::Draw() {
 }
 
 void GameScene::Finalize() {
-
+	SafeDelete(debugCamera_);
 }
 
 void GameScene::Release() {
-	SafeDelete(debugCamera_);
+	
 }
 
 void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands) {
