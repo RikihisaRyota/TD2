@@ -1,33 +1,89 @@
-#pragma once
+ï»¿#pragma once
 #include "IScene.h"
+#include <cstdlib>
+#include <memory>
+
+#include "Audio.h"
+#include "CubeRenderer.h"
+#include "DebugCamera.h"
+#include "Input.h"
+#include "PrimitiveDrawer.h"
+#include "Model.h"
+#include "OBJ.h"
+#include "SafeDelete.h"
+#include "PlaneRenderer.h"
+#include "SphereRenderer.h"
+#include "Sprite.h"
+
+// ã“ã“ã‹ã‚‰ä¸‹ã«ãªã‚‹ã¹ãã‚¢ãƒ«ãƒ•ã‚¡ãƒ™ãƒƒãƒˆé †ã§
+#include "BackGround.h"
+#include "CSV.h"
+#include "Enemy.h"
+#include "EnemyEditor.h"
+#include "FollowCamera.h"
+#include "Frame.h"
+#include "Player.h"
+
 class InGameScene :public IScene
 {
 public:
+	InGameScene();
+	~InGameScene();
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// XV
+	/// æ›´æ–°
 	/// </summary>
 	void Update() override;
 
 	/// <summary>
-	/// ”wŒiƒXƒvƒ‰ƒCƒg
+	/// èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	/// </summary>
 	void BackDraw() override;
 
 	/// <summary>
-	/// 3Dƒ‚ƒfƒ‹
+	/// 3Dãƒ¢ãƒ‡ãƒ«
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
-	/// ‘OŒiƒXƒvƒ‰ƒCƒg
+	/// å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	/// </summary>
 	void foreDraw() override;
-private:
 
+	// ã‚¨ãƒãƒŸãƒ¼ãƒªã‚¹ãƒãƒ¼ãƒ³ç”¨
+	void SpawnEnemy(const Vector3& position, uint32_t type);
+
+	void Release() override;
+private:
+	Input* input_ = nullptr;
+	DebugCamera* debugCamera_ = nullptr;
+	ViewProjection* viewProjection_;
+
+	bool IsDebugCamera_;
+	/// <summary>
+	/// ã‚²ãƒ¼ãƒ ç”¨
+	/// </summary>
+	/*std::unique_ptr<BackGround> backGround_;
+	std::unique_ptr<FollowCamera> followCamera_;
+	std::unique_ptr<Frame> frame_;
+	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> playerModel_;
+	std::list<Enemy*> enemy_;
+	std::unique_ptr<EnemyEditor> enemyEditor_;
+	std::unique_ptr<Model> enemyModel_;*/
+	BackGround* backGround_;
+	FollowCamera* followCamera_;
+	Frame* frame_;
+	Player* player_;
+	Model* playerModel_;
+	std::list<Enemy*> enemy_;
+	EnemyEditor* enemyEditor_;
+	Model* enemyModel_;
+
+	std::stringstream enemyPopCommands_;
 };
 

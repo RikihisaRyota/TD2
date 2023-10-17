@@ -1,5 +1,6 @@
 #include "EnemyEditor.h"
 
+#include "CSV.h"
 #include "Enemy.h"
 #include "Model.h"
 #include "ImGuiManager.h"
@@ -44,7 +45,16 @@ void EnemyEditor::Update(std::list<Enemy*>& enemies, Model* model) {
         enemies.emplace_back(enemy);
     }
     if (ImGui::Button("Save")) {
-
+        // CSVからデータの読み込み
+        std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+        std::vector<CSV::Data> datas;
+        datas.clear();
+        CSV::Data data = {
+            .position{0, 0, 0},
+            .type {0}
+        };
+        datas.push_back(data);
+        csv->WritingData(datas);
     }
 
     ImGui::End();

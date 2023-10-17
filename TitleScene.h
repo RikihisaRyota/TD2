@@ -1,35 +1,45 @@
-#pragma once
+ï»¿#pragma once
 #include "IScene.h"
+#include "Input.h"
+
 class TitleScene :public IScene
 {
 public:
+	TitleScene();
+	~TitleScene();
+
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	void Initialize() override;
 
 	/// <summary>
-	/// XV
+	/// æ›´æ–°
 	/// </summary>
 	void Update() override;
 
 	/// <summary>
-	/// ”wŒiƒXƒvƒ‰ƒCƒg
+	/// èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	/// </summary>
 	void BackDraw() override;
 
 	/// <summary>
-	/// 3Dƒ‚ƒfƒ‹
+	/// 3Dãƒ¢ãƒ‡ãƒ«
 	/// </summary>
 	void Draw() override;
 
 	/// <summary>
-	/// ‘OŒiƒXƒvƒ‰ƒCƒg
+	/// å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	/// </summary>
 	void foreDraw() override;
 
-private:
+	/// <summary>
+	/// å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
+	/// </summary>
+	void Release() override;
 
+private:
+	Input* input_;
 
 };
 

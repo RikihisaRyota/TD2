@@ -73,3 +73,17 @@ std::vector<CSV::Data> CSV::UpdateDataCommands() {
 	}
 	return result;
 }
+
+void CSV::WritingData(std::vector<Data> datas)
+{
+	std::ofstream csv_file("test", std::ios::binary);
+	for (auto& data : datas) {
+		csv_file << "Position,";
+		csv_file.write(reinterpret_cast<char*>(&data.position), sizeof(Data::position));
+		csv_file << std::endl;
+		csv_file << "Type,";
+		csv_file.write(reinterpret_cast<char*>(&data.type), sizeof(Data::type));
+		csv_file << std::endl;
+	}
+
+}

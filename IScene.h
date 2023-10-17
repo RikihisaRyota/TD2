@@ -1,40 +1,44 @@
-#pragma once
+ï»¿#pragma once
 
-// ƒV[ƒ““à‚Å‚Ìˆ—‚ğs‚¤Šî’êƒNƒ‰ƒX
-enum SCENE{TITLE, GAME_STAGE, CLEAR};
+// ã‚·ãƒ¼ãƒ³å†…ã§ã®å‡¦ç†ã‚’è¡Œã†åŸºåº•ã‚¯ãƒ©ã‚¹
+enum SCENE{TITLE, InGame, CLEAR};
 
 class IScene
 {
 public:
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	virtual void Initialize() = 0;
 
 	/// <summary>
-	/// XV
+	/// æ›´æ–°
 	/// </summary>
 	virtual void Update() = 0;
 
 	/// <summary>
-	/// ”wŒiƒXƒvƒ‰ƒCƒg
+	/// èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	/// </summary>
 	virtual void BackDraw() = 0;
 
 	/// <summary>
-	/// 3Dƒ‚ƒfƒ‹
+	/// 3Dãƒ¢ãƒ‡ãƒ«
 	/// </summary>
 	virtual void Draw() = 0;
 
 	/// <summary>
-	/// ‘OŒiƒXƒvƒ‰ƒCƒg
+	/// å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
 	/// </summary>
 	virtual void foreDraw() = 0;
 	
+	/// <summary>
+	/// å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
+	/// </summary>
+	virtual void Release() = 0;
 
 	int GetSceneNo() { return sceneNo; }
-protected:
 	static int sceneNo;
+protected:
 
 };
 

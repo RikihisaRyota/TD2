@@ -1,1 +1,3 @@
-#include "IScene.h"
+﻿#include "IScene.h"
+
+int IScene::sceneNo = InGame;
