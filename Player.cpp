@@ -5,12 +5,6 @@
 #include "MyMath.h"
 #include "ImGuiManager.h"
 
-#ifndef M_PI
-#define M_PI 3.14
-#endif
-
-#define deg_to_rad(deg) (deg * (M_PI/180))
-
 void Player::Initialize(Model* model) {
 	assert(model);
 	model_ = model;

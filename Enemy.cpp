@@ -5,13 +5,13 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	assert(model);
 	model_ = model;
 
-	type_ = type;
-
 	worldTransform_.Initialize();
 
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
-	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
+	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
 	worldTransform_.translation_ = position;
+
+	type_ = type;
 }
 
 void Enemy::Update() {
@@ -39,5 +39,7 @@ void Enemy::OBJtoOBB() {
 
 // 敵のポジションをプレイヤーに固定
 void Enemy::SetParent(const WorldTransform* parent) { 
-	worldTransform_.parent_ = parent;
+	
+
+	
 }

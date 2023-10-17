@@ -46,12 +46,14 @@ void GameScene::Initialize() {
 	playerModel_.reset(Model::Create("Player"));
 	player_->Initialize(playerModel_.get());
 	enemyModel_.reset(Model::Create("Enemy"));
+
+	UpdateEnemyPopCommands();
 #pragma endregion
 
 }
 
 void GameScene::Update() {
-	UpdateEnemyPopCommands();
+	//UpdateEnemyPopCommands();
 
 	player_->Update();
 
