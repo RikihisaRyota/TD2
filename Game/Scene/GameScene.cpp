@@ -97,6 +97,10 @@ void GameScene::Update() {
 		LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
 		UpdateEnemyPopCommands();
 	}
+
+	if (input_->PushKey(DIK_0)) {
+		sceneNumber_ = OVER_SCENE;
+	}
 }
 
 void GameScene::Draw() {
@@ -160,6 +164,10 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::Finalize() {
+
 }
 
 void GameScene::Release() {

@@ -52,7 +52,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Game/Scene;$(ProjectDir)Game/Manager;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -116,7 +116,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Frame.cpp" />
-    <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="Game\Manager\SceneManager.cpp" />
+    <ClCompile Include="Game\Scene\GameClear.cpp" />
+    <ClCompile Include="Game\Scene\GameOver.cpp" />
+    <ClCompile Include="Game\Scene\GameScene.cpp" />
+    <ClCompile Include="Game\Scene\IScene.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene.cpp" />
     <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="MyMath.cpp" />
@@ -137,7 +142,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="OBJ.cpp" />
     <ClCompile Include="PeraGraphicsPipeline.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SphereRenderer.cpp" />
     <ClCompile Include="PlaneRenderer.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -180,7 +184,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="Frame.h" />
-    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="Game\Manager\SceneManager.h" />
+    <ClInclude Include="Game\Scene\GameClear.h" />
+    <ClInclude Include="Game\Scene\GameOver.h" />
+    <ClInclude Include="Game\Scene\GameScene.h" />
+    <ClInclude Include="Game\Scene\IScene.h" />
+    <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="cMaterial.h" />
@@ -205,7 +214,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="PeraGraphicsPipeline.h" />
     <ClInclude Include="SafeDelete.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SphereRenderer.h" />
     <ClInclude Include="PlaneRenderer.h" />

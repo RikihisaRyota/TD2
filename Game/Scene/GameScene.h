@@ -24,6 +24,7 @@
 #include "EnemyBulletManager.h"
 #include "FollowCamera.h"
 #include "Frame.h"
+#include "IScene.h"
 #include "Player.h"
 #include "PlayerBulletManager.h"
 #include "Uvula.h"
@@ -32,7 +33,7 @@ class DirectXCommon;
 /// <summary>
 /// ゲームシーン
 /// </summary>
-class GameScene {
+class GameScene : public IScene{
 public: // メンバ関数
 	/// <summary>
 	/// コンストクラタ
@@ -47,17 +48,22 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize() override;
 
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw() override;
+
+	/// <summary>
+	/// ファイナライズ
+	/// </summary>
+	void Finalize() override;
 
 	/// <summary>
 	/// 解放
