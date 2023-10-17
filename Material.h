@@ -21,6 +21,7 @@ public:
 	void SetDirectionalLight(const cDirectionalLight& DirectionalLight);
 	cMaterial* GetMaterial() const { return material_; }
 	void SetMaterial(const cMaterial& material);
+	void SetColor(const Vector4& color) { material_->color_ = color; }
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBuffer(UINT size);
 private:

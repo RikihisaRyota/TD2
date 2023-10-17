@@ -125,6 +125,13 @@ bool Input::PushKey(BYTE keyNumber) const {
 	return false;
 }
 
+bool Input::PrePushKey(BYTE keyNumber) const {
+	if (!keyPre_[keyNumber]) {
+		return true;
+	}
+	return false;
+}
+
 bool Input::PushMouse(int32_t keyNumber) const {
 	if (mouse_.rgbButtons[keyNumber]) {
 		return true;
@@ -141,6 +148,14 @@ bool Input::TriggerKey(BYTE keyNumber)const {
 	}
 
 	// トリガーでない
+	return false;
+}
+
+bool Input::IsKeyReleased(BYTE keyNumber) const {
+	// 前回が0で、今回が0でなければトリガー
+	if (keyPre_[keyNumber] && !key_[keyNumber]) {
+		return true;
+	}
 	return false;
 }
 

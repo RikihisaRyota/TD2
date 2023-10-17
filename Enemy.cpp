@@ -1,6 +1,8 @@
 #include "Enemy.h"
 #include "ImGuiManager.h"
 
+#include "Draw.h"
+
 void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	assert(model);
 	model_ = model;
@@ -12,34 +14,43 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
+	worldTransform_.UpdateMatrix();
+	HitBoxInitialize();
 }
 
 void Enemy::Update() {
-	OBJtoOBB();
-
-	ImGui::Begin("Enemy");
-	ImGui::DragFloat3("position", &worldTransform_.translation_.x, 0.01f);
-	ImGui::DragFloat3("rotation", &worldTransform_.rotation_.x, 0.01f);
-	ImGui::DragInt("flag", &isHit_, 1);
-	ImGui::End();
-
 	worldTransform_.UpdateMatrix();
+	HitBoxUpdate();
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection);
 }
 
-void Enemy::OBJtoOBB() {
-	// .objをOBBへ変更（当たり判定へ）
-	obb_.center_ = worldTransform_.translation_;
-	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
-	obb_.size_ = worldTransform_.scale_;
+void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
+
 }
 
-// 敵のポジションをプレイヤーに固定
-void Enemy::SetPosition(const Vector3& position) { 
-	worldTransform_.translation_.x = position.x; 
-	worldTransform_.translation_.y = position.y + -2; 
-	worldTransform_.translation_.z = position.z; 
+void Enemy::HitBoxInitialize() {
+	// 衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributeEnemy);
+	// 衝突対象を自分以外に設定
+	SetCollisionMask(~kCollisionAttributeEnemy);
+	// Sphere
+	sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_ },
+	};
+}
+
+void Enemy::HitBoxUpdate() {
+	// Sphere
+	sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_ },
+	};
+}
+
+void Enemy::HitBoxDraw(const ViewProjection& viewProjection) {
+	DrawSphere(sphere_, viewProjection,Vector4(1.0f,0.0f,0.0f,1.0f));
 }

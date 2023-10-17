@@ -58,6 +58,13 @@ public: // メンバ関数
 	bool PushKey(BYTE keyNumber) const;
 
 	/// <summary>
+	/// 前回のキーの押下をチェック
+	/// </summary>
+	/// <param name="keyNumber">キー番号( DIK_0 等)</param>
+	/// <returns>押されているか</returns>
+	bool PrePushKey(BYTE keyNumber) const;
+
+	/// <summary>
 	/// マウスの押下をチェック
 	/// </summary>
 	/// <param name="keyNumber">マウスボタン番号(0:左,1:右,2:中)</param>
@@ -70,6 +77,13 @@ public: // メンバ関数
 	/// <param name="keyNumber">キー番号( DIK_0 等)</param>
 	/// <returns>トリガーか</returns>
 	bool TriggerKey(BYTE keyNumber) const;
+
+	/// <summary>
+	/// 前回のキーのトリガーをチェック(離した瞬間true)
+	/// </summary>
+	/// <param name="keyNumber">キー番号( DIK_0 等)</param>
+	/// <returns>トリガーか</returns>
+	bool IsKeyReleased(BYTE keyNumber) const;
 
 	/// <summary>
 	/// キーのトリガーをチェック

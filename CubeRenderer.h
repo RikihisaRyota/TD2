@@ -24,6 +24,7 @@ public:
 	void SetToon(uint32_t IsToon);
 	void SetDirectionalLight(const cDirectionalLight& DirectionalLight);
 	void SetMaterial(const cMaterial& material);
+	void SetColor(const Vector4& color) { material_->color_ = color; }
 private:
 	void Initialize();
 	void BasicDraw(

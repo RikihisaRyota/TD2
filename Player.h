@@ -1,19 +1,35 @@
 #pragma once
 
-#include "Model.h"
-#include "Input.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
-#include "OBB.h"
 #include <cmath>
 #include <math.h>
-
 #include <memory>
+#include <optional>
+
+#include "Collider.h"
+#include "Model.h"
+#include "OBB.h"
+#include "PlayerBulletManager.h"
+#include "PlayerJump.h"
+#include "PlayerMove.h"
+#include "PlayerPullingMove.h"
+#include "PlayerString.h"
+#include "WorldTransform.h"
+#include "ViewProjection.h"
+
 
 /// <summary>
 /// 自キャラ
 /// </summary>
-class Player {
+class Player : public Collider{
+public:
+	enum Behavior {
+		kMove,
+		kPullingMove,
+		kString,
+		kJump,
+
+		kCount
+	};
 public:
 	/// <summary>
 	/// 初期化
@@ -33,39 +49,58 @@ public:
 	/// <param name= "viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(const ViewProjection& viewProjection);
 
-	void OBJtoOBB(); // WorldTransformをOBBへ変換
+	void Reset();
 
-	void Move(); // プレイヤーの移動処理
-
-	Vector3 GetWorldPosition();
-	const WorldTransform& GetWorldTransform() { return worldTransform_; }
-	void SetViewProjection(const ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
-
-	OBB GetOBB() { return obb_; } // OBBの取得用
-
-private:
 	void Debug();
-	float kDropMaxSpeed_ = 0.05f;
-	float kDropSpeed_ = 0.01f;
-	float kDropHorizontalSpeed_ = 0.4f;
-	float kGravity_ = 0.001f;
-	float kInertia_ = 0.9f;
-	float kSpeed_ = 0.01f;
-	float kRightAngle_= 45.0f;
-	float kLeftAngle_= 135.0f;
-	uint32_t kWeightMax_ = 10;
 
+	void OBJtoOBB(); // WorldTransformをOBBへ変換
+	// 当たり判定
+	void OnCollision(uint32_t type, Sphere* sphere)override;
+	void HitBoxInitialize() override;
+	void HitBoxUpdate() override;
+	void HitBoxDraw(const ViewProjection& viewProjection) override;
+
+	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager;	}
+	PlayerBulletManager* GetPlayerBulletManager() { return playerBulletManager_; }
+	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
+	PlayerPullingMove* GetPlayerMove() { return playerPullingMove.get(); }
+	PlayerString* GetPlayerString() { return playerString_.get(); }
+	void SetScale(const Vector3& scale);
+	const Vector3 GetScale() const { return worldTransform_.scale_; }
+	void SetRotation(const Vector3& rotation);
+	const Vector3 GetRotation() const { return worldTransform_.rotation_; }
+	void SetTranslation(const Vector3& translation);
+	const Vector3 GetTranslation() const { return worldTransform_.translation_; }
+	void SetWorldTransform(const WorldTransform& worldTransform);
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	void SetBehavior(const std::optional<Behavior>& behaviorRequest);
+	Behavior GetBehavior() const { return behavior_; }
+	void SetHeight(float height) { kHeight_ = height; }
+	float GetHeight() { return kHeight_; }
+	void SetWidth(float width) { kWidth_ = width; }
+	float GetWidth() {return kWidth_; }
+private:
+	void BehaviorInitialize();
+	void MoveLimit();
+	float radius_ = 1.0f;
+	PlayerBulletManager* playerBulletManager_;
+	Input* input_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
-	const ViewProjection* viewProjection_ = nullptr;
-	Input* input_ = nullptr;
-	
+	OBB obb_; // 当たり判定用
 	// モデル
 	Model* model_ = nullptr;
-	Vector3 velocity_;
-	Vector3 acceleration_;
-  
-	OBB obb_; // 当たり判定用
-  
-	uint32_t weightCount_;
+	// ふるまい
+	Behavior behavior_ = Behavior::kMove;
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+	// プレイヤーの動き
+	std::unique_ptr<PlayerJump> playerJump_;
+	std::unique_ptr<PlayerMove> playerMove_;
+	std::unique_ptr<PlayerPullingMove> playerPullingMove;
+	std::unique_ptr<PlayerString> playerString_;
+	// プレイヤーの行動範囲
+	float kWidth_ = 100.0f;
+	float kHeight_ = 50.0f;
+	// デバック用
+	bool isPulling_;
 };

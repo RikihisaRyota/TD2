@@ -9,11 +9,7 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {
-	for (Enemy* enemy : enemy_) {
-		delete enemy;
-	}
-}
+GameScene::~GameScene() {}
 
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -25,48 +21,64 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	viewProjection_.Initialize();
 #pragma region 生成
-	floor_ = std::make_unique<CubeRenderer>();
+	backGround_ = std::make_unique<BackGround>();
+	collisionManager_ = std::make_unique<CollisionManager>();
+	enemyEditor_ = std::make_unique<EnemyEditor>();
+	enemyManager_ = std::make_unique<EnemyManager>();
+	enemyBulletManager_ = std::make_unique<EnemyBulletManager>();
+	frame_ = std::make_unique<Frame>();
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
+	playerBulletManager_ = std::make_unique<PlayerBulletManager>();
 	playerModel_ = std::make_unique<Model>();
+	playerBulletModel_ = std::make_unique<Model>();
+	uvula_ = std::make_unique<Uvula>();
+	uvulaHead_ = std::make_unique<Model>();
+	uvulaBody_= std::make_unique<Model>();
 #pragma endregion
 #pragma region 初期化
 	// CSV
 	LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
-	// 床
-	floor_.reset(CubeRenderer::Create());
-	floorWorldTransform_.Initialize();
-	floorWorldTransform_.translation_ = { 0.0f,-2.0f,0.0f };
-	floorWorldTransform_.scale_ = { 20.0f,1.0f,1.0f };
-	floorWorldTransform_.UpdateMatrix();
+	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
+	backGround_->Initialize(textureHandle);
+	// 枠組み
+	frame_->SetPlayer(player_.get());
+	frame_->Initialize();
 	// カメラ
-	followCamera_->Initialize();
 	followCamera_->SetTarget(&player_->GetWorldTransform());
+	followCamera_->SetPlayer(player_.get());
+	followCamera_->Initialize();
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
+	playerBulletModel_.reset(Model::Create("playerBullet"));
+	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_.get());
+	playerBulletManager_->SetViewProjection(&viewProjection_);
+	playerBulletManager_->Initialize(playerBulletModel_.get());
+	
+	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
+	enemyBulletManager_->Initialize(enemyModel_.get());
+	enemyManager_->Initialize(enemyModel_.get());
+	UpdateEnemyPopCommands();
+	// ベロ
+	uvulaHead_.reset(Model::Create("uvulaHead"));
+	uvulaBody_.reset(Model::Create("uvulaBody"));
+	uvula_->SetPlayer(player_.get());
+	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 #pragma endregion
-
 }
 
 void GameScene::Update() {
+	frame_->Update();
 	player_->Update();
-	
-	for (Enemy* enemy : enemy_) {
-		enemy->Update();
-
-		// 当たり判定
-		if (IsCollision(player_->GetOBB(), enemy->GetObb())) {
-			enemy->SetPosition(player_->GetWorldPosition());
-		}
-		else {
-
-		}
-	}
-
-	UpdateEnemyPopCommands();
-
+	enemyManager_->Update();
+	playerBulletManager_->Update();
+	enemyBulletManager_->Update();
+	uvula_->Update();
+	// 敵生成
+	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
+	collisionManager_->Update(player_.get(),playerBulletManager_.get(),enemyManager_.get(),enemyBulletManager_.get(), uvula_.get());
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
 		IsDebugCamera_ ^= true;
@@ -78,6 +90,12 @@ void GameScene::Update() {
 	else {
 		followCamera_->Update();
 		viewProjection_ = followCamera_->GetViewProjection();
+	}
+	// リセット
+	if (input_->TriggerKey(DIK_R)) {
+		enemyManager_->Reset();
+		LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
+		UpdateEnemyPopCommands();
 	}
 }
 
@@ -109,12 +127,13 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	floor_->Draw(floorWorldTransform_, viewProjection_);
+	backGround_->Draw(viewProjection_);
+	frame_->Draw(viewProjection_);
+	uvula_->Draw(viewProjection_);
+	enemyManager_->Draw(viewProjection_);
+	enemyBulletManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
-	
-	for (Enemy* enemy : enemy_) {
-		enemy->Draw(viewProjection_);
-	}
+	playerBulletManager_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
@@ -160,6 +179,8 @@ void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands)
 
 void GameScene::UpdateEnemyPopCommands() {
 	std::string line;
+	enemyPopCommands_.clear();
+	enemyPopCommands_.seekg(0, std::ios_base::beg);
 
 	while (getline(enemyPopCommands_, line)) {
 		std::istringstream line_stream(line);
@@ -191,15 +212,11 @@ void GameScene::UpdateEnemyPopCommands() {
 			getline(line_stream, word, ',');
 			type = (uint32_t)std::atof(word.c_str());
 		}
-
 		SpawnEnemy(Vector3(x, y, z), type);
+
 	}
 }
 
 void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {
-	Enemy* enemy = new Enemy();
-
-	enemy->Initialize(enemyModel_.get(), position, type);
-
-	enemy_.push_back(enemy);
+	enemyManager_->Create(position,type);
 }

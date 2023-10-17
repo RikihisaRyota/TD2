@@ -1,32 +1,23 @@
 #pragma once
 
-#include "Collision.h"
+#include "Collider.h"
 #include "Model.h"
-#include "Player.h"
 #include "WorldTransform.h"
-#include "MyMath.h"
-#include "OBB.h"
-#include <functional>
 
-class Enemy {
+class Enemy :public Collider{
 public:
 	void Initialize(Model* model, const Vector3& position, uint32_t type);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
-
-	void OBJtoOBB(); // WorldTransform‚ğOBB‚Ö•ÏŠ·
-
-	void SetPosition(const Vector3& position);
-
-	OBB GetObb() { return obb_; } // OBB‚Ìæ“¾—p
-
-	int SetFlag(int flag) { return isHit_ = flag; } // ƒtƒ‰ƒOƒZƒbƒ^iImGui—p‚Éint‚Å‚·j
-
 private:
+	// å½“ãŸã‚Šåˆ¤å®š
+	// è¡çªã—ãŸã‚‰å‘¼ã³å‡ºã•ã‚Œã‚‹å‡¦ç†
+	void OnCollision(uint32_t type, Sphere* sphere)override;
+	void HitBoxInitialize() override;
+	void HitBoxUpdate() override;
+	void HitBoxDraw(const ViewProjection& viewProjection) override;
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;
 	uint32_t type_;
-
-	OBB obb_; // “–‚½‚è”»’è—p
-	int isHit_ = false;
+	float radius_ = 1.0f;
 };

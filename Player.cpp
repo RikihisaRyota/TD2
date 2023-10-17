@@ -2,29 +2,105 @@
 
 #include <cassert>
 
+#include "CollisionManager.h"
+#include "Draw.h"
 #include "MyMath.h"
 #include "ImGuiManager.h"
+#include "Input.h"
+
 
 void Player::Initialize(Model* model) {
 	assert(model);
 	model_ = model;
 
-	worldTransform_.Initialize();
+	input_ = Input::GetInstance();
 
+	playerJump_ = std::make_unique<PlayerJump>();
+	playerJump_->SetPlayer(this);
+	
+	playerMove_ = std::make_unique<PlayerMove>();
+	playerMove_->SetPlayer(this);
+	
+	playerPullingMove = std::make_unique<PlayerPullingMove>();
+	playerPullingMove->SetPlayer(this);
+	
+	playerString_ = std::make_unique<PlayerString>();
+	playerString_->SetPlayer(this);
+	
+	Reset();
+	HitBoxInitialize();
+	// デバック用
+	isPulling_ = false;
+}
+
+void Player::Reset() {
+	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
+	worldTransform_.translation_ = { 20.0f,0.0f,0.0f };
+	worldTransform_.UpdateMatrix();
 
-	input_ = Input::GetInstance();
+	playerJump_->Initialize({ 0.0f,0.0f,0.0f });
+	playerMove_->Initialize();
+	playerPullingMove->Initialize();
+	playerString_->Initialize();
+	HitBoxUpdate();
 }
 
 void Player::Update() {
-	OBJtoOBB();
-	Move();
+	if (input_->TriggerKey(DIK_LSHIFT)) {
+		isPulling_ ^= true;
+		if (isPulling_) {
+			behaviorRequest_ = kPullingMove;
+		}
+		else {
+			behaviorRequest_ = kMove;
+		}
+		BehaviorInitialize();
+	}
+	switch (behavior_) {
+	case Player::kMove:
+		playerMove_->Update();
+		break;
+	case Player::kPullingMove:
+		playerPullingMove->Update();
+		break;
+	case Player::kString:
+		playerString_->Update();
+		break;
+	case Player::kJump:
+		playerJump_->Update();
+		break;
+	}
+	MoveLimit();
+	HitBoxUpdate();
+	playerMove_->Debug();
+	playerPullingMove->Debug();
+	playerString_->Debug();
+	playerJump_->Debug();
 	Debug();
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
+	switch (behavior_) {
+	case Player::kMove:
+		break;
+	case Player::kPullingMove:
+		break;
+	case Player::kString:
+		playerString_->Draw(viewProjection);
+		break;
+	case Player::kJump:
+		break;
+	}
 	model_->Draw(worldTransform_, viewProjection);
+}
+
+void Player::Debug() {
+	ImGui::Begin("Player");
+	ImGui::Text("translation\n");
+	ImGui::Text("x:%.4f,y:%.4f,z:%.4f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	ImGui::End();
 }
 
 void Player::OBJtoOBB() {
@@ -34,84 +110,129 @@ void Player::OBJtoOBB() {
 	obb_.size_ = worldTransform_.scale_;
 }
 
-void Player::Move() {
-	Vector3 move = { 0, 0, 0 };
-	float nowWeight = static_cast<float>((kWeightMax_ - weightCount_)) / static_cast<float> (kWeightMax_);
+void Player::OnCollision(uint32_t type, Sphere* sphere) {
+	switch (type) {
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
+	{
 
-	// SPACE押している間も重力がかかり落下スピードが上がるかも
-	if (input_->PushKey(DIK_SPACE)) {
-		acceleration_.y -= kDropSpeed_;
-		if (input_->PushKey(DIK_A)) {
-			move.x = -1.0f;
-			move *= kDropHorizontalSpeed_;
-		}
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
+	{
 
-		if (input_->PushKey(DIK_D)) {
-			move.x = 1.0f;
-			move *= kDropHorizontalSpeed_;
-		}
-		velocity_.x = move.x;
 	}
-	else {
-		if (input_->TriggerKey(DIK_A)) {
-			Vector3 direction = { cosf(DegToRad(kLeftAngle_)), sinf(DegToRad(kLeftAngle_)), 0 };
-			direction.Normalize();
-			move += direction * nowWeight;
-			acceleration_.y = kSpeed_ * nowWeight;
-		}
-		if (input_->TriggerKey(DIK_D)) {
-			Vector3 direction = { cosf(DegToRad(kRightAngle_)), sinf(DegToRad(kRightAngle_)), 0 };
-			direction.Normalize();
-			move += direction * nowWeight;
-			acceleration_.y = kSpeed_ * nowWeight;
-		}
-		// 斜め移動時の速度を正規化
-		if (move.Length() > 0) {
-			move.Normalize();
-			velocity_ = move;
-		}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
+	{
+		behaviorRequest_ = kPullingMove;
+		BehaviorInitialize();
 	}
-	// 重力を適用
-	if (acceleration_.y >= -kDropMaxSpeed_) {
-		acceleration_.y -= kGravity_;
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
+	{
+
 	}
-	// 移動
-	velocity_ += acceleration_;
-	velocity_ *= kInertia_;
-	worldTransform_.translation_ += velocity_;
-	// 地面に接触した場合、速度をリセット
-	if (worldTransform_.translation_.y <= 0.0f) {
-		worldTransform_.translation_.y = 0.0f;
-		acceleration_.y = 0.0f;
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemyBullet):
+	{
+
 	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemy):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
+	{
+
+	}
+	break;
+	default:
+		break;
+	}
+}
+
+void Player::HitBoxInitialize() {
+	// 衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributePlayer);
+	// 衝突対象を自分以外に設定
+	SetCollisionMask(~kCollisionAttributePlayer);
+	// Sphere
+	sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_ },
+	};
+}
+
+void Player::HitBoxUpdate() {
+	// Sphere
+	sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_ },
+	};
+}
+
+void Player::HitBoxDraw(const ViewProjection& viewProjection) {
+	DrawSphere(sphere_,viewProjection,Vector4(0.0f,1.0f,0.0f,1.0f));
+}
+
+void Player::BehaviorInitialize() {
+	if (behaviorRequest_) {
+		// ふるまいを変更
+		behavior_ = behaviorRequest_.value();
+		// 各ふるまいごとの初期化を実行
+		switch (behavior_) {
+		case Player::kMove:
+			playerMove_->Initialize();
+			break;
+		case Behavior::kPullingMove:
+			playerPullingMove->Initialize();
+			break;
+		case Behavior::kString:
+			playerString_->Initialize();
+			break;
+		case Behavior::kJump:
+			playerJump_->Initialize(playerString_->GetShootOutVector());
+			break;
+		}
+		// ふるまいリクエストをリセット
+		behaviorRequest_ = std::nullopt;
+	}
+}
+
+void Player::MoveLimit() {
+	float playerSize = 2.0f;
+	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kWidth_+playerSize, kWidth_- playerSize);
+	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kHeight_+ playerSize, kHeight_- playerSize);
+	worldTransform_.UpdateMatrix();
+	if (worldTransform_.translation_.x <= 0.0f) {
+		behaviorRequest_ = kMove;
+		BehaviorInitialize();
+	}
+}
+
+void Player::SetScale(const Vector3& scale) {
+	worldTransform_.scale_ = scale;
 	worldTransform_.UpdateMatrix();
 }
 
-Vector3 Player::GetWorldPosition() {
-	Vector3 worldPosition;
-
-	worldPosition.x = worldTransform_.matWorld_.m[3][0];
-	worldPosition.y = worldTransform_.matWorld_.m[3][1];
-	worldPosition.z = worldTransform_.matWorld_.m[3][2];
-
-	return worldPosition;
+void Player::SetRotation(const Vector3& rotation) {
+	worldTransform_.rotation_ = rotation;
+	worldTransform_.UpdateMatrix();
 }
 
-void Player::Debug() {
-	ImGui::Begin("Player");
-	ImGui::Text("velocity:x:%f,y:%f,z:%f", velocity_.x, velocity_.y, velocity_.z);
-	ImGui::Text("acceleration:x:%f,y:%f,z:%f", acceleration_.x, acceleration_.y, acceleration_.z);
-	ImGui::Text("pos:x:%f,y:%f:z:%f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
-	ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
-	ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 0.1f);
-	ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
-	ImGui::SliderFloat("DropSpeed", &kDropSpeed_, 0.0f, 1.0f);
-	ImGui::SliderFloat("DropHorizontalSpeed", &kDropHorizontalSpeed_, 0.1f, 0.5f);
-	ImGui::SliderFloat("DropMaxSpeed", &kDropMaxSpeed_, 0.0f, 1.0f);
-	ImGui::SliderFloat("RightAngle", &kRightAngle_, 0.0f, 90.0f);
-	ImGui::SliderFloat("LeftAngle", &kLeftAngle_, 90.0f, 180.0f);
-	float weight = static_cast<float>(weightCount_);
-	ImGui::SliderFloat("WeightCount", &weight, 0.0f, 10.0f);
-	weightCount_= static_cast<uint32_t>(weight);
-	ImGui::End();
+void Player::SetTranslation(const Vector3& translation) {
+	worldTransform_.translation_ = translation;
+	worldTransform_.UpdateMatrix();
+}
+
+void Player::SetWorldTransform(const WorldTransform& worldTransform) {
+	worldTransform_ = worldTransform;
+	worldTransform_.UpdateMatrix();
+}
+
+void Player::SetBehavior(const std::optional<Behavior>& behaviorRequest) {
+	behaviorRequest_ = behaviorRequest;
+	BehaviorInitialize();
 }

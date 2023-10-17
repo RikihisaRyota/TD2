@@ -3,23 +3,34 @@
 
 #include "Input.h"
 #include "ImGuiManager.h"
+#include "Player.h"
 
 void FollowCamera::Initialize() {
 	viewProjection_.Initialize();
-	debugOffset_ = { 0.0f, 12.0f, -65.0f };
-	delayInterpolationLate_ = 0.02f;
+	debugOffset_ = { 40.0f, 0.0f, -90.0f };
+	dropOffset_ = { -40.0f, 0.0f, -90.0f };
+	delayInterpolationLate_ = 0.5f;
+	dropDelayInterpolationLate_ = 0.8f;
 }
 
 void FollowCamera::Update() {
 	if (target_) {
-		Vector3 offset = debugOffset_;
+		float kInterpolationLate;
+		// プレイヤーが落下中か
+		/*if (player_->GetIsDrop()) {
+			nowOffset_ =Lerp(nowOffset_, dropOffset_,0.1f);
+			kInterpolationLate = dropDelayInterpolationLate_;
+		}
+		else {*/
+			nowOffset_ =Lerp(nowOffset_, debugOffset_,  0.1f);
+			kInterpolationLate = delayInterpolationLate_;
+		/*}*/
 		// 追従座標の補間
-		const float kInterpolationLate = delayInterpolationLate_;
 		interTarget_ = Lerp(interTarget_, target_->translation_, kInterpolationLate);
 		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(viewProjection_.rotation_);
 
-		offset = TransformNormal(offset, rotateMatrix);
-		viewProjection_.translation_ = interTarget_ + offset;
+		nowOffset_ = TransformNormal(nowOffset_, rotateMatrix);
+		viewProjection_.translation_ = interTarget_ + nowOffset_;
 	}
 
 	if (Input::GetInstance()->IsControllerConnected()) {
@@ -36,8 +47,18 @@ void FollowCamera::Update() {
 
 void FollowCamera::Debug() {
 	ImGui::Begin("Camera");
-	ImGui::SliderFloat("Offset_y",&debugOffset_.y,0.0f,50.0f);
-	ImGui::SliderFloat("Offset_z",&debugOffset_.z,0.0f,-100.0f);
-	ImGui::SliderFloat("Delay",&delayInterpolationLate_,0.0f,1.0f);
+	if (ImGui::TreeNode("Nomal")) {
+		ImGui::SliderFloat("Offset_x", &debugOffset_.x, -50.0f, 50.0f);
+		ImGui::SliderFloat("Offset_y", &debugOffset_.y, 0.0f, 50.0f);
+		ImGui::SliderFloat("Offset_z", &debugOffset_.z, 0.0f, -100.0f);
+		ImGui::SliderFloat("Delay", &delayInterpolationLate_, 0.0f, 1.0f);
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Drop")) {
+		ImGui::SliderFloat("Offset_y", &dropOffset_.y, 0.0f, -50.0f);
+		ImGui::SliderFloat("Offset_z", &dropOffset_.z, 0.0f, -100.0f);
+		ImGui::SliderFloat("Delay", &dropDelayInterpolationLate_, 0.0f, 1.0f);
+		ImGui::TreePop();
+	}
 	ImGui::End();
 }
