@@ -28,6 +28,7 @@ void SceneManager::Run() {
 		}
 		
 		imguiManager->Begin();
+
 		input->Update();
 		audio->Update();
 
