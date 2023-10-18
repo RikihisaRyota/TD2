@@ -7,6 +7,7 @@
 // CSVはGameSceneへ移植しました //
 
 void CSV::LoadCSV(std::string fileName) {
+	fileName = "Resources/CSV/" + fileName + ".csv";
 	// ファイルを開く
 	std::ifstream file;
 	file.open(fileName);

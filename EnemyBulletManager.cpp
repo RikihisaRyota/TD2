@@ -38,6 +38,7 @@ void EnemyBulletManager::CreateBullet(const Vector3& position, const Vector3& sc
 {
 	EnemyBullet* bullet = new EnemyBullet();
 	bullet->Initialize(model_, position, scale);
+	bullet->SetViewProjection(viewProjection_);
 	enemyBullets_.emplace_back(bullet);
 }
 

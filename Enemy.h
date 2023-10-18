@@ -3,6 +3,8 @@
 
 #include "Collider.h"
 #include "Model.h"
+#include "Player.h"
+#include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "EnemyBulletManager.h"
 
@@ -29,6 +31,10 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
+	bool GetIsAlive() { return isAlive_; }
+	bool GetIsDrawing() { return isDrawing_; }
+	void SetPlayer(Player* player) { player_ = player; }
+	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
 private:
 	// 当たり判定
@@ -56,9 +62,13 @@ private:
 	void GrowUpdate();
 
 	WorldTransform worldTransform_;
+	ViewProjection* viewProjection_;
 	Model* model_ = nullptr;
+	Player* player_;
 	uint32_t type_;
 	float radius_ = 1.0f;
+	bool isAlive_;
+	bool isDrawing_;
 
 	// 振る舞い
 	Behavior behavior_ = Behavior::kStandby;
