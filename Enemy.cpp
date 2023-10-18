@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "ImGuiManager.h"
 
+#include "CollisionManager.h"
 #include "Draw.h"
 
 void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
@@ -15,10 +16,58 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
 	worldTransform_.UpdateMatrix();
+
+	times_.clear();
+	for (int i = 0; i < kCount; i++) {
+		uint32_t time = 0;
+		times_.push_back(time);
+	}
+
 	HitBoxInitialize();
+
+	input_ = Input::GetInstance();
 }
 
 void Enemy::Update() {
+	if (input_->PushKey(DIK_0)) {
+		behaviorRequest_ = Behavior::kStandby;
+	}
+	if (input_->PushKey(DIK_1)) {
+		behaviorRequest_ = Behavior::kShot;
+	}
+	if (input_->PushKey(DIK_2)) {
+		behaviorRequest_ = Behavior::kSplit;
+	}
+	if (input_->PushKey(DIK_3)) {
+		behaviorRequest_ = Behavior::kDamage;
+	}
+	if (input_->PushKey(DIK_4)) {
+		behaviorRequest_ = Behavior::kCling;
+	}
+	if (input_->ExitKey(DIK_5)) {
+		behaviorRequest_ = Behavior::kGrow;
+	}
+	BehaviorRequestCheck();
+	switch (behavior_) {
+	case Behavior::kStandby:
+		StandbyUpdate();
+		break;
+	case Behavior::kShot:
+		ShotUpdate();
+		break;
+	case Behavior::kSplit:
+		SplitUpdate();
+		break;
+	case Behavior::kDamage:
+		DamageUpdate();
+		break;
+	case Behavior::kCling:
+		ClingUpdate();
+		break;
+	case Behavior::kGrow:
+		GrowUpdate();
+		break;
+	}
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
 }
@@ -28,7 +77,45 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 }
 
 void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
+	switch (type) {
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
+	{
 
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
+	{
+		behaviorRequest_ = Behavior::kGrow;
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemyBullet):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemy):
+	{
+
+	}
+	break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
+	{
+		//behaviorRequest_ = Behavior::kGrow;
+	}
+	break;
+	default:
+		break;
+	}
 }
 
 void Enemy::HitBoxInitialize() {
@@ -52,5 +139,113 @@ void Enemy::HitBoxUpdate() {
 }
 
 void Enemy::HitBoxDraw(const ViewProjection& viewProjection) {
-	DrawSphere(sphere_, viewProjection,Vector4(1.0f,0.0f,0.0f,1.0f));
+	DrawSphere(sphere_, viewProjection, Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+}
+
+void Enemy::BehaviorRequestCheck()
+{
+	if (behaviorRequest_) {
+		// ふるまいを変更
+		behavior_ = behaviorRequest_.value();
+		// 各ふるまいごとの初期化を実行
+		switch (behavior_) {
+		case Behavior::kStandby:
+			StandbyInitialize();
+			break;
+		case Behavior::kShot:
+			ShotInitialize();
+			break;
+		case Behavior::kSplit:
+			SplitInitialize();
+			break;
+		case Behavior::kDamage:
+			DamageInitialize();
+			break;
+		case Behavior::kCling:
+			ClingInitialize();
+			break;
+		case Behavior::kGrow:
+			GrowInitialize();
+			break;
+		}
+		// ふるまいリクエストをリセット
+		behaviorRequest_ = std::nullopt;
+	}
+}
+
+void Enemy::StandbyInitialize()
+{
+	times_[Behavior::kStandby] = 0;
+}
+
+void Enemy::ShotInitialize()
+{
+	times_[Behavior::kShot] = 0;
+}
+
+void Enemy::SplitInitialize()
+{
+	times_[Behavior::kSplit] = 0;
+}
+
+void Enemy::DamageInitialize()
+{
+	times_[Behavior::kDamage] = 0;
+}
+
+void Enemy::ClingInitialize()
+{
+	times_[Behavior::kCling] = 0;
+}
+
+void Enemy::GrowInitialize()
+{
+	times_[Behavior::kGrow] = 0;
+}
+
+void Enemy::StandbyUpdate()
+{
+	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+		times_[Behavior::kStandby]++;
+		if (times_[Behavior::kStandby] == ShotTime_ * worldTransform_.scale_.x) {
+			behaviorRequest_ = Behavior::kShot;
+		}
+	}
+}
+
+void Enemy::ShotUpdate()
+{
+	enemyBulletManager_->CreateBullet(worldTransform_.translation_, worldTransform_.scale_);
+	behaviorRequest_ = Behavior::kStandby;
+
+}
+
+void Enemy::SplitUpdate()
+{
+
+
+}
+
+void Enemy::DamageUpdate()
+{
+	worldTransform_.rotation_.x += 0.1f;
+	if (times_[Behavior::kDamage] == DamageTime_) {
+		worldTransform_.rotation_.x = 0.0f;
+		behaviorRequest_ = Behavior::kStandby;
+	}
+	times_[Behavior::kDamage]++;
+}
+
+void Enemy::ClingUpdate()
+{
+
+
+}
+
+void Enemy::GrowUpdate()
+{
+	worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
+	behaviorRequest_ = Behavior::kStandby;
+
+
 }
