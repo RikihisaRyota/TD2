@@ -1,5 +1,7 @@
 #include "EnemyManager.h"
 
+#include "MyMath.h"
+
 EnemyManager::~EnemyManager() {
 	Reset();
 }

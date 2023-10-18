@@ -1,5 +1,7 @@
 #include "EnemyBulletManager.h"
 
+#include "MyMath.h"
+
 EnemyBulletManager::~EnemyBulletManager()
 {
 	Reset();
@@ -44,10 +46,4 @@ void EnemyBulletManager::Reset() {
 		delete bullet;
 	}
 	enemyBullets_.clear();
-}
-
-void EnemyBulletManager::Create(const Vector3& position, uint32_t type) {
-	EnemyBullet* bullet = new EnemyBullet();
-	bullet->Initialize(model_,position);
-	enemyBullets_.emplace_back(bullet);
 }

@@ -18,7 +18,7 @@ public:
 
 	void SetWidth(float width) { kWidth_ = width; }
 private:
-	float kChaseMin_ = 0.02f;
+	float kChaseMin_ = 0.01f;
 	float kChaseMax_ = 0.045f;
 
 	float kWidth_=1000.0f;

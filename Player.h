@@ -13,6 +13,7 @@
 #include "PlayerMove.h"
 #include "PlayerPullingMove.h"
 #include "PlayerString.h"
+#include "PlayerStun.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 
@@ -28,6 +29,7 @@ public:
 		kString,
 		kJump,
 		kLanding,
+		kStun,
 
 		kCount
 	};
@@ -52,24 +54,24 @@ public:
 
 	void Reset();
 
-	void Debug();
-
-	void OBJtoOBB(); // WorldTransformをOBBへ変換
 	// 当たり判定
 	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
-
+#pragma region getter,setter
 	uint32_t GetWeightNum() { return weightCount_; }
 	uint32_t GetWeightMax() { return kWeightMax_; }
 	bool GetIsPulling() { return isPulling_; }
 	bool GetIsLanding() { return isLanding_; }
-	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager;	}
+	bool GetInvincible() { return isInvincible_; }
+	void SetInvincible(bool flg) { isInvincible_ = flg; }
+	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager; }
 	PlayerBulletManager* GetPlayerBulletManager() { return playerBulletManager_; }
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
 	PlayerPullingMove* GetPlayerMove() { return playerPullingMove.get(); }
 	PlayerString* GetPlayerString() { return playerString_.get(); }
+	PlayerStun* GetPlayerStun() { return playerStun_.get(); }
 	void SetScale(const Vector3& scale);
 	const Vector3 GetScale() const { return worldTransform_.scale_; }
 	void SetRotation(const Vector3& rotation);
@@ -83,10 +85,13 @@ public:
 	void SetHeight(float height) { kHeight_ = height; }
 	float GetHeight() { return kHeight_; }
 	void SetWidth(float width) { kWidth_ = width; }
-	float GetWidth() {return kWidth_; }
+	float GetWidth() { return kWidth_; }
+#pragma endregion
 private:
+	void Debug();
 	void BehaviorInitialize();
 	void MoveLimit();
+	void InvincibleUpdate();
 
 	uint32_t kWeightMax_ = 20;
 
@@ -106,6 +111,7 @@ private:
 	std::unique_ptr<PlayerMove> playerMove_;
 	std::unique_ptr<PlayerPullingMove> playerPullingMove;
 	std::unique_ptr<PlayerString> playerString_;
+	std::unique_ptr<PlayerStun> playerStun_;
 	// プレイヤーの行動範囲
 	float kWidth_ = 100.0f;
 	float kHeight_ = 50.0f;
@@ -114,4 +120,8 @@ private:
 	bool isLanding_;
 	// プレイヤーについているおもりの数
 	uint32_t weightCount_;
+	// 無敵かどうか
+	bool isInvincible_;
+	uint32_t invincibleCount_;
+	uint32_t kInvincibleMax_ = 60;
 };

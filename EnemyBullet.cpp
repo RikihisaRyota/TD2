@@ -13,7 +13,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 }
 
 void EnemyBullet::Update() {
-	worldTransform_.translation_.x += 0.1f;
+	worldTransform_.translation_.z += 0.1f;
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
 }

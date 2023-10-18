@@ -17,24 +17,31 @@ void Player::Initialize(Model* model) {
 
 	playerJump_ = std::make_unique<PlayerJump>();
 	playerJump_->SetPlayer(this);
-	
+
 	playerMove_ = std::make_unique<PlayerMove>();
 	playerMove_->SetPlayer(this);
-	
+
 	playerPullingMove = std::make_unique<PlayerPullingMove>();
 	playerPullingMove->SetPlayer(this);
-	
+
 	playerString_ = std::make_unique<PlayerString>();
 	playerString_->SetPlayer(this);
-	
+
+	playerStun_ = std::make_unique<PlayerStun>();
+	playerStun_->SetPlayer(this);
+
 	Reset();
 	HitBoxInitialize();
+
 	
-	isPulling_ = false;
 }
 
 void Player::Reset() {
+	isPulling_ = false;
+	isLanding_ = false;
 	weightCount_ = 0;
+	isInvincible_ = false;
+	invincibleCount_ = 0;
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
@@ -64,13 +71,18 @@ void Player::Update() {
 		break;
 	case Player::kLanding:
 		break;
+	case Player::kStun:
+		playerStun_->Update();
+		break;
 	}
+	InvincibleUpdate();
 	MoveLimit();
 	HitBoxUpdate();
 	playerMove_->Debug();
 	playerPullingMove->Debug();
 	playerString_->Debug();
 	playerJump_->Debug();
+	playerStun_->Debug();
 	Debug();
 }
 
@@ -87,6 +99,8 @@ void Player::Draw(const ViewProjection& viewProjection) {
 		break;
 	case Player::kLanding:
 		break;
+	case Player::kStun:
+		break;
 	}
 	model_->Draw(worldTransform_, viewProjection);
 }
@@ -95,20 +109,19 @@ void Player::Debug() {
 	ImGui::Begin("Player");
 	ImGui::Text("translation\n");
 	ImGui::Text("x:%.4f,y:%.4f,z:%.4f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
-	float count = static_cast<float>(weightCount_);
-	float max = static_cast<float>(kWeightMax_);
-	ImGui::SliderFloat("weightCount",&count,0.0f, max);
-	ImGui::SliderFloat("weightMax",&max,0.0f,20.0f);
-	weightCount_ = static_cast<uint32_t>(count);
-	kWeightMax_ = static_cast<uint32_t>(max);
+	float weightCount = static_cast<float>(weightCount_);
+	float weightMax = static_cast<float>(kWeightMax_);
+	ImGui::SliderFloat("weightCount", &weightCount, 0.0f, weightMax);
+	ImGui::SliderFloat("weightMax", &weightMax, 0.0f, 20.0f);
+	weightCount_ = static_cast<uint32_t>(weightCount);
+	kWeightMax_ = static_cast<uint32_t>(weightMax);
+	float invincibleCount = static_cast<float>(invincibleCount_);
+	float invincibleMax = static_cast<float>(kInvincibleMax_);
+	ImGui::SliderFloat("weightCount", &invincibleCount, 0.0f, invincibleMax);
+	ImGui::SliderFloat("weightMax", &invincibleMax, 0.0f, 60.0f);
+	invincibleCount_ = static_cast<uint32_t>(invincibleCount);
+	kInvincibleMax_ = static_cast<uint32_t>(invincibleMax);
 	ImGui::End();
-}
-
-void Player::OBJtoOBB() {
-	// .objをOBBへ変更（当たり判定へ）
-	obb_.center_ = worldTransform_.translation_;
-	GetOrientations(MakeRotateXYZMatrix(worldTransform_.rotation_), obb_.orientations_);
-	obb_.size_ = worldTransform_.scale_;
 }
 
 void Player::OnCollision(uint32_t type, Sphere* sphere) {
@@ -119,11 +132,22 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 		if (isPulling_) {
 			weightCount_++;
 		}
+		else {
+			if (behavior_ != Player::Behavior::kStun &&
+				!isInvincible_) {
+				behaviorRequest_ = Player::Behavior::kStun;
+				BehaviorInitialize();
+			}
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
 	{
-
+		if (behavior_ != Player::Behavior::kStun &&
+			!isInvincible_) {
+			behaviorRequest_ = Player::Behavior::kStun;
+			BehaviorInitialize();
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
@@ -178,7 +202,7 @@ void Player::HitBoxUpdate() {
 }
 
 void Player::HitBoxDraw(const ViewProjection& viewProjection) {
-	DrawSphere(sphere_,viewProjection,Vector4(0.0f,1.0f,0.0f,1.0f));
+	DrawSphere(sphere_, viewProjection, Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 }
 
 void Player::BehaviorInitialize() {
@@ -200,6 +224,9 @@ void Player::BehaviorInitialize() {
 		case Behavior::kJump:
 			playerJump_->Initialize(playerString_->GetShootOutVector());
 			break;
+		case Player::kStun:
+			playerStun_->Initialize();
+			break;
 		}
 		// ふるまいリクエストをリセット
 		behaviorRequest_ = std::nullopt;
@@ -208,9 +235,21 @@ void Player::BehaviorInitialize() {
 
 void Player::MoveLimit() {
 	float playerSize = 2.0f;
-	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kWidth_+playerSize, kWidth_- playerSize);
-	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kHeight_+ playerSize, kHeight_- playerSize);
+	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kWidth_ + playerSize, kWidth_ - playerSize);
+	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kHeight_ + playerSize, kHeight_ - playerSize);
 	worldTransform_.UpdateMatrix();
+}
+
+void Player::InvincibleUpdate() {
+	if (isInvincible_) {
+		invincibleCount_++;
+		model_->GetMaterial(0)->SetColor(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+		if (invincibleCount_ >= kInvincibleMax_) {
+			isInvincible_ = false;
+			invincibleCount_ = 0;
+			model_->GetMaterial(0)->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
+	}
 }
 
 void Player::SetScale(const Vector3& scale) {

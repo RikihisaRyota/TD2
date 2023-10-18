@@ -1,8 +1,16 @@
+// width 1000.0f(10/18)
+// height 50.0f(10/18)
 // コマンド,x,y,z,
-// コマンド,(0~2)
-Position,0,20,0
+// コマンド,0:タコ,1:とげ
+Position,100,45,0
 Type,0
-Position,0,25,0
+Position,200,0,0
 Type,1
-Position,0,30,0
-Type,2
+Position,230,10,0
+Type,0
+Position,250,45,0
+Type,1
+Position,500,0,0
+Type,0
+Position,500,-35,0
+Type,0

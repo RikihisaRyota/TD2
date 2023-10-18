@@ -128,6 +128,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="PlayerMove.cpp" />
     <ClCompile Include="PlayerPullingMove.cpp" />
     <ClCompile Include="PlayerString.cpp" />
+    <ClCompile Include="PlayerStun.cpp" />
     <ClCompile Include="PrimitiveDrawer.cpp" />
     <ClCompile Include="LineGraphicsPipline.cpp" />
     <ClCompile Include="main.cpp" />
@@ -197,6 +198,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="PlayerMove.h" />
     <ClInclude Include="PlayerPullingMove.h" />
     <ClInclude Include="PlayerString.h" />
+    <ClInclude Include="PlayerStun.h" />
     <ClInclude Include="PrimitiveDrawer.h" />
     <ClInclude Include="LineGraphicsPipline.h" />
     <ClInclude Include="Material.h" />
