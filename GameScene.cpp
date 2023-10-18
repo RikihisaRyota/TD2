@@ -73,7 +73,7 @@ void GameScene::Initialize() {
 	//for (CSV::Data data : datas) {
 	//	SpawnEnemy(data.position, data.type);
 	//}
-	SpawnEnemy({ 30.0f, 0.0f, 0.0f }, 0);
+	SpawnEnemy({ 20.0f, 10.0f, 0.0f }, 0);
 	// ベロ
 	uvulaHead_.reset(Model::Create("uvulaHead"));
 	uvulaBody_.reset(Model::Create("uvulaBody"));

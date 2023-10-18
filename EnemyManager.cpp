@@ -14,7 +14,7 @@ void EnemyManager::Initialize(Model* model) {
 void EnemyManager::Update() {
 
 	for (auto& enemy : enemies_) {
-		if (enemy->GetIsAlive() && enemy->GetIsDrawing()) {
+		if (enemy->GetIsAlive()) {
 			enemy->Update();
 		}
 	}
