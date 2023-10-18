@@ -59,6 +59,7 @@ void GameScene::Initialize() {
 	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
 	enemyBulletManager_->Initialize(enemyModel_.get());
+	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	UpdateEnemyPopCommands();

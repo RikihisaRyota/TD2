@@ -12,6 +12,7 @@ void EnemyManager::Initialize(Model* model) {
 
 void EnemyManager::Update() {
 	addEnemyStates_.clear();
+
 	for (auto& enemy : enemies_) {
 		enemy->Update();
 		if (enemy->GetEnemyCreateFlag()) {
@@ -21,10 +22,6 @@ void EnemyManager::Update() {
 			};
 			addEnemyStates_.emplace_back(add);
 		}
-	}
-
-	if (input_->ExitKey(DIK_L)) {
-		enemies_[0]->Add();
 	}
 
 

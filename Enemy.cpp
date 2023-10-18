@@ -112,7 +112,9 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
 	{
-		behaviorRequest_ = Behavior::kGrow;
+		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			behaviorRequest_ = Behavior::kGrow;
+		}
 	}
 	break;
 	default:
@@ -218,25 +220,34 @@ void Enemy::StandbyUpdate()
 
 void Enemy::ShotUpdate()
 {
-	Vector3 shotPos_ = { worldTransform_.translation_.x, worldTransform_.translation_.y - 5.0f * worldTransform_.scale_.x, worldTransform_.translation_.z };
-	enemyBulletManager_->CreateBullet(shotPos_, worldTransform_.scale_);
+	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+		Vector3 shotPos_ = { worldTransform_.translation_.x, worldTransform_.translation_.y - 5.0f * worldTransform_.scale_.x, worldTransform_.translation_.z };
+		enemyBulletManager_->CreateBullet(shotPos_, worldTransform_.scale_);
+	}
 	behaviorRequest_ = Behavior::kStandby;
-
 }
 
 void Enemy::SplitUpdate()
 {
-	EnemyCreateFlag = true;
-	float degree = float(rand() / 360);
-	splitPos_ = {
-		.x{cosf(degree) * 10.0f},
-		.y{sinf(degree) * 10.0f},
-		.z{0}
-	};
-	Vector3 Center = worldTransform_.translation_;
-	worldTransform_.translation_ = { splitPos_ + Center};
-	splitPos_ *= -1.0f;
-	splitPos_ += Center;
+	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+		EnemyCreateFlag = true;
+		float degree = float(rand() / 360);
+		splitPos_ = {
+			.x{cosf(degree) * 10.0f},
+			.y{sinf(degree) * 10.0f},
+			.z{0}
+		};
+		Vector3 Center = worldTransform_.translation_;
+		worldTransform_.translation_ = { splitPos_ + Center };
+		splitPos_ *= -1.0f;
+		splitPos_ += Center;
+	}
+	else {
+		EnemyCreateFlag = true;
+		splitPos_ = worldTransform_.translation_;
+		worldTransform_.translation_.y += 5.0f;
+		splitPos_.y  -= 5.0f;
+	}
 	behaviorRequest_ = Behavior::kStandby;
 }
 
@@ -258,11 +269,22 @@ void Enemy::ClingUpdate()
 
 void Enemy::GrowUpdate()
 {
-	if (worldTransform_.scale_.x < 5.0f) {
-		worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
-		behaviorRequest_ = Behavior::kStandby;
+	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+		if (worldTransform_.scale_.x < 5.0f) {
+			worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
+			behaviorRequest_ = Behavior::kStandby;
+		}
+		else {
+			behaviorRequest_ = Behavior::kSplit;
+		}
 	}
 	else {
-		behaviorRequest_ = Behavior::kSplit;
+		if (worldTransform_.scale_.x < 5.0f) {
+			worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
+			behaviorRequest_ = Behavior::kStandby;
+		}
+		else {
+			behaviorRequest_ = Behavior::kSplit;
+		}
 	}
 }

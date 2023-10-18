@@ -15,9 +15,9 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 void EnemyBullet::Update() {
 	worldTransform_.translation_.y -= 0.1f;
 	worldTransform_.UpdateMatrix();
-	/*if (!IsInsideFrustum(sphere_, *viewProjection_)) {
+	if (!IsInsideFrustum(sphere_, *viewProjection_)) {
 		isAlive_ = false;
-	}*/
+	}
 	HitBoxUpdate();
 }
 
