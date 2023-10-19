@@ -33,59 +33,64 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 }
 
 void Enemy::Update() {
-	EnemyCreateFlag = false;
-	if (worldTransform_.scale_.x >= 5.0f) {
-		behaviorRequest_ = Behavior::kSplit;
+	if (isAlive_) {
+		EnemyCreateFlag = false;
+		if (worldTransform_.scale_.x >= 5.0f) {
+			behaviorRequest_ = Behavior::kSplit;
+		}
+		if (input_->PushKey(DIK_0)) {
+			behaviorRequest_ = Behavior::kStandby;
+		}
+		if (input_->PushKey(DIK_1)) {
+			behaviorRequest_ = Behavior::kShot;
+		}
+		if (input_->ExitKey(DIK_2)) {
+			behaviorRequest_ = Behavior::kSplit;
+		}
+		if (input_->PushKey(DIK_3)) {
+			behaviorRequest_ = Behavior::kDamage;
+		}
+		if (input_->PushKey(DIK_4)) {
+			behaviorRequest_ = Behavior::kCling;
+		}
+		if (input_->ExitKey(DIK_5)) {
+			behaviorRequest_ = Behavior::kGrow;
+		}
+		BehaviorRequestCheck();
+		switch (behavior_) {
+		case Behavior::kStandby:
+			StandbyUpdate();
+			break;
+		case Behavior::kShot:
+			ShotUpdate();
+			break;
+		case Behavior::kSplit:
+			SplitUpdate();
+			break;
+		case Behavior::kDamage:
+			DamageUpdate();
+			break;
+		case Behavior::kCling:
+			ClingUpdate();
+			break;
+		case Behavior::kGrow:
+			GrowUpdate();
+			break;
+		}
+
+		if (!IsInsideFrustum(sphere_, *viewProjection_)) {
+			isDrawing_ = false;
+		}
+		else {
+			isDrawing_ = true;
+		}
 	}
-	if (input_->PushKey(DIK_0)) {
-		behaviorRequest_ = Behavior::kStandby;
-	}
-	if (input_->PushKey(DIK_1)) {
-		behaviorRequest_ = Behavior::kShot;
-	}
-	if (input_->ExitKey(DIK_2)) {
-		behaviorRequest_ = Behavior::kSplit;
-	}
-	if (input_->PushKey(DIK_3)) {
-		behaviorRequest_ = Behavior::kDamage;
-	}
-	if (input_->PushKey(DIK_4)) {
-		behaviorRequest_ = Behavior::kCling;
-	}
-	if (input_->ExitKey(DIK_5)) {
-		behaviorRequest_ = Behavior::kGrow;
-	}
-	BehaviorRequestCheck();
-	switch (behavior_) {
-	case Behavior::kStandby:
-		StandbyUpdate();
-		break;
-	case Behavior::kShot:
-		ShotUpdate();
-		break;
-	case Behavior::kSplit:
-		SplitUpdate();
-		break;
-	case Behavior::kDamage:
-		DamageUpdate();
-		break;
-	case Behavior::kCling:
-		ClingUpdate();
-		break;
-	case Behavior::kGrow:
-		GrowUpdate();
-		break;
-	}
+	
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
-	if (!IsInsideFrustum(sphere_, *viewProjection_)) {
-		isDrawing_ = false;
-	}
-	else {
-		isDrawing_ = true;
-	}
 
 	if (player_->GetIsLanding()) {
+		isAlive_ = true;
 		isDrawing_ = true;
 		worldTransform_.scale_.x = 1.0f;
 	}
@@ -99,8 +104,9 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-		if (!player_->GetIsLanding()) {
-			isAlive_ = false;
+		if (player_->GetIsPulling()) {
+ 			isAlive_ = false;
+			isDrawing_ = false;
 		}
 	}
 	break;

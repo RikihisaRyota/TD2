@@ -85,9 +85,9 @@ void EnemyManager::Update() {
 
 void EnemyManager::Draw(const ViewProjection& viewProjection) {
 	for (auto& enemy : enemies_) {
-		if (enemy->GetIsDrawing()) {
-			enemy->Draw(viewProjection);
-		}
+        if (enemy->GetIsDrawing()) {
+            enemy->Draw(viewProjection);
+        }
 	}
 }
 
