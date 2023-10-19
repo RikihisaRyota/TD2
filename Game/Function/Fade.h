@@ -9,20 +9,24 @@ public:
 	~Fade();
 
 	void Initialize();
-	void Update();
-	void Draw();
+
+	void FadeInUpdate();
+	void FadeOutUpdate();
+	
+	void FadeInDraw();
+	void FadeOutDraw();
 
 	void Finalize();
 
-	// 黒から徐々に明るくする場合は1 明るい状態から徐々に暗くする場合は2
-	int SetFlag(int isCount) { return isCount_ = isCount; }
+	bool FadeInFlagSet(bool flag) { return isCount_[0] = flag; }
+	bool FadeOutFlagSet(bool flag) { return isCount_[1] = flag; }
 
-	float GetColor() { return fadeColor_; }
+	float GetColor(int num) { return isCount_[num]; }
 
 private:
-	Sprite* sprite_;
+	Sprite* sprite_[2];
 	uint32_t textureHandle_;
 
-	float fadeColor_;
-	int isCount_ = 0;
+	float fadeColor_[2];
+	bool isCount_[2];
 };

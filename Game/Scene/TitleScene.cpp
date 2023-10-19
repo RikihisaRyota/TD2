@@ -28,9 +28,9 @@ void TitleScene::Update() {
 	ImGui::Text("GameTitle Scene");
 	ImGui::End();
 
-	fade_->Update();
+	fade_->FadeInUpdate();
 
-	if (fade_->GetColor() > 1.5) {
+	if (fade_->GetColor(0) == 1.2f) {
 		sceneNumber_ = GAME_SCENE;
 	}
 
@@ -87,12 +87,12 @@ void TitleScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
-
+	
 	if (input_->PushKey(DIK_SPACE)) {
-		fade_->SetFlag(1);
+		fade_->FadeInFlagSet(true);
 	}
 
-	fade_->Draw();
+	fade_->FadeInDraw();
 	
 	// スプライト描画後処理
 	Sprite::PostDraw();

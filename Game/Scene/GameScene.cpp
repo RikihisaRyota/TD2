@@ -80,7 +80,7 @@ void GameScene::Update() {
 	playerBulletManager_->Update();
 	enemyBulletManager_->Update();
 	uvula_->Update();
-	fade_->Update();
+	fade_->FadeInUpdate();
 	// 敵生成
 	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
 	collisionManager_->Update(player_.get(),playerBulletManager_.get(),enemyManager_.get(),enemyBulletManager_.get(), uvula_.get());
@@ -169,11 +169,6 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
-
-	if (input_->PushKey(DIK_SPACE)) {
-		fade_->SetFlag(2);
-	}
-	fade_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
