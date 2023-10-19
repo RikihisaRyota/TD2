@@ -11,8 +11,12 @@ void GameClear::Update() {
 	ImGui::Text("GameClear Scene");
 	ImGui::End();
 
-	if (input_->PushKey(DIK_0)) {
-		sceneNumber_ = TITLE_SCENE;
+	if (input_->PushKey(DIK_0)&& input_->PrePushKey(DIK_0)) {
+		sceneNumber_ = OVER_SCENE;
+	}
+
+	if (sceneNumber_ > 4) {
+		sceneNumber_ = 0;
 	}
 }
 

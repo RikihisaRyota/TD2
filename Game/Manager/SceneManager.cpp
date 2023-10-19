@@ -6,11 +6,11 @@ SceneManager::SceneManager() {
 }
 
 SceneManager::~SceneManager() {
-
+	
 }
 
 void SceneManager::Run() {
-	Init();
+	Initialize();
 
 	// メインループ
 	while (true) {
@@ -18,31 +18,31 @@ void SceneManager::Run() {
 		if (win->ProcessMessage()) {
 			break;
 		}
+
+		imguiManager->Begin();
+		input->Update();
+		//audio->Update();
+
+		TextureManager::GetInstance()->PreDraw();
+		dxCommon->PreDraw();
+
 		// ステートパターン化
 		preSceneNumber_ = sceneNumber_;
 		sceneNumber_ = sceneArray_[sceneNumber_]->GetSceneNumber();
 
 		if (sceneNumber_ != preSceneNumber_) {
 			sceneArray_[preSceneNumber_]->Finalize();
-			sceneArray_[sceneNumber_]->Finalize();
+			sceneArray_[sceneNumber_]->Initialize();
 		}
-		
-		imguiManager->Begin();
-
-		input->Update();
-		audio->Update();
 
 		sceneArray_[sceneNumber_]->Update();
-		imguiManager->End();
-
-		TextureManager::GetInstance()->PreDraw();
-		dxCommon->PreDraw();
-		imguiManager->Draw();
-		dxCommon->PostDraw();
-
+		
 		sceneArray_[sceneNumber_]->Draw();
+		
+		imguiManager->End();
+		imguiManager->Draw();
 
-		sceneArray_[sceneNumber_]->Finalize();
+		dxCommon->PostDraw();
 	}
 
 	// スプライト
@@ -64,7 +64,7 @@ void SceneManager::Run() {
 	win->TerminateGameWindow();
 }
 
-void SceneManager::Init() {
+void SceneManager::Initialize() {
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
 	win->CreateGameWindow(L"DirectXClass");
@@ -118,7 +118,7 @@ void SceneManager::Init() {
 	PrimitiveDrawer::GetInstance()->Initialize();
 
 	// ImGuiの初期化
-	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
+	imguiManager = ImGuiManager::GetInstance();
 	imguiManager->Initialize(win, dxCommon);
 
 	// Audio

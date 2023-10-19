@@ -98,9 +98,15 @@ void GameScene::Update() {
 		UpdateEnemyPopCommands();
 	}
 
-	if (input_->PushKey(DIK_0)) {
+	// シーン遷移用
+	if (input_->PushKey(DIK_0) && input_->PrePushKey(DIK_0)) {
 		sceneNumber_ = OVER_SCENE;
 	}
+
+	ImGui::Begin("SceneManage");
+	ImGui::InputInt("SceneNumber", &sceneNumber_);
+	ImGui::Text("Game Scene");
+	ImGui::End();
 }
 
 void GameScene::Draw() {
