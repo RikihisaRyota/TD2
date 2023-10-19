@@ -41,6 +41,7 @@ public:
 	void SetTranslation(const Vector3& translation) { worldTransform_.translation_ = translation; }
 	void SetRotate(const Vector3& rotate) { worldTransform_.rotation_ = rotate; }
 	void SetType(uint32_t type) { type_ = type; }
+	void SetMatWorld() { worldTransform_.UpdateMatrix(); }
 private:
 	// 当たり判定
 	// 衝突したら呼び出される処理

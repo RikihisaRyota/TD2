@@ -2,7 +2,7 @@
 // height 50.0f(10/18)
 // コマンド,x,y,z
 // コマンド,0:タコ,1:とげ
-Position,100,45,0
+Position,123.2,45,0
 Type,0
 Position,200,0,0
 Type,1
@@ -13,4 +13,8 @@ Type,1
 Position,500,0,0
 Type,0
 Position,500,-35,0
+Type,0
+Position,165.9,-31.4,0
+Type,0
+Position,7.9,0,0
 Type,0

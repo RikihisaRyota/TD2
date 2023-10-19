@@ -4,9 +4,10 @@
 
 #include "Model.h"
 
-class Enemy;
+class EnemyManager;
+class CSV;
 class EnemyEditor {
 public:
-	//void Update(std::vector<Enemy*>& enemies,Model* model);
+	void Update(EnemyManager* enemyManager);
 };
 

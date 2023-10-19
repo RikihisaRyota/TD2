@@ -27,6 +27,8 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
+	
+	void SetIsDebug(bool flg) { isDebug_ = flg; }
 private:
 	Model* model_;
 	Input* input_;
@@ -34,6 +36,7 @@ private:
 	std::vector<Enemy*> enemies_;
 	ViewProjection* viewProjection_;
 	Player* player_;
-	EnemyEditor* enemyEditor_;
+	// デバック
+	bool isDebug_;
 };
 

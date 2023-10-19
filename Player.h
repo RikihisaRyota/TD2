@@ -99,7 +99,7 @@ private:
 
 	uint32_t kWeightMax_ = 20;
 
-	float radius_ = 1.0f;
+	float radius_ = 5.0f;
 	PlayerBulletManager* playerBulletManager_;
 	Input* input_;
 	ViewProjection* viewProjection_;

@@ -88,40 +88,37 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	frame_->Update();
-	player_->Update();
-	enemyManager_->Update();
-	playerBulletManager_->Update();
-	enemyBulletManager_->Update();
-	uvula_->Update();
-	boss_->Update();
-	// 敵生成
-	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
-	collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-	// 0を押すとカメラを切り替える
-	if (input_->TriggerKey(DIK_0)) {
-		IsDebugCamera_ ^= true;
-	}
-	if (IsDebugCamera_) {
-		// デバックカメラ
-		debugCamera_->Update(&viewProjection_);
-	}
-	else {
+	if (!IsDebugCamera_) {
+		frame_->Update();
+		player_->Update();
+		// デバック
+		enemyManager_->SetIsDebug(IsDebugCamera_);
+		//
+		enemyManager_->Update();
+		playerBulletManager_->Update();
+		enemyBulletManager_->Update();
+		uvula_->Update();
+		boss_->Update();
+		// 敵生成
+		collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
+		// 0を押すとカメラを切り替える
+		if (input_->TriggerKey(DIK_0)) {
+			IsDebugCamera_ ^= true;
+		}
 		followCamera_->Update();
 		viewProjection_ = followCamera_->GetViewProjection();
 	}
-	// リセット
-	if (input_->TriggerKey(DIK_R)) {
-		enemyManager_->Reset();
-		// CSVからデータの読み込み
-		std::unique_ptr<CSV> csv = std::make_unique<CSV>();
-		csv->LoadCSV("Spaw");
-		std::vector<CSV::Data> datas = csv->UpdateDataCommands();
-		// 読み込んだデータから生成
-		for (CSV::Data data : datas) {
-			SpawnEnemy(data.position, data.type);
+	else {
+		// 0を押すとカメラを切り替える
+		if (input_->TriggerKey(DIK_0)) {
+			IsDebugCamera_ ^= true;
 		}
+		enemyEditor_->Update(enemyManager_.get());
+		// デバックカメラ
+		debugCamera_->Update(&viewProjection_);
+		enemyManager_->SetIsDebug(IsDebugCamera_);
 	}
+
 }
 
 void GameScene::Draw() {
@@ -152,14 +149,17 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	player_->Draw(viewProjection_);
 	backGround_->Draw(viewProjection_);
 	frame_->Draw(viewProjection_);
 	uvula_->Draw(viewProjection_);
 	enemyManager_->Draw(viewProjection_);
 	enemyBulletManager_->Draw(viewProjection_);
-	player_->Draw(viewProjection_);
 	playerBulletManager_->Draw(viewProjection_);
 	boss_->Draw(viewProjection_);
+
+	player_->HitBoxDraw(viewProjection_);
+	PrimitiveDrawer::GetInstance()->Draw();
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
 	PrimitiveDrawer::PostDraw();
