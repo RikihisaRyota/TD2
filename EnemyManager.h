@@ -4,6 +4,7 @@
 
 #include "Enemy.h"
 #include "EnemyBulletManager.h"
+#include "EnemyEditor.h"
 #include "Player.h"
 #include "ViewProjection.h"
 
@@ -27,5 +28,6 @@ private:
 	std::vector<Enemy*> enemies_;
 	ViewProjection* viewProjection_;
 	Player* player_;
+	EnemyEditor* enemyEditor_;
 };
 

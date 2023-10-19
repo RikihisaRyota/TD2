@@ -74,3 +74,30 @@ std::vector<CSV::Data> CSV::UpdateDataCommands() {
 	}
 	return result;
 }
+
+void CSV::WritingData(std::vector<Data> datas)
+{
+	std::ofstream outputFile("Resources/CSV/spaw.csv");
+	outputFile << "// width 1000.0f(10/18)";
+	outputFile << '\n';
+	outputFile << "// height 50.0f(10/18)";
+	outputFile << '\n';
+	outputFile << "// コマンド,x,y,z";
+	outputFile << '\n';
+	outputFile << "// コマンド,0:タコ,1:とげ";
+	outputFile << '\n';
+	for (auto& data : datas) {
+		outputFile << "Position,";
+		outputFile << data.position.x;
+		outputFile << ',';
+		outputFile << data.position.y;
+		outputFile << ',';
+		outputFile << data.position.z;
+		outputFile << '\n';
+		outputFile << "Type,";
+		outputFile << data.type;
+		outputFile << '\n';
+
+	}
+	outputFile.close();
+}

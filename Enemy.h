@@ -33,9 +33,14 @@ public:
 
 	bool GetIsAlive() { return isAlive_; }
 	bool GetIsDrawing() { return isDrawing_; }
+	uint32_t GetType() { return type_; }
+	WorldTransform GetWorldTransform() { return worldTransform_; }
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
+	void SetTranslation(const Vector3& translation) { worldTransform_.translation_ = translation; }
+	void SetRotate(const Vector3& rotate) { worldTransform_.rotation_ = rotate; }
+	void SetType(uint32_t type) { type_ = type; }
 private:
 	// 当たり判定
 	// 衝突したら呼び出される処理
