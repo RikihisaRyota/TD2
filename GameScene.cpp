@@ -62,6 +62,7 @@ void GameScene::Initialize() {
 	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
 	enemyBulletManager_->Initialize(enemyModel_.get());
+	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	UpdateEnemyPopCommands();
@@ -188,7 +189,7 @@ void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands)
 }
 
 void GameScene::UpdateEnemyPopCommands() {
-	std::string line;
+	/*std::string line;
 	enemyPopCommands_.clear();
 	enemyPopCommands_.seekg(0, std::ios_base::beg);
 
@@ -224,7 +225,8 @@ void GameScene::UpdateEnemyPopCommands() {
 		}
 		//SpawnEnemy(Vector3(x, y, z), type);
 
-	}
+	}*/
+	SpawnEnemy(Vector3(50.0f, 0.0f, 0.0f), 0);
 }
 
 void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {

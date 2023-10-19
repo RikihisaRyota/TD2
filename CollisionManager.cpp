@@ -85,8 +85,8 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			colliderB->OnCollision(static_cast<uint32_t>(Type::kPlayerBulletVSEnemyBullet), a);
 		}
 		// 敵対敵
-		else if (collisionAttributeA & kCollisionAttributePlayerBullet &&
-				 collisionAttributeB & kCollisionAttributeEnemyBullet) {
+		else if (collisionAttributeA & kCollisionAttributeEnemy &&
+				 collisionAttributeB & kCollisionAttributeEnemy) {
 			colliderA->OnCollision(static_cast<uint32_t>(Type::kEnemyVSEnemy), b);
 			colliderB->OnCollision(static_cast<uint32_t>(Type::kEnemyVSEnemy), a);
 		}
