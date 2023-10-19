@@ -152,6 +152,7 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
 	{
+		isPulling_ = true;
 		behaviorRequest_ = kPullingMove;
 		BehaviorInitialize();
 	}

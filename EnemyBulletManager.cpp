@@ -26,6 +26,9 @@ void EnemyBulletManager::Update() {
 			++it; // 次の要素へ進む
 		}
 	}
+	if (player_->GetIsPulling()) {
+		Reset();
+	}
 }
 
 void EnemyBulletManager::Draw(const ViewProjection& viewProjection) {

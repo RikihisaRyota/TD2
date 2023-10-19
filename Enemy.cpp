@@ -82,6 +82,7 @@ void Enemy::Update() {
 
 	if (player_->GetIsLanding()) {
 		isDrawing_ = true;
+		worldTransform_.scale_.x = 1.0f;
 	}
 }
 
@@ -235,8 +236,8 @@ void Enemy::ShotUpdate()
 		enemyBulletManager_->CreateBullet(
 			{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * worldTransform_.scale_.x) , worldTransform_.translation_.z },
 			worldTransform_.scale_);
-		behaviorRequest_ = Behavior::kStandby;
 	}
+	behaviorRequest_ = Behavior::kStandby;
 }
 
 void Enemy::SplitUpdate()

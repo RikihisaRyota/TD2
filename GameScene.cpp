@@ -60,20 +60,20 @@ void GameScene::Initialize() {
 	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
+	enemyBulletManager_->SetPlayer(player_.get());
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->SetPlayer(player_.get());
 	enemyManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
-	//// CSVからデータの読み込み
-	//std::unique_ptr<CSV> csv = std::make_unique<CSV>();
-	//csv->LoadCSV("Spaw");
-	//std::vector<CSV::Data> datas = csv->UpdateDataCommands();
-	//// 読み込んだデータから生成
-	//for (CSV::Data data : datas) {
-	//	SpawnEnemy(data.position, data.type);
-	//}
-	SpawnEnemy({ 20.0f, 10.0f, 0.0f }, 0);
+	// CSVからデータの読み込み
+	std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+	csv->LoadCSV("Spaw");
+	std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+	// 読み込んだデータから生成
+	for (CSV::Data data : datas) {
+		SpawnEnemy(data.position, data.type);
+	}
 	// ベロ
 	uvulaHead_.reset(Model::Create("uvulaHead"));
 	uvulaBody_.reset(Model::Create("uvulaBody"));
