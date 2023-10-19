@@ -4,7 +4,6 @@
 
 #include "CollisionManager.h"
 #include "Draw.h"
-#include "EnemyManager.h"
 #include "MyMath.h"
 
 void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
@@ -29,6 +28,8 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	HitBoxInitialize();
 
 	input_ = Input::GetInstance();
+	isAlive_ = true;
+	isDrawing_ = true;
 }
 
 void Enemy::Update() {
@@ -77,6 +78,17 @@ void Enemy::Update() {
 	}
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
+	if (!IsInsideFrustum(sphere_, *viewProjection_)) {
+		isDrawing_ = false;
+	}
+	else {
+		isDrawing_ = true;
+	}
+
+	if (player_->GetIsLanding()) {
+		isDrawing_ = true;
+		worldTransform_.scale_.x = 1.0f;
+	}
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
@@ -87,7 +99,9 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-
+		if (!player_->GetIsLanding()) {
+			isAlive_ = false;
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
@@ -136,6 +150,7 @@ void Enemy::HitBoxInitialize() {
 
 void Enemy::HitBoxUpdate() {
 	// Sphere
+	radius_ = worldTransform_.scale_.x / 2.0f;
 	sphere_ = {
 		.center_{worldTransform_.translation_},
 		.radius_{worldTransform_.scale_.x },
@@ -220,9 +235,10 @@ void Enemy::StandbyUpdate()
 
 void Enemy::ShotUpdate()
 {
-	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-		Vector3 shotPos_ = { worldTransform_.translation_.x, worldTransform_.translation_.y - 5.0f * worldTransform_.scale_.x, worldTransform_.translation_.z };
-		enemyBulletManager_->CreateBullet(shotPos_, worldTransform_.scale_);
+	if (!player_->GetIsPulling()) {
+		enemyBulletManager_->CreateBullet(
+			{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * worldTransform_.scale_.x) , worldTransform_.translation_.z },
+			worldTransform_.scale_);
 	}
 	behaviorRequest_ = Behavior::kStandby;
 }

@@ -4,6 +4,9 @@
 
 #include "Enemy.h"
 #include "EnemyBulletManager.h"
+#include "EnemyEditor.h"
+#include "Player.h"
+#include "ViewProjection.h"
 
 class EnemyManager {
 public:
@@ -21,12 +24,16 @@ public:
 
 	std::vector<Enemy*>& GetEnemies() { return enemies_; }
 
+	void SetPlayer(Player* player) { player_ = player; }
+	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
 private:
 	Model* model_;
 	Input* input_;
 	EnemyBulletManager* enemyBulletManager_;
 	std::vector<Enemy*> enemies_;
-	std::vector<EnemyState> addEnemyStates_;
+	ViewProjection* viewProjection_;
+	Player* player_;
+	EnemyEditor* enemyEditor_;
 };
 

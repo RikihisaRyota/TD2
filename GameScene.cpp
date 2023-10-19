@@ -38,8 +38,6 @@ void GameScene::Initialize() {
 	uvulaBody_ = std::make_unique<Model>();
 #pragma endregion
 #pragma region 初期化
-	// CSV
-	LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
 	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
 	backGround_->Initialize(textureHandle);
 	// 枠組み
@@ -61,11 +59,21 @@ void GameScene::Initialize() {
 
 	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
-	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
+	enemyBulletManager_->SetPlayer(player_.get());
+	enemyBulletManager_->Initialize(enemyModel_.get());
+	enemyManager_->SetViewProjection(&viewProjection_);
+	enemyManager_->SetPlayer(player_.get());
 	enemyManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
-	UpdateEnemyPopCommands();
+	// CSVからデータの読み込み
+	std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+	csv->LoadCSV("Spaw");
+	std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+	// 読み込んだデータから生成
+	for (CSV::Data data : datas) {
+		SpawnEnemy(data.position, data.type);
+	}
 	// ベロ
 	uvulaHead_.reset(Model::Create("uvulaHead"));
 	uvulaBody_.reset(Model::Create("uvulaBody"));
@@ -105,8 +113,14 @@ void GameScene::Update() {
 	// リセット
 	if (input_->TriggerKey(DIK_R)) {
 		enemyManager_->Reset();
-		LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
-		UpdateEnemyPopCommands();
+		// CSVからデータの読み込み
+		std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+		csv->LoadCSV("Spaw");
+		std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+		// 読み込んだデータから生成
+		for (CSV::Data data : datas) {
+			SpawnEnemy(data.position, data.type);
+		}
 	}
 }
 
@@ -175,58 +189,6 @@ void GameScene::Draw() {
 
 void GameScene::Release() {
 	SafeDelete(debugCamera_);
-}
-
-void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands) {
-	std::ifstream file;
-
-	file.open(csvName);
-	assert(file.is_open());
-
-	*popCommands << file.rdbuf();
-
-	file.close();
-}
-
-void GameScene::UpdateEnemyPopCommands() {
-	/*std::string line;
-	enemyPopCommands_.clear();
-	enemyPopCommands_.seekg(0, std::ios_base::beg);
-
-	while (getline(enemyPopCommands_, line)) {
-		std::istringstream line_stream(line);
-
-		std::string word;
-
-		getline(line_stream, word, ',');
-
-		if (word.find("//") == 0) {
-			continue;
-		}
-
-		float x = 0, y = 0, z = 0;
-		uint32_t type = 0u;
-
-		if (word.find("Position") == 0) {
-			getline(line_stream, word, ',');
-			x = (float)std::atof(word.c_str());
-
-			getline(line_stream, word, ',');
-			y = (float)std::atof(word.c_str());
-
-			getline(line_stream, word, ',');
-			z = (float)std::atof(word.c_str());
-
-		}
-
-		if (word.find("Type") == 0) {
-			getline(line_stream, word, ',');
-			type = (uint32_t)std::atof(word.c_str());
-		}
-		//SpawnEnemy(Vector3(x, y, z), type);
-
-	}*/
-	SpawnEnemy(Vector3(50.0f, 0.0f, 0.0f), 0);
 }
 
 void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {

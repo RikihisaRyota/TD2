@@ -26,6 +26,9 @@ void EnemyBulletManager::Update() {
 			++it; // 次の要素へ進む
 		}
 	}
+	if (player_->GetIsPulling()) {
+		Reset();
+	}
 }
 
 void EnemyBulletManager::Draw(const ViewProjection& viewProjection) {
@@ -39,6 +42,7 @@ void EnemyBulletManager::CreateBullet(const Vector3& position, const Vector3& sc
 	EnemyBullet* bullet = new EnemyBullet();
 	bullet->SetViewProjection(viewProjection_);
 	bullet->Initialize(model_, position, scale);
+	bullet->SetViewProjection(viewProjection_);
 	enemyBullets_.emplace_back(bullet);
 }
 

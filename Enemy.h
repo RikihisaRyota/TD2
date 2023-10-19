@@ -3,6 +3,8 @@
 
 #include "Collider.h"
 #include "Model.h"
+#include "Player.h"
+#include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "EnemyBulletManager.h"
 #include "Input.h"
@@ -29,12 +31,16 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
-	void Add() { worldTransform_.translation_.x -= 1.0f; }
-	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
-
-	bool GetEnemyCreateFlag() { return EnemyCreateFlag; }
-	Vector3 GetSplitPos() { return splitPos_; }
+	bool GetIsAlive() { return isAlive_; }
+	bool GetIsDrawing() { return isDrawing_; }
 	uint32_t GetType() { return type_; }
+	WorldTransform GetWorldTransform() { return worldTransform_; }
+	void SetPlayer(Player* player) { player_ = player; }
+	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
+	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
+	void SetTranslation(const Vector3& translation) { worldTransform_.translation_ = translation; }
+	void SetRotate(const Vector3& rotate) { worldTransform_.rotation_ = rotate; }
+	void SetType(uint32_t type) { type_ = type; }
 private:
 	// 当たり判定
 	// 衝突したら呼び出される処理
@@ -61,9 +67,13 @@ private:
 	void GrowUpdate();
 
 	WorldTransform worldTransform_;
+	ViewProjection* viewProjection_;
 	Model* model_ = nullptr;
+	Player* player_;
 	uint32_t type_;
 	float radius_ = 1.0f;
+	bool isAlive_;
+	bool isDrawing_;
 
 	// 振る舞い
 	Behavior behavior_ = Behavior::kStandby;

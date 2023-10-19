@@ -2,6 +2,7 @@
 
 #include "Draw.h"
 #include "MyMath.h"
+
 void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& scale) {
 	model_ = model;
 	worldTransform_.Initialize();
@@ -19,6 +20,9 @@ void EnemyBullet::Update() {
 		isAlive_ = false;
 	}
 	HitBoxUpdate();
+	if (!IsInsideFrustum(sphere_, *viewProjection_)) {
+		isAlive_ = false;
+	}
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {
@@ -30,8 +34,6 @@ void EnemyBullet::Reset() {
 }
 
 void EnemyBullet::OnCollision(uint32_t type, Sphere* sphere) {
-	uint32_t a = type;
-	Sphere s = *sphere;
 	isAlive_ = false;
 }
 
