@@ -52,7 +52,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Game/Scene;$(ProjectDir)Game/Manager;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Game/Scene;$(ProjectDir)Game/Manager;$(ProjectDir)Game/Function;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -116,6 +116,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="Game\Function\Fade.cpp" />
     <ClCompile Include="Game\Manager\SceneManager.cpp" />
     <ClCompile Include="Game\Scene\GameClear.cpp" />
     <ClCompile Include="Game\Scene\GameOver.cpp" />
@@ -184,6 +185,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="Frame.h" />
+    <ClInclude Include="Game\Function\Fade.h" />
     <ClInclude Include="Game\Manager\SceneManager.h" />
     <ClInclude Include="Game\Scene\GameClear.h" />
     <ClInclude Include="Game\Scene\GameOver.h" />

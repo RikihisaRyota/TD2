@@ -17,6 +17,11 @@
 #include <GameOver.h>
 #pragma endregion
 
+#pragma region その他
+#include <dxgidebug.h>
+#pragma comment(lib,"dxguid.lib")
+#pragma endregion
+
 class SceneManager {
 public:
 	SceneManager();

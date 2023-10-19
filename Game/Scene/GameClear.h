@@ -2,6 +2,7 @@
 
 #include "IScene.h"
 #include "Input.h"
+#include "Fade.h"
 
 class GameClear : public IScene {
 public:
@@ -12,5 +13,7 @@ public:
 	void Finalize() override;
 
 private:
+	std::unique_ptr<Fade> fade_;
+
 	Input* input_ = nullptr;
 };

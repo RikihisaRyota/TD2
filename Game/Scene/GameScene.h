@@ -22,6 +22,7 @@
 #include "EnemyEditor.h"
 #include "EnemyManager.h"
 #include "EnemyBulletManager.h"
+#include "Fade.h"
 #include "FollowCamera.h"
 #include "Frame.h"
 #include "IScene.h"
@@ -82,6 +83,7 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 
 	bool IsDebugCamera_;
+
 	/// <summary>
 	/// ゲーム用
 	/// </summary>
@@ -102,4 +104,6 @@ private: // メンバ変数
 	std::unique_ptr<Model> uvulaBody_;
 
 	std::stringstream enemyPopCommands_;
+
+	std::unique_ptr<Fade> fade_;
 };

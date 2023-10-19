@@ -35,6 +35,7 @@ void GameScene::Initialize() {
 	uvula_ = std::make_unique<Uvula>();
 	uvulaHead_ = std::make_unique<Model>();
 	uvulaBody_= std::make_unique<Model>();
+	fade_ = std::make_unique<Fade>();
 #pragma endregion
 #pragma region 初期化
 	// CSV
@@ -66,6 +67,9 @@ void GameScene::Initialize() {
 	uvulaBody_.reset(Model::Create("uvulaBody"));
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
+
+	// フェイド
+	fade_->Initialize();
 #pragma endregion
 }
 
@@ -76,6 +80,7 @@ void GameScene::Update() {
 	playerBulletManager_->Update();
 	enemyBulletManager_->Update();
 	uvula_->Update();
+	fade_->Update();
 	// 敵生成
 	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
 	collisionManager_->Update(player_.get(),playerBulletManager_.get(),enemyManager_.get(),enemyBulletManager_.get(), uvula_.get());
@@ -165,6 +170,10 @@ void GameScene::Draw() {
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
 
+	if (input_->PushKey(DIK_SPACE)) {
+		fade_->SetFlag(2);
+	}
+	fade_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
