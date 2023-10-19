@@ -9,7 +9,14 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	for (auto& model : enemyModels_Type0_) {
+		delete model;
+	}
+	for (auto& model : enemyModels_Type1_) {
+		delete model;
+	}
+}
 
 void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
@@ -59,12 +66,20 @@ void GameScene::Initialize() {
 
 	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
+	//enemyModels_.clear();
+	enemyModels_Type0_ = {
+		Model::Create("octopusHead"), Model::Create("octopusLeg")
+	};
+	enemyModels_Type1_ = {
+		Model::Create("toge")
+	};
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyBulletManager_->SetPlayer(player_.get());
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->SetPlayer(player_.get());
-	enemyManager_->Initialize(enemyModel_.get());
+	//enemyManager_->Initialize(enemyModel_.get());
+	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_);
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	// CSVからデータの読み込み
 	std::unique_ptr<CSV> csv = std::make_unique<CSV>();

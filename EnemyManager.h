@@ -17,6 +17,7 @@ public:
 public:
 	~EnemyManager();
 	void Initialize(Model* model);
+	void Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void Reset();
@@ -36,6 +37,8 @@ private:
 	std::vector<Enemy*> enemies_;
 	ViewProjection* viewProjection_;
 	Player* player_;
+	std::vector<Model*> models_type0_;
+	std::vector<Model*> models_type1_;
 	// デバック
 	bool isDebug_;
 };

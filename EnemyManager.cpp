@@ -9,8 +9,17 @@ EnemyManager::~EnemyManager() {
 }
 
 void EnemyManager::Initialize(Model* model) {
+    
 	model_ = model;
 	Reset();
+
+}
+
+void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1)
+{
+    models_type0_ = type0;
+    models_type1_ = type1;
+    Reset();
 }
 
 void EnemyManager::Update() {
@@ -40,8 +49,8 @@ void EnemyManager::Reset() {
 
 void EnemyManager::Create(const Vector3& position, uint32_t type) {
 	Enemy* enemy = new Enemy();
-	enemy->SetEnemyBulletManager(enemyBulletManager_);
-	enemy->Initialize(model_, position, type);
+	//enemy->Initialize(model_, position, type);
+    enemy->Initialize(models_type0_, models_type1_, position, type);
 	enemy->SetViewProjection(viewProjection_);
 	enemy->SetEnemyBulletManager(enemyBulletManager_);
 	enemy->SetPlayer(player_);
