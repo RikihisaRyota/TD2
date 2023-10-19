@@ -17,6 +17,15 @@ public:
 		kSpike
 	};
 
+	enum OctopusParts {
+		kHead,
+		kLeg
+	};
+	enum SpikeParts {
+		kBoll,
+		ks
+	};
+
 	enum Behavior {
 		kStandby, // 待機状態
 		kShot,    // 発射
@@ -26,8 +35,10 @@ public:
 		kGrow,    // 大きくなる
 		kCount    // 最大数
 	};
+
+	
 public:
-	void Initialize(Model* model, const Vector3& position, uint32_t type);
+	void Initialize(const std::vector<Model*>& type0,const std::vector<Model*>&type1, const Vector3& position, uint32_t type);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
@@ -41,6 +52,7 @@ public:
 	void SetTranslation(const Vector3& translation) { worldTransform_.translation_ = translation; }
 	void SetRotate(const Vector3& rotate) { worldTransform_.rotation_ = rotate; }
 	void SetType(uint32_t type) { type_ = type; }
+	
 private:
 	// 当たり判定
 	// 衝突したら呼び出される処理
@@ -72,8 +84,15 @@ private:
 	Player* player_;
 	uint32_t type_;
 	float radius_ = 1.0f;
-	bool isAlive_;
-	bool isDrawing_;
+	bool isAlive_ = true;
+	bool isDrawing_ = true;
+
+	// 演出用
+	std::vector<Model*> models_type0_;
+	std::vector<Model*> models_type1_;
+	WorldTransform worldTransform_type0_[2];
+	WorldTransform worldTransform_type1_[2];
+	
 
 	// 振る舞い
 	Behavior behavior_ = Behavior::kStandby;

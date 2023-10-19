@@ -5,10 +5,9 @@
 #include "Draw.h"
 #include "MyMath.h"
 
-void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
-	assert(model);
-	model_ = model;
-
+void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1, const Vector3& position, uint32_t type) {
+	models_type0_ = type0;
+	models_type1_ = type1;
 	type_ = type;
 
 	worldTransform_.Initialize();
@@ -17,6 +16,13 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t type) {
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
 	worldTransform_.UpdateMatrix();
+
+	worldTransform_type0_[kHead].Initialize();
+	worldTransform_type0_[kHead].rotation_.y = 9.5f;
+	worldTransform_type0_[kLeg].Initialize();
+	worldTransform_type1_[kBoll].Initialize();
+	worldTransform_type1_[kBoll].rotation_.y = 9.6f;
+	worldTransform_type1_[ks].Initialize();
 
 	times_.clear();
 	for (int i = 0; i < kCount; i++) {
@@ -84,11 +90,32 @@ void Enemy::Update() {
 		isDrawing_ = true;
 		worldTransform_.scale_.x = 1.0f;
 	}
+
+	worldTransform_type0_[kHead].translation_ = worldTransform_.translation_;
+	worldTransform_type0_[kHead].UpdateMatrix();
+	worldTransform_type0_[kLeg].translation_ = worldTransform_.translation_;
+	worldTransform_type0_[kLeg].UpdateMatrix();
+
+	worldTransform_type1_[kBoll].translation_ = worldTransform_.translation_;
+	worldTransform_type1_[kBoll].UpdateMatrix();
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection);
+	/*for (auto& model : models_) {
+		model->Draw(worldTransform_, viewProjection);
+	}*/
+	if (type_ == static_cast<size_t>(EnemyType::kOctopus)) {
+		models_type0_[kHead]->Draw(worldTransform_type0_[kHead], viewProjection);
+		models_type0_[kLeg]->Draw(worldTransform_type0_[kLeg], viewProjection);
+	}
+	else if (type_ == static_cast<size_t>(EnemyType::kSpike)) {
+		models_type1_[kBoll]->Draw(worldTransform_type1_[0], viewProjection);
+	}
+	
+
+	//model_->Draw(worldTransform_, viewProjection);
 }
+
 
 void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {

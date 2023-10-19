@@ -6,15 +6,20 @@
 
 EnemyManager::~EnemyManager() {
 	Reset();
-	delete enemyEditor_;
 }
 
 void EnemyManager::Initialize(Model* model) {
+    
 	model_ = model;
 	Reset();
-#ifdef _DEBUG
-	enemyEditor_ = new EnemyEditor();
-#endif // _DEBUG
+
+}
+
+void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1)
+{
+    models_type0_ = type0;
+    models_type1_ = type1;
+    Reset();
 }
 
 void EnemyManager::Update() {
@@ -38,6 +43,7 @@ void EnemyManager::Update() {
             ImGui::DragFloat3("rotation", &rotation.x, 0.01f);
             if (ImGui::Button("TYPE:0")) {
                 enemy->SetType(0);
+                
             }
             if (ImGui::Button("TYPE:1")) {
                 enemy->SetType(1);
@@ -100,7 +106,8 @@ void EnemyManager::Reset() {
 
 void EnemyManager::Create(const Vector3& position, uint32_t type) {
 	Enemy* enemy = new Enemy();
-	enemy->Initialize(model_, position, type);
+	//enemy->Initialize(model_, position, type);
+    enemy->Initialize(models_type0_, models_type1_, position, type);
 	enemy->SetViewProjection(viewProjection_);
 	enemy->SetEnemyBulletManager(enemyBulletManager_);
 	enemy->SetPlayer(player_);
