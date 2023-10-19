@@ -21,27 +21,25 @@ void Player::Initialize(Model* model) {
 	playerMove_ = std::make_unique<PlayerMove>();
 	playerMove_->SetPlayer(this);
 
-	playerPullingMove = std::make_unique<PlayerPullingMove>();
-	playerPullingMove->SetPlayer(this);
+	playerPullingMove_ = std::make_unique<PlayerPullingMove>();
+	playerPullingMove_->SetPlayer(this);
 
 	playerString_ = std::make_unique<PlayerString>();
 	playerString_->SetPlayer(this);
+	playerString_->SetViewProjection(viewProjection_);
 
 	playerStun_ = std::make_unique<PlayerStun>();
 	playerStun_->SetPlayer(this);
 
+	playerLanding_ = std::make_unique<PlayerLanding>();
+	playerLanding_->SetPlayer(this);
+
 	Reset();
 	HitBoxInitialize();
 
-	
 }
 
 void Player::Reset() {
-	isPulling_ = false;
-	isLanding_ = false;
-	weightCount_ = 0;
-	isInvincible_ = false;
-	invincibleCount_ = 0;
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
@@ -50,8 +48,15 @@ void Player::Reset() {
 
 	playerJump_->Initialize({ 0.0f,0.0f,0.0f });
 	playerMove_->Initialize();
-	playerPullingMove->Initialize();
+	playerPullingMove_->Initialize();
 	playerString_->Initialize();
+
+	isPulling_ = false;
+	isLanding_ = false;
+	weightCount_ = 0;
+	isInvincible_ = false;
+	invincibleCount_ = 0;
+
 	HitBoxUpdate();
 }
 
@@ -61,7 +66,7 @@ void Player::Update() {
 		playerMove_->Update();
 		break;
 	case Player::kPullingMove:
-		playerPullingMove->Update();
+		playerPullingMove_->Update();
 		break;
 	case Player::kString:
 		playerString_->Update();
@@ -70,6 +75,7 @@ void Player::Update() {
 		playerJump_->Update();
 		break;
 	case Player::kLanding:
+		playerLanding_->Update();
 		break;
 	case Player::kStun:
 		playerStun_->Update();
@@ -79,7 +85,7 @@ void Player::Update() {
 	MoveLimit();
 	HitBoxUpdate();
 	playerMove_->Debug();
-	playerPullingMove->Debug();
+	playerPullingMove_->Debug();
 	playerString_->Debug();
 	playerJump_->Debug();
 	playerStun_->Debug();
@@ -121,6 +127,10 @@ void Player::Debug() {
 	ImGui::SliderFloat("weightMax", &invincibleMax, 0.0f, 60.0f);
 	invincibleCount_ = static_cast<uint32_t>(invincibleCount);
 	kInvincibleMax_ = static_cast<uint32_t>(invincibleMax);
+	float behavior = static_cast<float>(behavior_);
+	ImGui::Text("Behavior:%f", behavior);
+	ImGui::Text("isPulling:%d", isPulling_);
+	ImGui::Text("isLanding:%d", isLanding_);
 	ImGui::End();
 }
 
@@ -152,8 +162,10 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
 	{
-		behaviorRequest_ = kPullingMove;
-		BehaviorInitialize();
+		if (!isPulling_) {
+			behaviorRequest_ = kPullingMove;
+			BehaviorInitialize();
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
@@ -216,7 +228,7 @@ void Player::BehaviorInitialize() {
 			weightCount_ = 0;
 			break;
 		case Behavior::kPullingMove:
-			playerPullingMove->Initialize();
+			playerPullingMove_->Initialize();
 			break;
 		case Behavior::kString:
 			playerString_->Initialize();

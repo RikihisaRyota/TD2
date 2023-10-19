@@ -14,6 +14,7 @@
 #include "PlayerPullingMove.h"
 #include "PlayerString.h"
 #include "PlayerStun.h"
+#include "PlayerLanding.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 
@@ -63,13 +64,15 @@ public:
 	uint32_t GetWeightNum() { return weightCount_; }
 	uint32_t GetWeightMax() { return kWeightMax_; }
 	bool GetIsPulling() { return isPulling_; }
+	void SetIsPulling(bool flg) { isPulling_= flg; }
 	bool GetIsLanding() { return isLanding_; }
+	void SetIsLanding(bool flg) { isLanding_= flg; }
 	bool GetInvincible() { return isInvincible_; }
 	void SetInvincible(bool flg) { isInvincible_ = flg; }
 	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager; }
 	PlayerBulletManager* GetPlayerBulletManager() { return playerBulletManager_; }
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
-	PlayerPullingMove* GetPlayerMove() { return playerPullingMove.get(); }
+	PlayerPullingMove* GetPlayerMove() { return playerPullingMove_.get(); }
 	PlayerString* GetPlayerString() { return playerString_.get(); }
 	PlayerStun* GetPlayerStun() { return playerStun_.get(); }
 	void SetScale(const Vector3& scale);
@@ -86,6 +89,7 @@ public:
 	float GetHeight() { return kHeight_; }
 	void SetWidth(float width) { kWidth_ = width; }
 	float GetWidth() { return kWidth_; }
+	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection;}
 #pragma endregion
 private:
 	void Debug();
@@ -98,6 +102,7 @@ private:
 	float radius_ = 1.0f;
 	PlayerBulletManager* playerBulletManager_;
 	Input* input_;
+	ViewProjection* viewProjection_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	OBB obb_; // 当たり判定用
@@ -109,9 +114,10 @@ private:
 	// プレイヤーの動き
 	std::unique_ptr<PlayerJump> playerJump_;
 	std::unique_ptr<PlayerMove> playerMove_;
-	std::unique_ptr<PlayerPullingMove> playerPullingMove;
+	std::unique_ptr<PlayerPullingMove> playerPullingMove_;
 	std::unique_ptr<PlayerString> playerString_;
 	std::unique_ptr<PlayerStun> playerStun_;
+	std::unique_ptr<PlayerLanding> playerLanding_;
 	// プレイヤーの行動範囲
 	float kWidth_ = 100.0f;
 	float kHeight_ = 50.0f;

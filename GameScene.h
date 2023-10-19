@@ -82,7 +82,7 @@ private: // メンバ変数
 	/// </summary>
 	std::unique_ptr<BackGround> backGround_;
 	std::unique_ptr<Boss> boss_;
-	std::unique_ptr<Model> bossModel_;
+	std::vector<Model*> bossModel_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Frame> frame_;

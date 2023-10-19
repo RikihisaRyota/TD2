@@ -9,6 +9,11 @@ class Input;
 class Player;
 class PlayerString {
 public:
+	struct StringBody {
+		WorldTransform worldTransform_;
+		bool isAlive_;
+	};
+public:
 	PlayerString();
 	~PlayerString();
 	void Initialize();
@@ -18,8 +23,11 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	const Vector3 GetShootOutVector()const { return shootOutVector_; }
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void Debug();
 private:
+	void StringBodyUpdate();
+	ViewProjection* viewProjection_;
 	float kAddAngle_ = 3.5f;
 	uint32_t kExtendCountMax_ = 40;
 	float kSpeed_ = 0.3f;
@@ -43,7 +51,7 @@ private:
 	Vector3 shootOutVector_;
 	float angle_;
 
-	std::vector<WorldTransform> stringWorldTransform_;
+	std::vector<StringBody> stringBody_;
 	uint32_t setStringWorldTransformCount_;
 	uint32_t extendCount_;
 

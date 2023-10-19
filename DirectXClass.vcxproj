@@ -125,6 +125,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="PlayerBulletManager.cpp" />
     <ClCompile Include="PlayerJump.cpp" />
+    <ClCompile Include="PlayerLanding.cpp" />
     <ClCompile Include="PlayerMove.cpp" />
     <ClCompile Include="PlayerPullingMove.cpp" />
     <ClCompile Include="PlayerString.cpp" />
@@ -195,6 +196,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="PlayerBulletManager.h" />
     <ClInclude Include="PlayerJump.h" />
+    <ClInclude Include="PlayerLanding.h" />
     <ClInclude Include="PlayerMove.h" />
     <ClInclude Include="PlayerPullingMove.h" />
     <ClInclude Include="PlayerString.h" />

@@ -13,6 +13,8 @@ PlayerMove::PlayerMove() {
 PlayerMove::~PlayerMove() {}
 
 void PlayerMove::Initialize() {
+	player_->SetIsPulling(false);
+	player_->SetIsLanding(false);
 	worldTransform_.translation_ = player_->GetTranslation();
 	acceleration_ = { 0.0f,0.0f,0.0f };
 	velocity_ = { 0.0f,0.0f,0.0f };

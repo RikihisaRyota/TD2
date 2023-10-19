@@ -21,7 +21,7 @@ PlayerString::~PlayerString() {
 		delete plane;
 	}
 	plane_.clear();
-	stringWorldTransform_.clear();
+	stringBody_.clear();
 }
 
 void PlayerString::Initialize() {
@@ -37,7 +37,7 @@ void PlayerString::Initialize() {
 	shootOutVector_ = { 0.0f,0.0f,0.0f };
 	angle_ = kInitialAngle_;
 	extendCount_ = 0;
-	stringWorldTransform_.clear();
+	stringBody_.clear();
 	setStringWorldTransformCount_ = 0;
 	isExtend_ = true;
 	shrinkCount_ = 0;
@@ -56,21 +56,23 @@ void PlayerString::Update() {
 		// 縮む処理
 		Shrink();
 	}
+	StringBodyUpdate();
 }
 
 void PlayerString::Extend() {
 	Vector3 move{};
 	if ((input_->TriggerKey(DIK_SPACE) &&
-		stringWorldTransform_.size() >= 4) ||
+		stringBody_.size() >= 4) ||
 		extendCount_ >= kExtendCountMax_) {
 		isExtend_ = false;
 		// 最後の位置を保存
-		WorldTransform saveWorldTransform;
-		saveWorldTransform.Initialize();
-		saveWorldTransform.scale_ = headWorldTransform_.scale_;
-		saveWorldTransform.translation_ = headWorldTransform_.translation_;
-		saveWorldTransform.UpdateMatrix();
-		stringWorldTransform_.emplace_back(saveWorldTransform);
+		StringBody save;
+		save.worldTransform_.Initialize();
+		save.worldTransform_.scale_ = headWorldTransform_.scale_;
+		save.worldTransform_.translation_ = headWorldTransform_.translation_;
+		save.worldTransform_.UpdateMatrix();
+		save.isAlive_ = true;
+		stringBody_.emplace_back(save);
 		plane_.emplace_back(PlaneRenderer::Create());
 		// プレイヤーのいる場所に戻す
 		headWorldTransform_.translation_ = player_->GetTranslation();
@@ -90,16 +92,20 @@ void PlayerString::Extend() {
 	}
 	velocity_ = move * kSpeed_;
 	headWorldTransform_.translation_ += velocity_;
-	float gravity = Lerp(kGravityMin_, kGravityMax_,static_cast<float>(player_->GetWeightNum())/ static_cast<float>(player_->GetWeightMax()));
+	float gravity = Lerp(kGravityMin_, kGravityMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
 	if (playerWorldTransform_.translation_.x > 0.0f) {
 		playerWorldTransform_.translation_.x -= gravity;
-		for (auto& string : stringWorldTransform_) {
-			string.translation_.x -= gravity;
-			string.UpdateMatrix();
+		for (auto& string : stringBody_) {
+			string.worldTransform_.translation_.x -= gravity;
+			string.worldTransform_.UpdateMatrix();
 		}
 	}
 	else {
 		playerWorldTransform_.translation_.x = 0.0f;
+		playerWorldTransform_.UpdateMatrix();
+		player_->SetWorldTransform(playerWorldTransform_);
+		acceleration_ = { 0.0f ,0.0f ,0.0f };
+		player_->SetBehavior(Player::Behavior::kLanding);
 	}
 	// 徐々にサイズを大きくしていく
 	float scale = kPlaneSize_ * static_cast<float>(extendCount_) / static_cast<float>(kExtendCountMax_);
@@ -109,12 +115,13 @@ void PlayerString::Extend() {
 	player_->SetTranslation(playerWorldTransform_.translation_);
 	// 場所を保存
 	if (setStringWorldTransformCount_ % kSetStringWorldTransformInterval == 0) {
-		WorldTransform saveWorldTransform;
-		saveWorldTransform.Initialize();
-		saveWorldTransform.scale_ = headWorldTransform_.scale_;
-		saveWorldTransform.translation_ = headWorldTransform_.translation_;
-		saveWorldTransform.UpdateMatrix();
-		stringWorldTransform_.emplace_back(saveWorldTransform);
+		StringBody save;
+		save.worldTransform_.Initialize();
+		save.worldTransform_.scale_ = headWorldTransform_.scale_;
+		save.worldTransform_.translation_ = headWorldTransform_.translation_;
+		save.worldTransform_.UpdateMatrix();
+		save.isAlive_ = true;
+		stringBody_.emplace_back(save);
 		plane_.emplace_back(PlaneRenderer::Create());
 		setStringWorldTransformCount_ = 0;
 	}
@@ -128,11 +135,11 @@ void PlayerString::Shrink() {
 
 	shrinkCount_++;
 
-	if (shrinkCount_ >= kShrinkCountMax_ || stringWorldTransform_.size() < 4) {
-		size_t endIndex = stringWorldTransform_.size() - 1;
+	if (shrinkCount_ >= kShrinkCountMax_ || stringBody_.size() < 4) {
+		size_t endIndex = stringBody_.size() - 1;
 		uint32_t count = 1;
 		while (shootOutVector_.Length() <= 0.0f) {
-			shootOutVector_ = stringWorldTransform_[endIndex].translation_ - stringWorldTransform_[endIndex - count].translation_;
+			shootOutVector_ = stringBody_[endIndex].worldTransform_.translation_ - stringBody_[endIndex - count].worldTransform_.translation_;
 			count++;
 		}
 		shootOutVector_.Normalize();
@@ -141,7 +148,7 @@ void PlayerString::Shrink() {
 	else {
 		float t = static_cast<float>(shrinkCount_) / static_cast<float>(kShrinkCountMax_);
 		// インデックスを計算
-		size_t numPoints = stringWorldTransform_.size();
+		size_t numPoints = stringBody_.size();
 		size_t startIndex = static_cast<size_t>(t * (numPoints - 1));
 		size_t endIndex = (std::min)(startIndex + 1, numPoints - 1);
 
@@ -149,7 +156,7 @@ void PlayerString::Shrink() {
 		float tInSegment = t * (numPoints - 1) - startIndex;
 
 		// 線形補間して位置を設定
-		headWorldTransform_.translation_ = Lerp(stringWorldTransform_[startIndex].translation_, stringWorldTransform_[endIndex].translation_, tInSegment);
+		headWorldTransform_.translation_ = Lerp(stringBody_[startIndex].worldTransform_.translation_, stringBody_[endIndex].worldTransform_.translation_, tInSegment);
 		headWorldTransform_.UpdateMatrix();
 		// プレイヤーのワールド変換を設定
 		player_->SetTranslation(headWorldTransform_.translation_);
@@ -159,8 +166,8 @@ void PlayerString::Shrink() {
 
 
 void PlayerString::Draw(const ViewProjection& viewProjection) {
-	for (size_t i = 0; i < stringWorldTransform_.size(); i++) {
-		plane_.at(i)->Draw(stringWorldTransform_.at(i), viewProjection);
+	for (size_t i = 0; i < stringBody_.size(); i++) {
+		plane_.at(i)->Draw(stringBody_.at(i).worldTransform_, viewProjection);
 	}
 	if (isExtend_) {
 		head_->Draw(headWorldTransform_, viewProjection);
@@ -183,12 +190,12 @@ void PlayerString::Debug() {
 		kExtendCountMax_ = static_cast<uint32_t>(extendCountMax);
 		ImGui::SliderFloat("GravityMin", &kGravityMin_, 0.0f, kGravityMax_);
 		ImGui::SliderFloat("GravityMax", &kGravityMax_, kGravityMin_, 1.0f);
-		if (stringWorldTransform_.empty()) {
+		if (stringBody_.empty()) {
 			if (ImGui::TreeNode("String")) {
 				uint32_t count = 0;
-				for (auto& world : stringWorldTransform_) {
+				for (auto& world : stringBody_) {
 					ImGui::Text(("translation" + std::to_string(count)).c_str());
-					ImGui::Text("x:%.4f,y:%.4f,z:%.4f", world.translation_.x, world.translation_.y, world.translation_.z);
+					ImGui::Text("x:%.4f,y:%.4f,z:%.4f", world.worldTransform_.translation_.x, world.worldTransform_.translation_.y, world.worldTransform_.translation_.z);
 					count++;
 				}
 				ImGui::TreePop();
@@ -197,4 +204,19 @@ void PlayerString::Debug() {
 		ImGui::TreePop();
 	}
 	ImGui::End();
+}
+
+void PlayerString::StringBodyUpdate() {
+	for (auto& body : stringBody_) {
+		if (!IsInsideFrustum(Sphere(body.worldTransform_.translation_, 1.0f), *viewProjection_)) {
+			body.isAlive_ = false;
+		}
+	}
+	// 削除する要素のイテレータを見つける
+	auto it = std::remove_if(stringBody_.begin(), stringBody_.end(), [](const StringBody& body) {
+		return !body.isAlive_;
+		});
+
+	// 削除する要素を実際に削除
+	stringBody_.erase(it, stringBody_.end());
 }

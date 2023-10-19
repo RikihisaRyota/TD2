@@ -16,12 +16,12 @@ PlayerPullingMove::PlayerPullingMove() {
 PlayerPullingMove::~PlayerPullingMove() {}
 
 void PlayerPullingMove::Initialize() {
-	worldTransform_ = player_->GetWorldTransform();
-	velocity_ = { 0.0f,0.0f,0.0f };
-
+	player_->SetIsPulling(true);
 }
 
 void PlayerPullingMove::Update() {
+	worldTransform_ = player_->GetWorldTransform();
+	velocity_ = { 0.0f,0.0f,0.0f };
 	Vector3 move{};
 	if (input_->PushKey(DIK_A)) {
 		move += { 0.0f, 1.0f, 0.0f };

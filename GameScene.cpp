@@ -23,7 +23,6 @@ void GameScene::Initialize() {
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
 	boss_ = std::make_unique<Boss>();
-	bossModel_ = std::make_unique<Model>();
 	collisionManager_ = std::make_unique<CollisionManager>();
 	enemyEditor_ = std::make_unique<EnemyEditor>();
 	enemyManager_ = std::make_unique<EnemyManager>();
@@ -36,7 +35,7 @@ void GameScene::Initialize() {
 	playerBulletModel_ = std::make_unique<Model>();
 	uvula_ = std::make_unique<Uvula>();
 	uvulaHead_ = std::make_unique<Model>();
-	uvulaBody_= std::make_unique<Model>();
+	uvulaBody_ = std::make_unique<Model>();
 #pragma endregion
 #pragma region 初期化
 	// CSV
@@ -54,11 +53,12 @@ void GameScene::Initialize() {
 	// プレイヤー
 	playerModel_.reset(Model::Create("Player"));
 	playerBulletModel_.reset(Model::Create("playerBullet"));
+	player_->SetViewProjection(&viewProjection_);
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_.get());
 	playerBulletManager_->SetViewProjection(&viewProjection_);
 	playerBulletManager_->Initialize(playerBulletModel_.get());
-	
+
 	// 敵
 	enemyModel_.reset(Model::Create("Enemy"));
 	enemyBulletManager_->Initialize(enemyModel_.get());
@@ -71,9 +71,10 @@ void GameScene::Initialize() {
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 	// ボス
-	bossModel_.reset(Model::Create("boss"));
+	bossModel_.emplace_back(Model::Create("bossOnJaw"));
+	bossModel_.emplace_back(Model::Create("bossLowerJaw"));
 	boss_->SetPlayer(player_.get());
-	boss_->Initialize(bossModel_.get());
+	boss_->Initialize(bossModel_);
 #pragma endregion
 }
 
@@ -87,7 +88,7 @@ void GameScene::Update() {
 	boss_->Update();
 	// 敵生成
 	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
-	collisionManager_->Update(player_.get(),playerBulletManager_.get(),enemyManager_.get(),enemyBulletManager_.get(), uvula_.get());
+	collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
 	// 0を押すとカメラを切り替える
 	if (input_->TriggerKey(DIK_0)) {
 		IsDebugCamera_ ^= true;
@@ -221,11 +222,11 @@ void GameScene::UpdateEnemyPopCommands() {
 			getline(line_stream, word, ',');
 			type = (uint32_t)std::atof(word.c_str());
 		}
-		SpawnEnemy(Vector3(x, y, z), type);
+		//SpawnEnemy(Vector3(x, y, z), type);
 
 	}
 }
 
 void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {
-	enemyManager_->Create(position,type);
+	enemyManager_->Create(position, type);
 }
