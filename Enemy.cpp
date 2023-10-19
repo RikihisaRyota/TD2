@@ -127,6 +127,16 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 }
 
 
+void Enemy::SetMatWorld() {
+	worldTransform_type0_[kHead].translation_ = worldTransform_.translation_;
+	worldTransform_type0_[kHead].UpdateMatrix();
+	worldTransform_type0_[kLeg].translation_ = worldTransform_.translation_;
+	worldTransform_type0_[kLeg].UpdateMatrix();
+
+	worldTransform_type1_[kBoll].translation_ = worldTransform_.translation_;
+	worldTransform_type1_[kBoll].UpdateMatrix();
+}
+
 void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
