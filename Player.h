@@ -38,6 +38,7 @@ public:
 		kJump,
 		kLanding,
 		kStun,
+		kDoNothing,
 
 		kCount
 	};
@@ -71,6 +72,7 @@ public:
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 #pragma region getter,setter
 	uint32_t GetWeightNum() { return weightCount_; }
+	void SetWeightNum(uint32_t num) { weightCount_ = num; }
 	uint32_t GetWeightMax() { return kWeightMax_; }
 	bool GetIsPulling() { return isPulling_; }
 	void SetIsPulling(bool flg) { isPulling_= flg; }

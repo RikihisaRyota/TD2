@@ -174,7 +174,6 @@ void GameScene::Draw() {
 	playerBulletManager_->Draw(viewProjection_);
 	boss_->Draw(viewProjection_);
 
-	player_->HitBoxDraw(viewProjection_);
 	PrimitiveDrawer::GetInstance()->Draw();
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();

@@ -10,7 +10,9 @@ PlayerLanding::PlayerLanding() {
 PlayerLanding::~PlayerLanding() {}
 
 void PlayerLanding::Initialize() {
+	uint32_t weightNum = player_->GetWeightNum();
 	player_->Reset();
+	player_->SetWeightNum(weightNum);
 	player_->SetIsLanding(true);
 }
 

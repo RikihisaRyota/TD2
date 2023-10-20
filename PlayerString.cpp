@@ -113,7 +113,7 @@ void PlayerString::Extend() {
 		player_->SetWorldTransform(playerWorldTransform_);
 		player_->UpdateMatrix();
 		acceleration_ = { 0.0f ,0.0f ,0.0f };
-		player_->SetBehavior(Player::Behavior::kLanding);
+		player_->SetBehavior(Player::Behavior::kDoNothing);
 	}
 	
 	// 場所を保存

@@ -108,6 +108,8 @@ void Player::Update() {
 	case Player::kStun:
 		playerStun_->Update();
 		break;
+	case Player::kDoNothing:
+		break;
 	}
 	InvincibleUpdate();
 	MoveLimit();
@@ -135,6 +137,8 @@ void Player::Draw(const ViewProjection& viewProjection) {
 		break;
 	case Player::kStun:
 		break;
+	case Player::kDoNothing:
+		break;
 	}
 	for (size_t i = 0; i < Parts::kPartsCount; i++) {
 		models_.at(i)->Draw(parts_.at(i), viewProjection);
@@ -153,8 +157,8 @@ void Player::Debug() {
 	kWeightMax_ = static_cast<uint32_t>(weightMax);
 	float invincibleCount = static_cast<float>(invincibleCount_);
 	float invincibleMax = static_cast<float>(kInvincibleMax_);
-	ImGui::SliderFloat("weightCount", &invincibleCount, 0.0f, invincibleMax);
-	ImGui::SliderFloat("weightMax", &invincibleMax, 0.0f, 60.0f);
+	ImGui::SliderFloat("invincibleCount", &invincibleCount, 0.0f, invincibleMax);
+	ImGui::SliderFloat("invincibleMax", &invincibleMax, 0.0f, 60.0f);
 	invincibleCount_ = static_cast<uint32_t>(invincibleCount);
 	kInvincibleMax_ = static_cast<uint32_t>(invincibleMax);
 	float behavior = static_cast<float>(behavior_);
@@ -277,6 +281,8 @@ void Player::BehaviorInitialize() {
 		case Player::kStun:
 			playerStun_->Initialize();
 			break;
+		case Player::kDoNothing:
+			break;
 		}
 		// ふるまいリクエストをリセット
 		behaviorRequest_ = std::nullopt;
@@ -294,7 +300,7 @@ void Player::InvincibleUpdate() {
 	if (isInvincible_) {
 		invincibleCount_++;
 		for (auto& model : models_) {
-			model->GetMaterial(0)->SetColor(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+			model->GetMaterial(0)->SetColor(Vector4(1.0f, 0.0f, 1.0f, 1.0f));
 		}
 		if (invincibleCount_ >= kInvincibleMax_) {
 			isInvincible_ = false;

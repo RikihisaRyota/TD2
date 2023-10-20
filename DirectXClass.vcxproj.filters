@@ -251,11 +251,11 @@
     <ClCompile Include="PlayerBulletManager.cpp">
       <Filter>ソース ファイル\Player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerStun.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerLanding.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerStun.cpp">
+      <Filter>ソース ファイル\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -485,7 +485,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="PlayerLanding.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

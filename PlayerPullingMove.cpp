@@ -16,6 +16,7 @@ PlayerPullingMove::PlayerPullingMove() {
 PlayerPullingMove::~PlayerPullingMove() {}
 
 void PlayerPullingMove::Initialize() {
+	player_->SetMotionRotation(Vector3(0.0f, 0.0f, 0.0f));
 	player_->SetIsPulling(true);
 }
 
@@ -81,6 +82,6 @@ void PlayerPullingMove::MoveLimit() {
 	if (worldTransform_.translation_.x <= 0.0f) {
 		worldTransform_.translation_.x = 0.0f;
 		acceleration_ = { 0.0f ,0.0f ,0.0f };
-		player_->SetBehavior(Player::Behavior::kLanding);
+		player_->SetBehavior(Player::Behavior::kDoNothing);
 	}
 }

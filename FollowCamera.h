@@ -27,6 +27,8 @@ private:
 	Vector3 nowOffset_;
 	Vector3 dropOffset_;
 	Vector3 debugOffset_;
+	Vector3 bossAttackOffset_;
+	uint32_t bossCamaraCount_ = 0;
 	float dropDelayInterpolationLate_;
 	float delayInterpolationLate_;
 };

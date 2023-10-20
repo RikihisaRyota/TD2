@@ -9,6 +9,7 @@ void FollowCamera::Initialize() {
 	viewProjection_.Initialize();
 	debugOffset_ = { 40.0f, 0.0f, -90.0f };
 	dropOffset_ = { -40.0f, 0.0f, -90.0f };
+	bossAttackOffset_ = { -15.0f,0.0f,-150.0f };
 	delayInterpolationLate_ = 0.5f;
 	dropDelayInterpolationLate_ = 0.8f;
 }
@@ -17,14 +18,25 @@ void FollowCamera::Update() {
 	if (target_) {
 		float kInterpolationLate;
 		// プレイヤーが落下中か
-		if (player_->GetIsPulling()) {
+		if (player_->GetIsPulling()&& !player_->GetIsLanding()) {
 			nowOffset_ =Lerp(nowOffset_, dropOffset_,0.1f);
-			kInterpolationLate = dropDelayInterpolationLate_;
+			//kInterpolationLate = dropDelayInterpolationLate_;
 		}
-		else {
+		if (!player_->GetIsPulling() && !player_->GetIsLanding()) {
 			nowOffset_ =Lerp(nowOffset_, debugOffset_,  0.1f);
-			kInterpolationLate = delayInterpolationLate_;
+			//kInterpolationLate = delayInterpolationLate_;
 		}
+		if (player_->GetBehavior()==Player::Behavior::kDoNothing) {
+			const float BossCameraCountMax = 60.0f;
+			nowOffset_ = Lerp(nowOffset_, bossAttackOffset_, static_cast<float>(bossCamaraCount_)/ BossCameraCountMax);
+			bossCamaraCount_++;
+			if (bossCamaraCount_ >= BossCameraCountMax) {
+				bossCamaraCount_ = 0;
+				player_->SetBehavior(Player::Behavior::kLanding);
+			}
+
+		}
+		kInterpolationLate = dropDelayInterpolationLate_;
 		// 追従座標の補間
 		interTarget_ = Lerp(interTarget_, target_->translation_, kInterpolationLate);
 		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(viewProjection_.rotation_);

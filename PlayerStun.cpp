@@ -14,21 +14,23 @@ PlayerStun::~PlayerStun() {}
 
 void PlayerStun::Initialize() {
 	stunCount_ = 0;
-	worldTransform_ = player_->GetWorldTransform();
+	worldTransform_ = player_->GetMotionWorldTransform();
 }
 
 void PlayerStun::Update() {
 	if (stunCount_ <= kStunMax_) {
 		stunCount_++;
 		float t = static_cast<float>(stunCount_) / static_cast<float>(kStunMax_);
-		worldTransform_.rotation_.z = Lerp(0.0f, 360.0f*kRotationCountMax_,t);
+		worldTransform_.rotation_.x = Lerp(0.0f, 360.0f*kRotationCountMax_,t);
 		worldTransform_.UpdateMatrix();
-		player_->SetWorldTransform(worldTransform_);
+		player_->SetMotionWorldTransform(worldTransform_);
+		player_->UpdateMatrix();
 	}
 	else {
-		worldTransform_.rotation_.z = 0.0f;
+		worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
 		worldTransform_.UpdateMatrix();
-		player_->SetWorldTransform(worldTransform_);
+		player_->SetMotionWorldTransform(worldTransform_);
+		player_->UpdateMatrix();
 		player_->SetInvincible(true);
 		player_->SetBehavior(Player::Behavior::kMove);
 	}

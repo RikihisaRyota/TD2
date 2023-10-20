@@ -48,7 +48,13 @@ public:
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 private:
 	void UpdateMatrix();
-	uint32_t kSakeMax_ = 30;
+	void DeathAnimation(float t);
+	void AttackAnimation(float t);
+	uint32_t kHP_ = 4;
+	uint32_t HP_;
+	uint32_t kAnimationMax_ = 120;
+
+	uint32_t animationCount_;
 
 	// プレイヤー
 	Player* player_;
