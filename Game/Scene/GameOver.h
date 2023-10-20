@@ -17,4 +17,6 @@ private:
 	std::unique_ptr<Fade> fade_;
 
 	Input* input_ = nullptr;
+
+	bool isStart_ = true;
 };

@@ -36,6 +36,7 @@ void GameScene::Initialize() {
 	uvulaHead_ = std::make_unique<Model>();
 	uvulaBody_= std::make_unique<Model>();
 	fade_ = std::make_unique<Fade>();
+	fade_->Initialize();
 #pragma endregion
 #pragma region 初期化
 	// CSV
@@ -68,54 +69,72 @@ void GameScene::Initialize() {
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 
-	// フェイド
-	fade_->Initialize();
+	isGameStart_ = false;
+	isGameEnd_ = false;
+	isGameOver_ = false;
 #pragma endregion
 }
 
 void GameScene::Update() {
-	frame_->Update();
-	player_->Update();
-	enemyManager_->Update();
-	playerBulletManager_->Update();
-	enemyBulletManager_->Update();
-	uvula_->Update();
-	fade_->FadeInUpdate();
-	// 敵生成
-	//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
-	collisionManager_->Update(player_.get(),playerBulletManager_.get(),enemyManager_.get(),enemyBulletManager_.get(), uvula_.get());
-	// 0を押すとカメラを切り替える
-	if (input_->TriggerKey(DIK_0)) {
-		IsDebugCamera_ ^= true;
-	}
-	if (IsDebugCamera_) {
-		// デバックカメラ
-		debugCamera_->Update(&viewProjection_);
-	}
-	else {
-		followCamera_->Update();
-		viewProjection_ = followCamera_->GetViewProjection();
-	}
-	// リセット
-	if (input_->TriggerKey(DIK_R)) {
-		enemyManager_->Reset();
-		LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
-		UpdateEnemyPopCommands();
+	fade_->FadeOutUpdate();
+	if (fade_->GetColor(1) < 0.0f) {
+		isGameStart_ = true;
 	}
 
-	// シーン遷移用
-	if (input_->PushKey(DIK_0) && input_->PrePushKey(DIK_0)) {
+	if (isGameStart_ == true) {
+		frame_->Update();
+		player_->Update();
+		enemyManager_->Update();
+		playerBulletManager_->Update();
+		enemyBulletManager_->Update();
+		uvula_->Update();
+		fade_->FadeInUpdate();
+		// 敵生成
+		//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
+		collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
+		// 0を押すとカメラを切り替える
+		if (input_->TriggerKey(DIK_0)) {
+			IsDebugCamera_ ^= true;
+		}
+		if (IsDebugCamera_) {
+			// デバックカメラ
+			debugCamera_->Update(&viewProjection_);
+		}
+		else {
+			followCamera_->Update();
+			viewProjection_ = followCamera_->GetViewProjection();
+		}
+		// リセット
+		if (input_->TriggerKey(DIK_R)) {
+			enemyManager_->Reset();
+			LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
+			UpdateEnemyPopCommands();
+		}
+
+		if (input_->PushKey(DIK_8)) {
+			isGameEnd_ = true;
+		}
+
+		if (input_->PushKey(DIK_9)) {
+			isGameOver_ = true;
+		}
+
+		ImGui::Begin("SceneManage");
+		ImGui::InputInt("SceneNumber", &sceneNumber_);
+		ImGui::Text("Game Scene");
+		ImGui::End();
+	}
+
+	if (fade_->GetColor(0) > 1.0f&& isGameEnd_ == true) {
+		sceneNumber_ = CLEAR_SCENE;
+	}
+	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
 		sceneNumber_ = OVER_SCENE;
 	}
-
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("Game Scene");
-	ImGui::End();
 }
 
 void GameScene::Draw() {
-
+	
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -142,6 +161,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	
 	backGround_->Draw(viewProjection_);
 	frame_->Draw(viewProjection_);
 	uvula_->Draw(viewProjection_);
@@ -149,6 +169,7 @@ void GameScene::Draw() {
 	enemyBulletManager_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 	playerBulletManager_->Draw(viewProjection_);
+
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
@@ -169,6 +190,16 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
+
+	if (isGameStart_ == false) {
+		fade_->FadeOutFlagSet(true);
+		fade_->FadeOutDraw();
+	}
+
+	if (isGameEnd_ == true || isGameOver_ == true) {
+		fade_->FadeInFlagSet(true);
+		fade_->FadeInDraw();
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

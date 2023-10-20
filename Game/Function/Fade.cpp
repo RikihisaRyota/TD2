@@ -11,7 +11,7 @@ void Fade::Initialize() {
 	sprite_[1] = Sprite::Create(textureHandle_, { 640,360 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 
 	fadeColor_[0] = 0.0f;
-	fadeColor_[1] = 1.0f;
+	fadeColor_[1] = 2.0f;
 }
 
 void Fade::FadeInUpdate() {
@@ -19,8 +19,9 @@ void Fade::FadeInUpdate() {
 		fadeColor_[0] += 0.03f;
 	}
 
-	if (fadeColor_[0] == 1.2f) {
+	if (fadeColor_[0] > 1.2f) {
 		isCount_[0] = false;
+		fadeColor_[0] = 0.0f;
 	}
 
 	ImGui::Begin("FadeIn");
@@ -33,8 +34,9 @@ void Fade::FadeOutUpdate() {
 		fadeColor_[1] -= 0.03f;
 	}
 
-	if (fadeColor_[1] == -1.2f) {
+	if (fadeColor_[1] < -1.2f) {
 		isCount_[1] = false;
+		fadeColor_[1] = 1.0f;
 	}
 
 	ImGui::Begin("FadeOut");

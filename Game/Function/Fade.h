@@ -21,7 +21,7 @@ public:
 	bool FadeInFlagSet(bool flag) { return isCount_[0] = flag; }
 	bool FadeOutFlagSet(bool flag) { return isCount_[1] = flag; }
 
-	float GetColor(int num) { return isCount_[num]; }
+	float GetColor(int num) { return fadeColor_[num]; }
 
 private:
 	Sprite* sprite_[2];

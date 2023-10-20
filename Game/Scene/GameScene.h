@@ -106,4 +106,9 @@ private: // メンバ変数
 	std::stringstream enemyPopCommands_;
 
 	std::unique_ptr<Fade> fade_;
+
+	// フェード管理用
+	bool isGameStart_ = false;
+	bool isGameEnd_ = false;
+	bool isGameOver_ = false;
 };

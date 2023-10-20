@@ -13,6 +13,11 @@
 
 void GameClear::Initialize() {
 	input_ = Input::GetInstance();
+
+	fade_ = std::make_unique<Fade>();
+	fade_->Initialize();
+
+	bool isStart_ = true;
 }
 
 void GameClear::Update() {
@@ -20,6 +25,12 @@ void GameClear::Update() {
 	ImGui::InputInt("SceneNumber", &sceneNumber_);
 	ImGui::Text("GameClear Scene");
 	ImGui::End();
+
+	fade_->FadeOutUpdate();
+
+	if (fade_->GetColor(1) < 0.0f) {
+		isStart_ = false;
+	}
 
 	if (input_->PushKey(DIK_0)&& input_->PrePushKey(DIK_0)) {
 		sceneNumber_ = OVER_SCENE;
@@ -78,6 +89,12 @@ void GameClear::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
+
+	if (isStart_ == true) {
+		fade_->FadeOutFlagSet(true);
+		fade_->FadeOutDraw();
+
+	}
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

@@ -30,7 +30,7 @@ void TitleScene::Update() {
 
 	fade_->FadeInUpdate();
 
-	if (fade_->GetColor(0) == 1.2f) {
+	if (fade_->GetColor(0) > 1.0f) {
 		sceneNumber_ = GAME_SCENE;
 	}
 
