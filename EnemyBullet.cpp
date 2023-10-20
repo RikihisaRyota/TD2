@@ -3,11 +3,13 @@
 #include "Draw.h"
 #include "MyMath.h"
 
-void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& scale) {
+void EnemyBullet::Initialize(Model* model, const Vector3& position, float radius) {
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
-	worldTransform_.scale_ = scale;
+	radius_ = radius;
+	float scale = radius * 0.5f;
+	worldTransform_.scale_ = {scale, scale, scale};
 	worldTransform_.UpdateMatrix();
 	isAlive_ = true;
 	HitBoxInitialize();

@@ -39,6 +39,7 @@ private:
 	Player* player_;
 	std::vector<Model*> models_type0_;
 	std::vector<Model*> models_type1_;
+	std::vector<EnemyState> splits_;
 	// デバック
 	bool isDebug_;
 };

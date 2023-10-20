@@ -23,11 +23,23 @@ void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vecto
 }
 
 void EnemyManager::Update() {
+
 	for (auto& enemy : enemies_) {
-		if (enemy->GetIsAlive()) {
-			enemy->Update();
+		enemy->Update();
+		if (enemy->GetIsCreateFlag()) {
+			EnemyState split = {
+				.position{enemy->GetSplitPos()},
+				.type{enemy->GetType()}
+			};
+			splits_.emplace_back(split);
 		}
 	}
+
+	for (auto& split : splits_) {
+		Create(split.position, split.type);
+	}
+	splits_.clear();
+
 }
 
 void EnemyManager::Draw(const ViewProjection& viewProjection) {

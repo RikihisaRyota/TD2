@@ -44,8 +44,10 @@ public:
 
 	bool GetIsAlive() { return isAlive_; }
 	bool GetIsDrawing() { return isDrawing_; }
+	bool GetIsCreateFlag() { return EnemyCreateFlag; }
 	uint32_t GetType() { return type_; }
 	WorldTransform GetWorldTransform() { return worldTransform_; }
+	Vector3 GetSplitPos() { return splitPos_; }
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
@@ -83,7 +85,7 @@ private:
 	Model* model_ = nullptr;
 	Player* player_;
 	uint32_t type_;
-	float radius_ = 1.0f;
+	float radius_ = 2.0f;
 	bool isAlive_ = true;
 	bool isDrawing_ = true;
 
