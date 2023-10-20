@@ -26,6 +26,11 @@ public:
 	/// </summary>
 	std::vector<Data> UpdateDataCommands();
 
+	/// <summary>
+	/// データの書き込み
+	/// </summary>
+	void WritingData(std::vector<Data> datas);
+
 private:
 	// 発生コマンド
 	std::stringstream dateCommands_;

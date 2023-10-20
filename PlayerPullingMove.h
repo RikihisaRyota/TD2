@@ -18,8 +18,10 @@ private:
 	void MoveLimit();
 	float kSpeed_ = 0.4f;
 	float kGravity_ = 0.1f;
-	float kGravityMax_ = -1.5f;
-	
+	float kGravityMax_ = 0.2f;
+	float kGravityMin_ = 0.1f;
+	float kGravityLimitMin_ = 2.0f;
+	float kGravityLimitMax_ = 3.5f;
 	
 	Player* player_;
 	Input* input_;

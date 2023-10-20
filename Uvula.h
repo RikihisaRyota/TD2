@@ -15,12 +15,19 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	void SetPlayer(Player* player) { player_ = player; }
 	void Reset();
+
+	void SetWidth(float width) { kWidth_ = width; }
+private:
+	float kChaseMin_ = 0.01f;
+	float kChaseMax_ = 0.045f;
+
+	float kWidth_=1000.0f;
 	// 当たり判定
 	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
-private:
+
 	uint32_t kCreateModelInterval_ = 5;
 	float radius_ = 3.0f;
 	Player* player_;

@@ -1,23 +1,34 @@
 #include "EnemyBullet.h"
 
 #include "Draw.h"
+#include "MyMath.h"
 
-void EnemyBullet::Initialize(Model* model, const Vector3& position) {
+void EnemyBullet::Initialize(Model* model, const Vector3& position, float radius) {
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
+	radius_ = radius;
+	float scale = radius * 0.5f;
+	worldTransform_.scale_ = {scale, scale, scale};
 	worldTransform_.UpdateMatrix();
 	isAlive_ = true;
 	HitBoxInitialize();
 }
 
 void EnemyBullet::Update() {
+	worldTransform_.translation_.y -= 0.1f;
 	worldTransform_.UpdateMatrix();
+	if (!IsInsideFrustum(sphere_, *viewProjection_)) {
+		isAlive_ = false;
+	}
 	HitBoxUpdate();
+	if (!IsInsideFrustum(sphere_, *viewProjection_)) {
+		isAlive_ = false;
+	}
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_,viewProjection);
+	model_->Draw(worldTransform_, viewProjection);
 }
 
 void EnemyBullet::Reset() {
@@ -25,8 +36,7 @@ void EnemyBullet::Reset() {
 }
 
 void EnemyBullet::OnCollision(uint32_t type, Sphere* sphere) {
-	uint32_t a = type;
-	Sphere s = *sphere;
+	isAlive_ = false;
 }
 
 void EnemyBullet::HitBoxInitialize() {

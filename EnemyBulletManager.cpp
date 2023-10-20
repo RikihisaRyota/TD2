@@ -1,5 +1,12 @@
 #include "EnemyBulletManager.h"
 
+#include "MyMath.h"
+
+EnemyBulletManager::~EnemyBulletManager()
+{
+	Reset();
+}
+
 void EnemyBulletManager::Initialize(Model* model) {
 	model_ = model;
 	Reset();
@@ -19,6 +26,9 @@ void EnemyBulletManager::Update() {
 			++it; // 次の要素へ進む
 		}
 	}
+	if (player_->GetIsPulling()) {
+		Reset();
+	}
 }
 
 void EnemyBulletManager::Draw(const ViewProjection& viewProjection) {
@@ -27,15 +37,18 @@ void EnemyBulletManager::Draw(const ViewProjection& viewProjection) {
 	}
 }
 
+void EnemyBulletManager::CreateBullet(const Vector3& position, float radius)
+{
+	EnemyBullet* bullet = new EnemyBullet();
+	bullet->SetViewProjection(viewProjection_);
+	bullet->Initialize(model_, position, radius);
+	bullet->SetViewProjection(viewProjection_);
+	enemyBullets_.emplace_back(bullet);
+}
+
 void EnemyBulletManager::Reset() {
 	for (auto& bullet : enemyBullets_) {
 		delete bullet;
 	}
 	enemyBullets_.clear();
-}
-
-void EnemyBulletManager::Create(const Vector3& position, uint32_t type) {
-	EnemyBullet* bullet = new EnemyBullet();
-	bullet->Initialize(model_,position);
-	enemyBullets_.emplace_back(bullet);
 }

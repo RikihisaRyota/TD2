@@ -1,12 +1,13 @@
 #pragma once
 
-#include <list>
+#include <vector>
 
 #include "Model.h"
 
-class Enemy;
+class EnemyManager;
+class CSV;
 class EnemyEditor {
 public:
-	void Update(std::list<Enemy*>& enemies,Model* model);
+	void Update(EnemyManager* enemyManager);
 };
 

@@ -16,6 +16,7 @@
 
 // ここから下になるべくアルファベット順で
 #include "BackGround.h"
+#include "Boss.h"
 #include "CollisionManager.h"
 #include "CSV.h"
 #include "Enemy.h"
@@ -72,8 +73,6 @@ public: // メンバ関数
 	void Release();
 
 	// エネミーリスポーン用
-	void LoadCSVData(const char* csvName, std::stringstream* popCommands);
-	void UpdateEnemyPopCommands();
 	void SpawnEnemy(const Vector3& position, uint32_t type);
 
 private: // メンバ変数
@@ -88,12 +87,14 @@ private: // メンバ変数
 	/// ゲーム用
 	/// </summary>
 	std::unique_ptr<BackGround> backGround_;
+	std::unique_ptr<Boss> boss_;
+	std::vector<Model*> bossModel_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Frame> frame_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<PlayerBulletManager> playerBulletManager_;
-	std::unique_ptr<Model> playerModel_;
+	std::vector<Model*> playerModel_;
 	std::unique_ptr<Model> playerBulletModel_;
 	std::unique_ptr<EnemyEditor> enemyEditor_;
 	std::unique_ptr<EnemyManager> enemyManager_;
@@ -102,6 +103,9 @@ private: // メンバ変数
 	std::unique_ptr<Uvula> uvula_;
 	std::unique_ptr<Model> uvulaHead_;
 	std::unique_ptr<Model> uvulaBody_;
+
+	std::vector<Model*> enemyModels_Type0_;
+	std::vector<Model*> enemyModels_Type1_;
 
 	std::stringstream enemyPopCommands_;
 

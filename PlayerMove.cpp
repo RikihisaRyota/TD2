@@ -13,6 +13,9 @@ PlayerMove::PlayerMove() {
 PlayerMove::~PlayerMove() {}
 
 void PlayerMove::Initialize() {
+	player_->SetIsPulling(false);
+	player_->SetIsLanding(false);
+	player_->SetWeightNum(0);
 	worldTransform_.translation_ = player_->GetTranslation();
 	acceleration_ = { 0.0f,0.0f,0.0f };
 	velocity_ = { 0.0f,0.0f,0.0f };
@@ -45,6 +48,7 @@ void PlayerMove::Update() {
 	MoveLimit();
 	worldTransform_.UpdateMatrix();
 	player_->SetTranslation(worldTransform_.translation_);
+	player_->UpdateMatrix();
 }
 
 void PlayerMove::Debug() {
@@ -52,13 +56,14 @@ void PlayerMove::Debug() {
 		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
 		worldTransform_.UpdateMatrix();
 		player_->SetTranslation(worldTransform_.translation_);
+		player_->UpdateMatrix();
 		Initialize();
 	}
 	ImGui::Begin("Player");
 	if (ImGui::TreeNode("kMove")) {
 		ImGui::Text("velocity\nx:%.4f,y:%.4f,z:%.4f", velocity_.x, velocity_.y, velocity_.z);
 		ImGui::Text("acceleration\nx:%.4f,y:%.4f,z:%.4f", acceleration_.x, acceleration_.y, acceleration_.z);
-		ImGui::SliderFloat("Power", &kPower_, 0.0f, 10.0f);
+		ImGui::SliderFloat("Power", &kPower_, 0.0f, 0.1f);
 		ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
 		ImGui::SliderFloat("Angle", &kAngle_, 0.0f, 90.0f);
 		ImGui::TreePop();
