@@ -63,7 +63,7 @@ void PlayerMove::Debug() {
 	if (ImGui::TreeNode("kMove")) {
 		ImGui::Text("velocity\nx:%.4f,y:%.4f,z:%.4f", velocity_.x, velocity_.y, velocity_.z);
 		ImGui::Text("acceleration\nx:%.4f,y:%.4f,z:%.4f", acceleration_.x, acceleration_.y, acceleration_.z);
-		ImGui::SliderFloat("Power", &kPower_, 0.0f, 10.0f);
+		ImGui::SliderFloat("Power", &kPower_, 0.0f, 0.1f);
 		ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
 		ImGui::SliderFloat("Angle", &kAngle_, 0.0f, 90.0f);
 		ImGui::TreePop();
