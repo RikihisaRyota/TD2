@@ -18,7 +18,7 @@ private:
 	void MoveLimit();
 	float kPower_ = 0.002f;
 	float kInertia_ = 0.98f;
-	float kAngle_ = 45.0f;
+	float kAngle_ = 60.0f;
 
 	Player* player_;
 	Input* input_;

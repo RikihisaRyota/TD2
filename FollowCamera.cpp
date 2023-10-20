@@ -7,8 +7,8 @@
 
 void FollowCamera::Initialize() {
 	viewProjection_.Initialize();
-	debugOffset_ = { 40.0f, 0.0f, -90.0f };
-	dropOffset_ = { -40.0f, 0.0f, -90.0f };
+	debugOffset_ = { 40.0f, 0.0f, -150.0f };
+	dropOffset_ = { -40.0f, 0.0f, -150.0f };
 	bossAttackOffset_ = { -15.0f,0.0f,-150.0f };
 	delayInterpolationLate_ = 0.5f;
 	dropDelayInterpolationLate_ = 0.8f;
@@ -62,13 +62,13 @@ void FollowCamera::Debug() {
 	if (ImGui::TreeNode("Nomal")) {
 		ImGui::SliderFloat("Offset_x", &debugOffset_.x, -50.0f, 50.0f);
 		ImGui::SliderFloat("Offset_y", &debugOffset_.y, 0.0f, 50.0f);
-		ImGui::SliderFloat("Offset_z", &debugOffset_.z, 0.0f, -100.0f);
+		ImGui::SliderFloat("Offset_z", &debugOffset_.z, 0.0f, -200.0f);
 		ImGui::SliderFloat("Delay", &delayInterpolationLate_, 0.0f, 1.0f);
 		ImGui::TreePop();
 	}
 	if (ImGui::TreeNode("Drop")) {
 		ImGui::SliderFloat("Offset_y", &dropOffset_.y, 0.0f, -50.0f);
-		ImGui::SliderFloat("Offset_z", &dropOffset_.z, 0.0f, -100.0f);
+		ImGui::SliderFloat("Offset_z", &dropOffset_.z, 0.0f, -200.0f);
 		ImGui::SliderFloat("Delay", &dropDelayInterpolationLate_, 0.0f, 1.0f);
 		ImGui::TreePop();
 	}
