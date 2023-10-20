@@ -51,8 +51,6 @@ void PlayerPullingMove::Update() {
 	acceleration_.y *= 0.9f;
 	
 	MoveLimit();
-	worldTransform_.UpdateMatrix();
-	player_->SetWorldTransform(worldTransform_);
 }
 
 void PlayerPullingMove::Debug() {
@@ -77,6 +75,8 @@ void PlayerPullingMove::MoveLimit() {
 	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -player_->GetWidth() + playerSize, player_->GetWidth() - playerSize);
 	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -player_->GetHeight() + playerSize, player_->GetHeight() - playerSize);
 	worldTransform_.UpdateMatrix();
+	player_->SetWorldTransform(worldTransform_);
+	player_->UpdateMatrix();
 	// 地面に着いたら
 	if (worldTransform_.translation_.x <= 0.0f) {
 		worldTransform_.translation_.x = 0.0f;

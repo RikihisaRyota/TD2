@@ -47,6 +47,7 @@ void PlayerMove::Update() {
 	MoveLimit();
 	worldTransform_.UpdateMatrix();
 	player_->SetTranslation(worldTransform_.translation_);
+	player_->UpdateMatrix();
 }
 
 void PlayerMove::Debug() {
@@ -54,6 +55,7 @@ void PlayerMove::Debug() {
 		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
 		worldTransform_.UpdateMatrix();
 		player_->SetTranslation(worldTransform_.translation_);
+		player_->UpdateMatrix();
 		Initialize();
 	}
 	ImGui::Begin("Player");

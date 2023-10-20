@@ -99,20 +99,23 @@ void PlayerString::Extend() {
 			string.worldTransform_.translation_.x -= gravity;
 			string.worldTransform_.UpdateMatrix();
 		}
+		// 徐々にサイズを大きくしていく
+		float scale = kPlaneSize_ * static_cast<float>(extendCount_) / static_cast<float>(kExtendCountMax_);
+		headWorldTransform_.scale_ = { scale,scale,1.0f };
+		headWorldTransform_.UpdateMatrix();
+		playerWorldTransform_.UpdateMatrix();
+		player_->SetTranslation(playerWorldTransform_.translation_);
+		player_->UpdateMatrix();
 	}
 	else {
 		playerWorldTransform_.translation_.x = 0.0f;
 		playerWorldTransform_.UpdateMatrix();
 		player_->SetWorldTransform(playerWorldTransform_);
+		player_->UpdateMatrix();
 		acceleration_ = { 0.0f ,0.0f ,0.0f };
 		player_->SetBehavior(Player::Behavior::kLanding);
 	}
-	// 徐々にサイズを大きくしていく
-	float scale = kPlaneSize_ * static_cast<float>(extendCount_) / static_cast<float>(kExtendCountMax_);
-	headWorldTransform_.scale_ = { scale,scale,1.0f };
-	headWorldTransform_.UpdateMatrix();
-	playerWorldTransform_.UpdateMatrix();
-	player_->SetTranslation(playerWorldTransform_.translation_);
+	
 	// 場所を保存
 	if (setStringWorldTransformCount_ % kSetStringWorldTransformInterval == 0) {
 		StringBody save;
@@ -144,6 +147,7 @@ void PlayerString::Shrink() {
 		}
 		shootOutVector_.Normalize();
 		player_->SetBehavior(Player::Behavior::kJump);
+		return;
 	}
 	else {
 		float t = static_cast<float>(shrinkCount_) / static_cast<float>(kShrinkCountMax_);
@@ -160,6 +164,7 @@ void PlayerString::Shrink() {
 		headWorldTransform_.UpdateMatrix();
 		// プレイヤーのワールド変換を設定
 		player_->SetTranslation(headWorldTransform_.translation_);
+		player_->UpdateMatrix();
 	}
 
 }

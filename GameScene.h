@@ -86,7 +86,7 @@ private: // メンバ変数
 	std::unique_ptr<Frame> frame_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<PlayerBulletManager> playerBulletManager_;
-	std::unique_ptr<Model> playerModel_;
+	std::vector<Model*> playerModel_;
 	std::unique_ptr<Model> playerBulletModel_;
 	std::unique_ptr<EnemyEditor> enemyEditor_;
 	std::unique_ptr<EnemyManager> enemyManager_;

@@ -10,6 +10,7 @@ PlayerLanding::PlayerLanding() {
 PlayerLanding::~PlayerLanding() {}
 
 void PlayerLanding::Initialize() {
+	player_->Reset();
 	player_->SetIsLanding(true);
 }
 

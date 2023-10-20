@@ -1,6 +1,6 @@
 # Blender 3.5.0
 # www.blender.org
-mtllib playerBody.mtl
+mtllib playerLegLeft.mtl
 o Cube.002
 v 0.990865 -1.603759 -0.180785
 v 0.089454 0.191248 -0.180785

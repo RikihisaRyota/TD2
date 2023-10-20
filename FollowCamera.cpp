@@ -17,14 +17,14 @@ void FollowCamera::Update() {
 	if (target_) {
 		float kInterpolationLate;
 		// プレイヤーが落下中か
-		/*if (player_->GetIsDrop()) {
+		if (player_->GetIsPulling()) {
 			nowOffset_ =Lerp(nowOffset_, dropOffset_,0.1f);
 			kInterpolationLate = dropDelayInterpolationLate_;
 		}
-		else {*/
+		else {
 			nowOffset_ =Lerp(nowOffset_, debugOffset_,  0.1f);
 			kInterpolationLate = delayInterpolationLate_;
-		/*}*/
+		}
 		// 追従座標の補間
 		interTarget_ = Lerp(interTarget_, target_->translation_, kInterpolationLate);
 		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(viewProjection_.rotation_);

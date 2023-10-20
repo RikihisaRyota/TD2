@@ -28,7 +28,7 @@ void Uvula::Update() {
 	if (isPlayerChase_) {
 		// プレイヤーを追っている最中
 		angle_ += 0.1f;
-		float chase = Lerp(kChaseMin_, kChaseMax_,player_->GetTranslation().x / kWidth_);
+		float chase = Lerp(kChaseMin_, kChaseMax_, player_->GetTranslation().x / kWidth_);
 		headWorldTransform_.translation_ = Lerp(headWorldTransform_.translation_, player_->GetTranslation(), chase);
 		if (createModelCount_ >= kCreateModelInterval_) {
 			WorldTransform bodyWorldTransform{};
@@ -44,13 +44,23 @@ void Uvula::Update() {
 		createModelCount_++;
 	}
 	else {
-		headWorldTransform_.translation_ = player_->GetTranslation();
-		headWorldTransform_.translation_.x -= 2.0f;
-		headWorldTransform_.UpdateMatrix();
-	}
-	if (player_->GetTranslation().x <= 0.0f) {
-		isPlayerChase_ = true;
-		Reset();
+		// 地面に着いたときにリセット、プレイヤーを追いかけるフラグはOFF
+		if (player_->GetBehavior() == Player::Behavior::kLanding) {
+			Reset();
+			isPlayerChase_ = false;
+		}
+		// 引っ張られているとき
+		if(player_->GetBehavior() == Player::Behavior::kPullingMove ||
+			player_->GetBehavior() == Player::Behavior::kJump ||
+			player_->GetBehavior() == Player::Behavior::kString) {
+			headWorldTransform_.translation_ = player_->GetTranslation();
+			headWorldTransform_.translation_.x -= 2.0f;
+			headWorldTransform_.UpdateMatrix();
+		}
+		// プレイヤーがMoveに入ったら追いかけるフラグON
+		if (player_->GetBehavior() == Player::Behavior::kMove) {
+			isPlayerChase_ = true;
+		}
 	}
 }
 
@@ -75,7 +85,7 @@ void Uvula::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
 	{
-    	Reset();
+		Reset();
 		isPlayerChase_ = false;
 	}
 	break;
@@ -91,12 +101,12 @@ void Uvula::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemy):
 	{
-		
+
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
 	{
-		
+
 	}
 	break;
 	default:

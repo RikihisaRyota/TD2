@@ -9,9 +9,27 @@
 #include "Input.h"
 
 
-void Player::Initialize(Model* model) {
-	assert(model);
-	model_ = model;
+Player::~Player() {
+	for (size_t i = 0; i < static_cast<size_t>(Parts::kPartsCount); i++) {
+		delete models_.at(i);
+	}
+	models_.clear();
+}
+
+void Player::Initialize(std::vector<Model*> models) {
+	for (size_t i = 0; i < static_cast<size_t>(Parts::kPartsCount); i++) {
+		models_.emplace_back(models.at(i));
+	}
+	worldTransform_.Initialize();
+	motion_.Initialize();
+	motion_.parent_ = &worldTransform_;
+	for (size_t i = 0; i < static_cast<size_t>(Parts::kPartsCount); i++) {
+		WorldTransform part;
+		part.Initialize();
+		part.parent_ = &motion_;
+		part.UpdateMatrix();
+		parts_.emplace_back(part);
+	}
 
 	input_ = Input::GetInstance();
 
@@ -39,13 +57,22 @@ void Player::Initialize(Model* model) {
 
 }
 
+void Player::UpdateMatrix() {
+	worldTransform_.UpdateMatrix();
+	motion_.UpdateMatrix();
+	for (auto& parts : parts_) {
+		parts.UpdateMatrix();
+	}
+}
+
 void Player::Reset() {
-	worldTransform_.Initialize();
+	radius_ = kRadiusMin_;
+
 	float scale = radius_ * 0.5f;
 	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
 	worldTransform_.translation_ = { 20.0f,0.0f,0.0f };
-	worldTransform_.UpdateMatrix();
+	UpdateMatrix();
 
 	playerJump_->Initialize({ 0.0f,0.0f,0.0f });
 	playerMove_->Initialize();
@@ -109,7 +136,9 @@ void Player::Draw(const ViewProjection& viewProjection) {
 	case Player::kStun:
 		break;
 	}
-	model_->Draw(worldTransform_, viewProjection);
+	for (size_t i = 0; i < Parts::kPartsCount; i++) {
+		models_.at(i)->Draw(parts_.at(i), viewProjection);
+	}
 }
 
 void Player::Debug() {
@@ -142,6 +171,10 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 		// 引っ張られていたら
 		if (isPulling_) {
 			weightCount_++;
+			radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
+			float scale = radius_ * 0.5f;
+			worldTransform_.scale_ = { scale ,scale ,scale };
+			UpdateMatrix();
 		}
 		else {
 			if (behavior_ != Player::Behavior::kStun &&
@@ -163,9 +196,11 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
 	{
-		isPulling_ = true;
-		behaviorRequest_ = kPullingMove;
-		BehaviorInitialize();
+		if (!isPulling_) {
+			isPulling_ = true;
+			behaviorRequest_ = kPullingMove;
+			BehaviorInitialize();
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
@@ -236,6 +271,9 @@ void Player::BehaviorInitialize() {
 		case Behavior::kJump:
 			playerJump_->Initialize(playerString_->GetShootOutVector());
 			break;
+		case Behavior::kLanding:
+			playerLanding_->Initialize();
+			break;
 		case Player::kStun:
 			playerStun_->Initialize();
 			break;
@@ -255,11 +293,15 @@ void Player::MoveLimit() {
 void Player::InvincibleUpdate() {
 	if (isInvincible_) {
 		invincibleCount_++;
-		model_->GetMaterial(0)->SetColor(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+		for (auto& model : models_) {
+			model->GetMaterial(0)->SetColor(Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+		}
 		if (invincibleCount_ >= kInvincibleMax_) {
 			isInvincible_ = false;
 			invincibleCount_ = 0;
-			model_->GetMaterial(0)->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			for (auto& model : models_) {
+				model->GetMaterial(0)->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+			}
 		}
 	}
 }
@@ -282,6 +324,46 @@ void Player::SetTranslation(const Vector3& translation) {
 void Player::SetWorldTransform(const WorldTransform& worldTransform) {
 	worldTransform_ = worldTransform;
 	worldTransform_.UpdateMatrix();
+}
+
+void Player::SetMotionScale(const Vector3& scale) {
+	motion_.scale_ = scale;
+	motion_.UpdateMatrix();
+}
+
+void Player::SetMotionRotation(const Vector3& rotation) {
+	motion_.rotation_ = rotation;
+	motion_.UpdateMatrix();
+}
+
+void Player::SetMotionTranslation(const Vector3& translation) {
+	motion_.translation_ = translation;
+	motion_.UpdateMatrix();
+}
+
+void Player::SetMotionWorldTransform(const WorldTransform& worldTransform) {
+	motion_ = worldTransform;
+	motion_.UpdateMatrix();
+}
+
+void Player::SetPartsScale(const Vector3& scale, size_t num) {
+	parts_.at(num).scale_ = scale;
+	parts_.at(num).UpdateMatrix();
+}
+
+void Player::SetPartsRotation(const Vector3& rotation, size_t num) {
+	parts_.at(num).rotation_ = rotation;
+	parts_.at(num).UpdateMatrix();
+}
+
+void Player::SetPartsTranslation(const Vector3& translation, size_t num) {
+	parts_.at(num).translation_ = translation;
+	parts_.at(num).UpdateMatrix();
+}
+
+void Player::SetPartsWorldTransform(const WorldTransform& worldTransform, size_t num) {
+	parts_.at(num) = worldTransform;
+	parts_.at(num).UpdateMatrix();
 }
 
 void Player::SetBehavior(const std::optional<Behavior>& behaviorRequest) {
