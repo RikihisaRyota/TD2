@@ -11,7 +11,7 @@ public:
 	void Initialize(Model* model);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
-	void CreateBullet(const Vector3& position, const Vector3& scale);
+	void CreateBullet(const Vector3& position, float radius);
 	void Reset();
 	std::vector<EnemyBullet*>& GetEnemyBullets() { return enemyBullets_; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }

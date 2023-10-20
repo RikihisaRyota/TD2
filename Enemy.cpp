@@ -14,14 +14,17 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 
-	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
-	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
+	float scale = radius_ * 0.5f;
+	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.UpdateMatrix();
 
 	worldTransform_type0_[kHead].Initialize();
+	worldTransform_type0_[kHead].scale_ = { scale ,scale ,scale };
 	worldTransform_type0_[kHead].rotation_.y = 9.5f;
 	worldTransform_type0_[kLeg].Initialize();
+	worldTransform_type0_[kLeg].parent_ = &worldTransform_type0_[kHead];
 	worldTransform_type1_[kBoll].Initialize();
+	worldTransform_type1_[kBoll].scale_ = { scale ,scale ,scale };
 	worldTransform_type1_[kBoll].rotation_.y = 9.6f;
 	worldTransform_type1_[ks].Initialize();
 
@@ -36,14 +39,12 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	input_ = Input::GetInstance();
 	isAlive_ = true;
 	isDrawing_ = true;
+	EnemyCreateFlag = false;
 }
 
 void Enemy::Update() {
 	if (isAlive_) {
 		EnemyCreateFlag = false;
-		if (worldTransform_.scale_.x >= 5.0f) {
-			behaviorRequest_ = Behavior::kSplit;
-		}
 		if (input_->PushKey(DIK_0)) {
 			behaviorRequest_ = Behavior::kStandby;
 		}
@@ -98,12 +99,15 @@ void Enemy::Update() {
 	if (player_->GetIsLanding()) {
 		isAlive_ = true;
 		isDrawing_ = true;
-		worldTransform_.scale_.x = 1.0f;
+		radius_ = 2.0f;
+		worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+		worldTransform_type1_[kBoll].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 	}
 
+
+	// 演出用
 	worldTransform_type0_[kHead].translation_ = worldTransform_.translation_;
 	worldTransform_type0_[kHead].UpdateMatrix();
-	worldTransform_type0_[kLeg].translation_ = worldTransform_.translation_;
 	worldTransform_type0_[kLeg].UpdateMatrix();
 
 	worldTransform_type1_[kBoll].translation_ = worldTransform_.translation_;
@@ -111,9 +115,6 @@ void Enemy::Update() {
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	/*for (auto& model : models_) {
-		model->Draw(worldTransform_, viewProjection);
-	}*/
 	if (type_ == static_cast<size_t>(EnemyType::kOctopus)) {
 		models_type0_[kHead]->Draw(worldTransform_type0_[kHead], viewProjection);
 		models_type0_[kLeg]->Draw(worldTransform_type0_[kLeg], viewProjection);
@@ -121,9 +122,6 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 	else if (type_ == static_cast<size_t>(EnemyType::kSpike)) {
 		models_type1_[kBoll]->Draw(worldTransform_type1_[0], viewProjection);
 	}
-	
-
-	//model_->Draw(worldTransform_, viewProjection);
 }
 
 
@@ -187,16 +185,15 @@ void Enemy::HitBoxInitialize() {
 	// Sphere
 	sphere_ = {
 		.center_{worldTransform_.translation_},
-		.radius_{worldTransform_.scale_.x },
+		.radius_{radius_ },
 	};
 }
 
 void Enemy::HitBoxUpdate() {
 	// Sphere
-	radius_ = worldTransform_.scale_.x / 2.0f;
 	sphere_ = {
 		.center_{worldTransform_.translation_},
-		.radius_{worldTransform_.scale_.x },
+		.radius_{radius_},
 	};
 }
 
@@ -248,7 +245,9 @@ void Enemy::ShotInitialize()
 void Enemy::SplitInitialize()
 {
 	times_[Behavior::kSplit] = 0;
-	worldTransform_.scale_ = { 1.0f, 1.0f, 1.0f };
+	radius_ = 2.0f;
+	worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+	worldTransform_type1_[kBoll].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 }
 
 void Enemy::DamageInitialize()
@@ -270,7 +269,7 @@ void Enemy::StandbyUpdate()
 {
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		times_[Behavior::kStandby]++;
-		if (times_[Behavior::kStandby] == ShotTime_ * worldTransform_.scale_.x) {
+		if (times_[Behavior::kStandby] == ShotTime_ * radius_) {
 			behaviorRequest_ = Behavior::kShot;
 		}
 	}
@@ -280,16 +279,16 @@ void Enemy::ShotUpdate()
 {
 	if (!player_->GetIsPulling()) {
 		enemyBulletManager_->CreateBullet(
-			{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * worldTransform_.scale_.x) , worldTransform_.translation_.z },
-			worldTransform_.scale_);
+			{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * radius_) , worldTransform_.translation_.z },
+			radius_);
 	}
 	behaviorRequest_ = Behavior::kStandby;
 }
 
 void Enemy::SplitUpdate()
 {
+	EnemyCreateFlag = true;
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-		EnemyCreateFlag = true;
 		float degree = float(rand() / 360);
 		splitPos_ = {
 			.x{cosf(degree) * 10.0f},
@@ -302,7 +301,6 @@ void Enemy::SplitUpdate()
 		splitPos_ += Center;
 	}
 	else {
-		EnemyCreateFlag = true;
 		splitPos_ = worldTransform_.translation_;
 		worldTransform_.translation_.y += 5.0f;
 		splitPos_.y  -= 5.0f;
@@ -312,9 +310,11 @@ void Enemy::SplitUpdate()
 
 void Enemy::DamageUpdate()
 {
-	worldTransform_.rotation_.x += 0.1f;
+	worldTransform_type0_[kHead].rotation_.z += 0.1f;
+	worldTransform_type1_[kBoll].rotation_.z += 0.1f;
 	if (times_[Behavior::kDamage] == DamageTime_) {
-		worldTransform_.rotation_.x = 0.0f;
+		worldTransform_type0_[kHead].rotation_.z = 0.0f;
+		worldTransform_type1_[kBoll].rotation_.z = 0.0f;
 		behaviorRequest_ = Behavior::kStandby;
 	}
 	times_[Behavior::kDamage]++;
@@ -328,22 +328,17 @@ void Enemy::ClingUpdate()
 
 void Enemy::GrowUpdate()
 {
-	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-		if (worldTransform_.scale_.x < 5.0f) {
-			worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
-			behaviorRequest_ = Behavior::kStandby;
+	if (radius_ < 5.0f) {
+		radius_ += 1.0f;
+		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
-		else {
-			behaviorRequest_ = Behavior::kSplit;
+		else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
+			worldTransform_type1_[kBoll].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
+		behaviorRequest_ = Behavior::kStandby;
 	}
 	else {
-		if (worldTransform_.scale_.x < 5.0f) {
-			worldTransform_.scale_ += Vector3(1.0f, 1.0f, 1.0f);
-			behaviorRequest_ = Behavior::kStandby;
-		}
-		else {
-			behaviorRequest_ = Behavior::kSplit;
-		}
+		behaviorRequest_ = Behavior::kSplit;
 	}
 }

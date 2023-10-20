@@ -7,7 +7,7 @@
 
 class EnemyBullet :public Collider {
 public:
-	void Initialize(Model* model, const Vector3& position, const Vector3& scale);
+	void Initialize(Model* model, const Vector3& position, float radius);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void Reset();
