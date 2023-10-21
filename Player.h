@@ -71,6 +71,7 @@ public:
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 #pragma region getter,setter
+	float GetSize() { return radius_; }
 	Vector3 GetInitialPosition() { return kInitialPosition_; }
 	uint32_t GetWeightNum() { return weightCount_; }
 	void SetWeightNum(uint32_t num) { weightCount_ = num; }

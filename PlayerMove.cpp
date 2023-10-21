@@ -90,7 +90,7 @@ void PlayerMove::Debug() {
 }
 
 void PlayerMove::MoveLimit() {
-	float playerSize = 2.0f;
+	float playerSize = player_->GetSize();
 	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -player_->GetWidth() + playerSize, player_->GetWidth() - playerSize);
 	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -player_->GetHeight() + playerSize, player_->GetHeight() - playerSize);
 	if (worldTransform_.translation_.x <= -player_->GetWidth() + playerSize ||
