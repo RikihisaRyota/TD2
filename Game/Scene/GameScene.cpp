@@ -122,76 +122,61 @@ void GameScene::Update() {
 		playerBulletManager_->Update();
 		enemyBulletManager_->Update();
 		uvula_->Update();
+		boss_->Update();
 		fade_->FadeInUpdate();
+
 		// 敵生成
 		//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
 		collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-		// 0を押すとカメラを切り替える
-		if (input_->TriggerKey(DIK_0)) {
-			IsDebugCamera_ ^= true;
-		}
-		if (IsDebugCamera_) {
-			// デバックカメラ
-			debugCamera_->Update(&viewProjection_);
-		}
-		else {
+
+		if (!IsDebugCamera_) {
+			frame_->Update();
+			player_->Update();
+			// デバック
+			enemyManager_->SetIsDebug(IsDebugCamera_);
+			//
+			enemyManager_->Update();
+			playerBulletManager_->Update();
+			enemyBulletManager_->Update();
+			uvula_->Update();
+			boss_->Update();
+			// 敵生成
+			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
+			// shiftを押すとカメラを切り替える
+			if (input_->TriggerKey(DIK_LSHIFT)) {
+				IsDebugCamera_ ^= true;
+			}
 			followCamera_->Update();
 			viewProjection_ = followCamera_->GetViewProjection();
 		}
-		// リセット
-		if (input_->TriggerKey(DIK_R)) {
-			enemyManager_->Reset();
-			LoadCSVData("Resources/CSV/Spaw.csv", &enemyPopCommands_);
-			UpdateEnemyPopCommands();
+		else {
+			// shiftを押すとカメラを切り替える
+			if (input_->TriggerKey(DIK_LSHIFT)) {
+				IsDebugCamera_ ^= true;
+			}
+			enemyEditor_->Update(enemyManager_.get());
+			// デバックカメラ
+			debugCamera_->Update(&viewProjection_);
+			enemyManager_->SetIsDebug(IsDebugCamera_);
 		}
 
-		if (input_->PushKey(DIK_8)) {
-			isGameEnd_ = true;
-		}
-
-		if (input_->PushKey(DIK_9)) {
-			isGameOver_ = true;
-		}
-	if (!IsDebugCamera_) {
-		frame_->Update();
-		player_->Update();
-		// デバック
-		enemyManager_->SetIsDebug(IsDebugCamera_);
-		//
-		enemyManager_->Update();
-		playerBulletManager_->Update();
-		enemyBulletManager_->Update();
-		uvula_->Update();
-		boss_->Update();
-		// 敵生成
-		collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-		// shiftを押すとカメラを切り替える
-		if (input_->TriggerKey(DIK_LSHIFT)) {
-			IsDebugCamera_ ^= true;
-		}
-		followCamera_->Update();
-		viewProjection_ = followCamera_->GetViewProjection();
-	}
-	else {
-		// shiftを押すとカメラを切り替える
-		if (input_->TriggerKey(DIK_LSHIFT)) {
-			IsDebugCamera_ ^= true;
-		}
-		enemyEditor_->Update(enemyManager_.get());
-		// デバックカメラ
-		debugCamera_->Update(&viewProjection_);
-		enemyManager_->SetIsDebug(IsDebugCamera_);
 	}
 
-}
+	ImGui::Begin("SceneManage");
+	ImGui::InputInt("SceneNumber", &sceneNumber_);
+	ImGui::Text("Game Scene");
+	ImGui::End();
 
-		ImGui::Begin("SceneManage");
-		ImGui::InputInt("SceneNumber", &sceneNumber_);
-		ImGui::Text("Game Scene");
-		ImGui::End();
+
+	if (input_->PushKey(DIK_8)) {
+		isGameEnd_ = true;
 	}
 
-	if (fade_->GetColor(0) > 1.0f&& isGameEnd_ == true) {
+	if (input_->PushKey(DIK_9)) {
+		isGameOver_ = true;
+	}
+
+	if (fade_->GetColor(0) > 1.0f && isGameEnd_ == true) {
 		sceneNumber_ = CLEAR_SCENE;
 	}
 	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
@@ -279,57 +264,6 @@ void GameScene::Finalize() {
 
 void GameScene::Release() {
 	
-}
-
-void GameScene::LoadCSVData(const char* csvName, std::stringstream* popCommands) {
-	std::ifstream file;
-
-	file.open(csvName);
-	assert(file.is_open());
-
-	*popCommands << file.rdbuf();
-
-	file.close();
-}
-
-void GameScene::UpdateEnemyPopCommands() {
-	std::string line;
-	enemyPopCommands_.clear();
-	enemyPopCommands_.seekg(0, std::ios_base::beg);
-
-	while (getline(enemyPopCommands_, line)) {
-		std::istringstream line_stream(line);
-
-		std::string word;
-
-		getline(line_stream, word, ',');
-
-		if (word.find("//") == 0) {
-			continue;
-		}
-
-		float x = 0, y = 0, z = 0;
-		uint32_t type = 0u;
-
-		if (word.find("Position") == 0) {
-			getline(line_stream, word, ',');
-			x = (float)std::atof(word.c_str());
-
-			getline(line_stream, word, ',');
-			y = (float)std::atof(word.c_str());
-
-			getline(line_stream, word, ',');
-			z = (float)std::atof(word.c_str());
-
-		}
-
-		if (word.find("Type") == 0) {
-			getline(line_stream, word, ',');
-			type = (uint32_t)std::atof(word.c_str());
-		}
-		SpawnEnemy(Vector3(x, y, z), type);
-
-	}
 }
 
 void GameScene::SpawnEnemy(const Vector3& position, uint32_t type) {

@@ -17,7 +17,7 @@ void GameClear::Initialize() {
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
 
-	bool isStart_ = true;
+	isStart_ = true;
 }
 
 void GameClear::Update() {
