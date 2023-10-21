@@ -71,6 +71,7 @@ public:
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 #pragma region getter,setter
+	Vector3 GetInitialPosition() { return kInitialPosition_; }
 	uint32_t GetWeightNum() { return weightCount_; }
 	void SetWeightNum(uint32_t num) { weightCount_ = num; }
 	uint32_t GetWeightMax() { return kWeightMax_; }
@@ -83,7 +84,8 @@ public:
 	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager; }
 	PlayerBulletManager* GetPlayerBulletManager() { return playerBulletManager_; }
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
-	PlayerPullingMove* GetPlayerMove() { return playerPullingMove_.get(); }
+	PlayerPullingMove* GetPlayerPullingMove() { return playerPullingMove_.get(); }
+	PlayerMove* GetPlayerMove() { return playerMove_.get(); }
 	PlayerString* GetPlayerString() { return playerString_.get(); }
 	PlayerStun* GetPlayerStun() { return playerStun_.get(); }
 	void SetScale(const Vector3& scale);
@@ -128,7 +130,7 @@ private:
 	void InvincibleUpdate();
 
 	uint32_t kWeightMax_ = 20;
-
+	Vector3 kInitialPosition_ = { 80.0f,-10.0f,0.0f };
 	float kRadiusMax_ = 10.0f;
 	float kRadiusMin_ = 5.0f;
 	float radius_ = kRadiusMin_;

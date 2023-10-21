@@ -19,7 +19,7 @@ void PlayerMove::Initialize() {
 	worldTransform_.translation_ = player_->GetTranslation();
 	acceleration_ = { 0.0f,0.0f,0.0f };
 	velocity_ = { 0.0f,0.0f,0.0f };
-	direction_ = false;
+	direction_ = true;
 }
 
 void PlayerMove::Update() {
@@ -43,7 +43,7 @@ void PlayerMove::Update() {
 	}
 	velocity_ += acceleration_;
 	velocity_ *= kInertia_;
-	acceleration_ *= kInertia_;
+	acceleration_ *= 0.5;
 	worldTransform_.translation_ += velocity_;
 	MoveLimit();
 	worldTransform_.UpdateMatrix();

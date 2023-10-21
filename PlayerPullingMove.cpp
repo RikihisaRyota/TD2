@@ -42,7 +42,7 @@ void PlayerPullingMove::Update() {
 	if (worldTransform_.translation_.x > 0.0f) {
 		float gravity = Lerp(kGravityMin_, kGravityMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
 		float gravityLimit= Lerp(kGravityLimitMin_, kGravityLimitMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
-		Vector3 vector = -worldTransform_.translation_;
+		Vector3 vector =Vector3(-20.0f,-10.0f,0.0f) - worldTransform_.translation_;
 		vector.Normalize();
 		acceleration_ += vector * gravity;
 		acceleration_.x = std::clamp(acceleration_.x,-gravityLimit, 10.0f);

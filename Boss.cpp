@@ -55,6 +55,13 @@ void Boss::Update() {
 		HitBoxUpdate();
 		animationCount_++;
 		if (animationCount_ >= kAnimationMax_) {
+			if (player_->GetWeightNum() >= HP_) {
+				player_->SetTranslation(player_->GetInitialPosition());
+			}
+			else {
+				player_->SetTranslation(Vector3(0.0f, -15.0f, 0.0f));
+				player_->GetPlayerMove()->SetAcceleration(Vector3(1.5f,0.0f,0.0f));
+			}
 			player_->SetBehavior(Player::Behavior::kMove);
 			Reset();
 		}
@@ -171,6 +178,7 @@ void Boss::UpdateMatrix() {
 void Boss::DeathAnimation(float t) {
 	motion_.translation_ = Lerp(Vector3(0.0f,0.0f,0.0f), Vector3(-20.0f, 0, 0.0f), t);
 	motion_.translation_ += Vector3(0.0f, rnd.NextFloatRange(-1.0f, 1.0f), 0.0f);
+	motion_.rotation_.z += 0.1f;
 }
 
 void Boss::AttackAnimation(float t) {

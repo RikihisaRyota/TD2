@@ -71,7 +71,7 @@ void Player::Reset() {
 	float scale = radius_ * 0.5f;
 	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
-	worldTransform_.translation_ = { 20.0f,0.0f,0.0f };
+	worldTransform_.translation_ = kInitialPosition_;
 	UpdateMatrix();
 
 	playerJump_->Initialize({ 0.0f,0.0f,0.0f });

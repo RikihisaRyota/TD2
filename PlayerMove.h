@@ -13,6 +13,7 @@ public:
 	void Update();
 
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetAcceleration(const Vector3& acceleration) { acceleration_ = acceleration; }
 	void Debug();
 private:
 	void MoveLimit();
