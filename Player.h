@@ -122,6 +122,8 @@ public:
 	void SetWidth(float width) { kWidth_ = width; }
 	float GetWidth() { return kWidth_; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection;}
+	bool GetIsHitStop() { return isHitStop_; }
+	void SetIsHitStop(bool flg) { isHitStop_ = flg; }
 #pragma endregion
 private:
 	void Debug();
@@ -166,4 +168,6 @@ private:
 	bool isInvincible_;
 	uint32_t invincibleCount_;
 	uint32_t kInvincibleMax_ = 60;
+	// ヒットストップ
+	bool isHitStop_;
 };

@@ -44,7 +44,7 @@ void Boss::Initialize(std::vector<Model*> models) {
 
 void Boss::Update() {
 	if (player_->GetBehavior() == Player::Behavior::kLanding) {
-		float t = std::clamp(static_cast<float>(animationCount_) / static_cast<float>(kAnimationMax_),0.0f,1.0f);
+		float t = std::clamp(static_cast<float>(animationCount_) / static_cast<float>(kAnimationMax_), 0.0f, 1.0f);
 		if (player_->GetWeightNum() >= HP_) {
 			DeathAnimation(t);
 		}
@@ -57,12 +57,15 @@ void Boss::Update() {
 		if (animationCount_ >= kAnimationMax_) {
 			if (player_->GetWeightNum() >= HP_) {
 				player_->SetTranslation(player_->GetInitialPosition());
+				player_->SetBehavior(Player::Behavior::kMove);
 			}
 			else {
 				player_->SetTranslation(Vector3(0.0f, -15.0f, 0.0f));
-				player_->GetPlayerMove()->SetAcceleration(Vector3(1.5f,0.0f,0.0f));
+				player_->SetBehavior(Player::Behavior::kMove);
+				player_->GetPlayerMove()->SetAcceleration(Vector3(1.5f, 0.0f, 0.0f));
+				player_->GetPlayerMove()->SetIsEating(true);
+				player_->GetPlayerMove()->SetRotateVelocity(50.0f);
 			}
-			player_->SetBehavior(Player::Behavior::kMove);
 			Reset();
 		}
 	}
@@ -80,7 +83,7 @@ void Boss::Reset() {
 	worldTransform_.scale_ = { 20.0f,20.0f,20.0f };
 	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
 	worldTransform_.translation_ = { -20.0f,-15.0f,0.0f };
-	
+
 	motion_.scale_ = { 1.0f,1.0f,1.0f };
 	motion_.rotation_ = { 0.0f,0.0f,0.0f };
 	motion_.translation_ = { 0.0f,0.0f,0.0f };
@@ -96,7 +99,7 @@ void Boss::Reset() {
 void Boss::Debug() {
 	ImGui::Begin("Boss");
 	float hp = static_cast<float>(kHP_);
-	ImGui::SliderFloat("HP", &hp,0.0f,10.0f);
+	ImGui::SliderFloat("HP", &hp, 0.0f, 10.0f);
 	kHP_ = static_cast<uint32_t>(hp);
 	ImGui::End();
 }
@@ -176,12 +179,12 @@ void Boss::UpdateMatrix() {
 }
 
 void Boss::DeathAnimation(float t) {
-	motion_.translation_ = Lerp(Vector3(0.0f,0.0f,0.0f), Vector3(-20.0f, 0, 0.0f), t);
+	motion_.translation_ = Lerp(Vector3(0.0f, 0.0f, 0.0f), Vector3(-20.0f, 0, 0.0f), t);
 	motion_.translation_ += Vector3(0.0f, rnd.NextFloatRange(-1.0f, 1.0f), 0.0f);
 	motion_.rotation_.z += 0.1f;
 }
 
 void Boss::AttackAnimation(float t) {
-	parts_.at(static_cast<size_t>(Parts::kOnJaw)).rotation_.z = Lerp(0.0f, -DegToRad(20.0f),t);
-	parts_.at(static_cast<size_t>(Parts::kLowerJaw)).rotation_.z = Lerp(0.0f, DegToRad(20.0f),t);
+	parts_.at(static_cast<size_t>(Parts::kOnJaw)).rotation_.z = Lerp(0.0f, -DegToRad(20.0f), t);
+	parts_.at(static_cast<size_t>(Parts::kLowerJaw)).rotation_.z = Lerp(0.0f, DegToRad(20.0f), t);
 }

@@ -100,4 +100,7 @@ private: // メンバ変数
 	std::vector<Model*> enemyModels_Type1_;
 
 	std::stringstream enemyPopCommands_;
+
+	// ヒットストップ用
+	uint32_t hitStopCount_;
 };

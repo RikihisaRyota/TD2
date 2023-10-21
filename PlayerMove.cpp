@@ -19,11 +19,18 @@ void PlayerMove::Initialize() {
 	worldTransform_.translation_ = player_->GetTranslation();
 	acceleration_ = { 0.0f,0.0f,0.0f };
 	velocity_ = { 0.0f,0.0f,0.0f };
+	playerNextRotate_ = 0.0f;
+	playerCurrentRotate_ = 0.0f;
 	direction_ = true;
+	isEating_ = false;
+	rotateVelocity_ = 0.0f;
 }
 
 void PlayerMove::Update() {
 	if (input_->TriggerKey(DIK_SPACE)) {
+		if (isEating_) {
+			isEating_ = false;
+		} 
 		float angle = 0.0f;
 		Vector3 move{};
 		// direction_がtrueで左
@@ -40,6 +47,17 @@ void PlayerMove::Update() {
 		// 弾生成
 		player_->GetPlayerBulletManager()->CreateBullet(worldTransform_.translation_);
 		direction_ ^= true;
+		playerNextRotate_ = angle;
+		
+	}
+	if (!isEating_) {
+		playerCurrentRotate_ = LenpShortAngle(playerCurrentRotate_, playerNextRotate_, 0.1f);
+		player_->SetMotionRotation(Vector3(playerCurrentRotate_, 0.0f, 0.0f));
+	}
+	else {
+		playerCurrentRotate_ = rotateVelocity_;
+		rotateVelocity_ *= 0.99f;
+		player_->SetMotionRotation(Vector3(playerCurrentRotate_, 0.0f, 0.0f));
 	}
 	velocity_ += acceleration_;
 	velocity_ *= kInertia_;

@@ -85,6 +85,8 @@ void Player::Reset() {
 	isInvincible_ = false;
 	invincibleCount_ = 0;
 
+	isHitStop_ = false;
+
 	HitBoxUpdate();
 }
 
@@ -174,6 +176,7 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	{
 		// 引っ張られていたら
 		if (isPulling_) {
+			isHitStop_ = true;
 			weightCount_++;
 			radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
 			float scale = radius_ * 0.5f;

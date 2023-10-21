@@ -14,6 +14,8 @@ public:
 
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetAcceleration(const Vector3& acceleration) { acceleration_ = acceleration; }
+	void SetIsEating(bool flg) { isEating_ = flg; }
+	void SetRotateVelocity(float velocity) { rotateVelocity_ = velocity; }
 	void Debug();
 private:
 	void MoveLimit();
@@ -27,7 +29,10 @@ private:
 	WorldTransform worldTransform_;
 	Vector3 acceleration_;
 	Vector3 velocity_;
-
+	float playerCurrentRotate_;
+	float playerNextRotate_;
 	bool direction_;
+	bool isEating_;
+	float rotateVelocity_;
 };
 
