@@ -19,18 +19,25 @@ void PlayerMove::Initialize() {
 	worldTransform_.translation_ = player_->GetTranslation();
 	acceleration_ = { 0.0f,0.0f,0.0f };
 	velocity_ = { 0.0f,0.0f,0.0f };
-	playerNextRotate_ = 0.0f;
-	playerCurrentRotate_ = 0.0f;
 	direction_ = true;
+
 	isEating_ = false;
 	rotateVelocity_ = 0.0f;
+
+	playerNextRotate_ = 0.0f;
+	playerCurrentRotate_ = 0.0f;
+
+	isSwell_ = false;
+	swellCount_ = 0;
+	playerCurrentLegLeftRotate_ = 0.0f;
+	playerCurrentLegRightRotate_ = 0.0f;
 }
 
 void PlayerMove::Update() {
 	if (input_->TriggerKey(DIK_SPACE)) {
 		if (isEating_) {
 			isEating_ = false;
-		} 
+		}
 		float angle = 0.0f;
 		Vector3 move{};
 		// direction_がtrueで左
@@ -47,12 +54,34 @@ void PlayerMove::Update() {
 		// 弾生成
 		player_->GetPlayerBulletManager()->CreateBullet(worldTransform_.translation_);
 		direction_ ^= true;
+
 		playerNextRotate_ = angle;
-		
+		isSwell_ = true;
+		playerCurrentLegLeftRotate_ = 0.0f;
+		playerCurrentLegRightRotate_ = 0.0f;
+
 	}
 	if (!isEating_) {
 		playerCurrentRotate_ = LenpShortAngle(playerCurrentRotate_, playerNextRotate_, 0.1f);
+		if (isSwell_) {
+			const uint32_t kSwellMax = 5;
+			float t = static_cast<float>(swellCount_) / static_cast<float>(kSwellMax);
+			float legAngle = DegToRad(kLegAngle_);
+			playerCurrentLegLeftRotate_ = LenpShortAngle(playerCurrentLegLeftRotate_, -legAngle, t);
+			playerCurrentLegRightRotate_ = LenpShortAngle(playerCurrentLegRightRotate_, legAngle, t);
+			swellCount_++;
+			if (swellCount_ >= kSwellMax) {
+				isSwell_ = false;
+				swellCount_ = 0;
+			}
+		}
+		else {
+			playerCurrentLegLeftRotate_ = LenpShortAngle(playerCurrentLegLeftRotate_, DegToRad(10.0f), 0.1f);
+			playerCurrentLegRightRotate_ = LenpShortAngle(playerCurrentLegRightRotate_, DegToRad(-10.0f), 0.1f);
+		}
 		player_->SetMotionRotation(Vector3(playerCurrentRotate_, 0.0f, 0.0f));
+		player_->SetPartsRotation(Vector3(playerCurrentLegLeftRotate_), static_cast<size_t>(Player::Parts::kLegLeft));
+		player_->SetPartsRotation(Vector3(playerCurrentLegRightRotate_), static_cast<size_t>(Player::Parts::kLegRight));
 	}
 	else {
 		playerCurrentRotate_ = rotateVelocity_;

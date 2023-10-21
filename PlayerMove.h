@@ -23,16 +23,25 @@ private:
 	float kInertia_ = 0.98f;
 	float kAngle_ = 60.0f;
 
+	float kLegAngle_ = 35.0f;
+
 	Player* player_;
 	Input* input_;
 
 	WorldTransform worldTransform_;
 	Vector3 acceleration_;
 	Vector3 velocity_;
-	float playerCurrentRotate_;
-	float playerNextRotate_;
 	bool direction_;
+	// ボスに食べられたとき
 	bool isEating_;
 	float rotateVelocity_;
+	// プレイヤーの体の向き
+	float playerCurrentRotate_;
+	float playerNextRotate_;
+	// プレイヤーの脚の向き
+	bool isSwell_;
+	uint32_t swellCount_;
+	float playerCurrentLegLeftRotate_;
+	float playerCurrentLegRightRotate_;
 };
 
