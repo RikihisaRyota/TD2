@@ -6,7 +6,7 @@ SceneManager::SceneManager() {
 }
 
 SceneManager::~SceneManager() {
-	
+
 }
 
 void SceneManager::Run() {
@@ -59,6 +59,9 @@ void SceneManager::Run() {
 
 	// DirectXの解放
 	dxCommon->Release();
+
+	// シーンの破棄
+	sceneArray_[sceneNumber_]->Finalize();
 
 	// ゲームウィンドウの破棄
 	win->TerminateGameWindow();

@@ -43,7 +43,6 @@ void GameScene::Initialize() {
 	uvulaHead_ = std::make_unique<Model>();
 	uvulaBody_= std::make_unique<Model>();
 	fade_ = std::make_unique<Fade>();
-	fade_->Initialize();
 #pragma endregion
 #pragma region 初期化
 	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
@@ -102,6 +101,8 @@ void GameScene::Initialize() {
 	bossModel_.emplace_back(Model::Create("bossLowerJaw"));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
+
+	fade_->Initialize();
 
 	isGameStart_ = false;
 	isGameEnd_ = false;
