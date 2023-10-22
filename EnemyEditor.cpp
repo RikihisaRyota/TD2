@@ -92,14 +92,15 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
         // CSVからデータの読み込み
         std::unique_ptr<CSV> csv = std::make_unique<CSV>();
         if (spawn0_) {
-            csv->LoadCSV("Spaw");
+            csv->LoadCSV("Spaw0");
         }
         else if (spawn1_) {
-            csv->LoadCSV("Spaw");
+            csv->LoadCSV("Spaw1");
         }
         else if (spawn2_) {
-            csv->LoadCSV("Spaw");
+            csv->LoadCSV("Spaw2");
         }
+        enemyManager->Reset();
         std::vector<CSV::Data> datas = csv->UpdateDataCommands();
         // 読み込んだデータから生成
         for (CSV::Data data : datas) {

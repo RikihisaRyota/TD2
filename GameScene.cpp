@@ -86,7 +86,7 @@ void GameScene::Initialize() {
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	// CSVからデータの読み込み
 	std::unique_ptr<CSV> csv = std::make_unique<CSV>();
-	csv->LoadCSV("Spaw");
+	csv->LoadCSV("Spaw0");
 	std::vector<CSV::Data> datas = csv->UpdateDataCommands();
 	// 読み込んだデータから生成
 	for (CSV::Data data : datas) {

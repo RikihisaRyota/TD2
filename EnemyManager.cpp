@@ -29,13 +29,13 @@ void EnemyManager::Update() {
 		std::unique_ptr<CSV> csv = std::make_unique<CSV>();
 
 		if (spawn0_) {
-			csv->LoadCSV("Spaw");
+			csv->LoadCSV("Spaw0");
 		}
 		else if (spawn1_) {
-			csv->LoadCSV("Spaw");
+			csv->LoadCSV("Spaw1");
 		}
 		else if (spawn2_) {
-			csv->LoadCSV("Spaw");
+			csv->LoadCSV("Spaw2");
 		}
 		std::vector<CSV::Data> datas = csv->UpdateDataCommands();
 		// 読み込んだデータから生成
