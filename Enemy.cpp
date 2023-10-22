@@ -292,32 +292,30 @@ void Enemy::ShotUpdate()
 		if (!player_->GetIsPulling()) {
 			times_[Behavior::kShot]++;
 
-			if (times_[Behavior::kShot] == 30) {
-				easeMax_ = worldTransform_.translation_.y;
+			if (times_[Behavior::kShot] == 20) {
 				enemyBulletManager_->CreateBullet(
-					{ worldTransform_.translation_.x, worldTransform_.translation_.y - (1.5f * radius_), worldTransform_.translation_.z },
+					{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * radius_), worldTransform_.translation_.z },
 					radius_);
-				worldTransform_.translation_.y += 5.0f;
 				worldTransform_type0_[kLeg].translation_.y = 0.0f;
-				easeMin_ = worldTransform_.translation_.y;
+				easeMax_ = radius_ * 0.5f;
+				easeMin_ = worldTransform_type0_[kHead].scale_.x;
 			}
-			else if (times_[Behavior::kShot] > 30) {
-				float easedT = easeTime_ * easeTime_ * easeTime_;
-				worldTransform_.translation_.y = (1.0f - easedT) * easeMin_ + easedT * easeMax_;
+			else if (times_[Behavior::kShot] > 20) {
+				float easedT = 1.0f - std::powf(1.0f - easeTime_, 3.0f);
+				float scale = (1.0f - easedT) * easeMin_ + easedT * easeMax_;
+				worldTransform_type0_[kHead].scale_ = { scale, scale, scale };
 				if (easeTime_ < 1.0f) {
-					easeTime_ += 0.05f;
+					easeTime_ += 0.01f;
 				}
 				else {
 					behaviorRequest_ = Behavior::kStandby;
 				}
 			}
-			/*else if (times_[Behavior::kShot] > 30) {
-				worldTransform_.translation_.y += ;
-				easeMin_ = worldTransform_.translation_.y;
-			}*/
-			else if (times_[Behavior::kShot] < 30) {
+			else if (times_[Behavior::kShot] < 20) {
+				worldTransform_type0_[kHead].scale_ += {0.01f, 0.01f, 0.01f};
 				worldTransform_type0_[kLeg].translation_.y += 0.01f;
 				worldTransform_type0_[kLeg].rotation_.y += 1.0f;
+		
 			}
 
 		}

@@ -24,7 +24,7 @@ private:
 	Model* model_;
 	WorldTransform worldTransform_;
 	ViewProjection* viewProjection_;
-	float radius_ = 1.0f;
+	float radius_ = 2.0f;
 	bool isAlive_;
 };
 

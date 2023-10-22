@@ -68,7 +68,7 @@ void GameScene::Initialize() {
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 
 	// 敵
-	enemyModel_.reset(Model::Create("Enemy"));
+	enemyModel_.reset(Model::Create("octopusBullet"));
 	//enemyModels_.clear();
 	enemyModels_Type0_ = {
 		Model::Create("octopusHead"), Model::Create("octopusLeg")

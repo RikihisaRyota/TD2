@@ -24,36 +24,19 @@ void Uvula::Reset() {
 
 	isPlayerChase_ = true;
 	HitBoxUpdate();
+
+	isDebug_ = false;
 }
 
 void Uvula::Update() {
-	if (isPlayerChase_) {
-		// プレイヤーを追っている最中
-		float chase = Lerp(kChaseMin_, kChaseMax_, player_->GetTranslation().x / kWidth_);
-		headWorldTransform_.translation_ = Lerp(headWorldTransform_.translation_, player_->GetTranslation(), chase);
-		Vector3 distance = headWorldTransform_.translation_ - kInitialPosition_;
-		bodyWorldTransforms_.scale_.x = distance.x * 0.5f;
-		Vector3 rotate{};
-		if (distance.Length() > 0) {
-			rotate = Normalize(distance);
-		}
-		float angle = std::atan2(rotate.y, rotate.x);
-		bodyWorldTransforms_.rotation_.z = angle;
-		bodyWorldTransforms_.translation_ = distance * 0.5f + kInitialPosition_;
-		headWorldTransform_.UpdateMatrix();
-		bodyWorldTransforms_.UpdateMatrix();
-		HitBoxUpdate();
+	if (Input::GetInstance()->TriggerKey(DIK_M)) {
+		isDebug_ ^= true;
 	}
-	else {
-		// 地面に着いたときにリセット、プレイヤーを追いかけるフラグはOFF
-		if (player_->GetBehavior() == Player::Behavior::kLanding) {
-			Reset();
-			isPlayerChase_ = false;
-		}
-		// 引っ張られているとき
-		if (player_->GetIsPulling()) {
-			headWorldTransform_.translation_ = player_->GetTranslation();
-			headWorldTransform_.translation_.x -= 2.0f;
+	if (isDebug_) {
+		if (isPlayerChase_) {
+			// プレイヤーを追っている最中
+			float chase = Lerp(kChaseMin_, kChaseMax_, player_->GetTranslation().x / kWidth_);
+			headWorldTransform_.translation_ = Lerp(headWorldTransform_.translation_, player_->GetTranslation(), chase);
 			Vector3 distance = headWorldTransform_.translation_ - kInitialPosition_;
 			bodyWorldTransforms_.scale_.x = distance.x * 0.5f;
 			Vector3 rotate{};
@@ -65,12 +48,37 @@ void Uvula::Update() {
 			bodyWorldTransforms_.translation_ = distance * 0.5f + kInitialPosition_;
 			headWorldTransform_.UpdateMatrix();
 			bodyWorldTransforms_.UpdateMatrix();
+			HitBoxUpdate();
 		}
-		// プレイヤーがMoveに入ったら追いかけるフラグON
-		if (player_->GetBehavior() == Player::Behavior::kMove) {
-			isPlayerChase_ = true;
+		else {
+			// 地面に着いたときにリセット、プレイヤーを追いかけるフラグはOFF
+			if (player_->GetBehavior() == Player::Behavior::kLanding) {
+				Reset();
+				isPlayerChase_ = false;
+			}
+			// 引っ張られているとき
+			if (player_->GetIsPulling()) {
+				headWorldTransform_.translation_ = player_->GetTranslation();
+				headWorldTransform_.translation_.x -= 2.0f;
+				Vector3 distance = headWorldTransform_.translation_ - kInitialPosition_;
+				bodyWorldTransforms_.scale_.x = distance.x * 0.5f;
+				Vector3 rotate{};
+				if (distance.Length() > 0) {
+					rotate = Normalize(distance);
+				}
+				float angle = std::atan2(rotate.y, rotate.x);
+				bodyWorldTransforms_.rotation_.z = angle;
+				bodyWorldTransforms_.translation_ = distance * 0.5f + kInitialPosition_;
+				headWorldTransform_.UpdateMatrix();
+				bodyWorldTransforms_.UpdateMatrix();
+			}
+			// プレイヤーがMoveに入ったら追いかけるフラグON
+			if (player_->GetBehavior() == Player::Behavior::kMove) {
+				isPlayerChase_ = true;
+			}
 		}
 	}
+	
 }
 
 void Uvula::Draw(const ViewProjection& viewProjection) {
