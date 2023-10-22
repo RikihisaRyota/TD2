@@ -2,17 +2,28 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
-#include "PlaneRenderer.h"
+#include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 class BackGround {
 public:
-	void Initialize(uint32_t textureHandle);
+	enum Type {
+		kBack,
+		kMiddle,
+		kFront,
+
+		kCount,
+	};
+public:
+	~BackGround();
+	void Initialize(std::vector<uint32_t> textureHandle);
+	void Update();
 	void Draw(const ViewProjection& viewProjection);
 private:
-	std::unique_ptr<PlaneRenderer> plane_;
-	WorldTransform worldTransform_;
+	Vector2 spritePosition_;
+	std::vector<Sprite*>sprite_;
 	uint32_t textureHandle_;
 };
 

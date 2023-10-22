@@ -79,6 +79,7 @@ private: // メンバ変数
 	/// ゲーム用
 	/// </summary>
 	std::unique_ptr<BackGround> backGround_;
+	std::vector<uint32_t> backGroundTextureHandles_;
 	std::unique_ptr<Boss> boss_;
 	std::vector<Model*> bossModel_;
 	std::unique_ptr<CollisionManager> collisionManager_;

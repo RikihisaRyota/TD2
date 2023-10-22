@@ -46,8 +46,10 @@ void GameScene::Initialize() {
 #pragma endregion
 #pragma region 初期化
 	hitStopCount_ = 0;
-	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
-	backGround_->Initialize(textureHandle);
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
+	backGround_->Initialize(backGroundTextureHandles_);
 	// 枠組み
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
@@ -163,7 +165,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-
+	backGround_->Draw(viewProjection_);
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
@@ -180,7 +182,6 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	player_->Draw(viewProjection_);
-	backGround_->Draw(viewProjection_);
 	frame_->Draw(viewProjection_);
 	uvula_->Draw(viewProjection_);
 	enemyManager_->Draw(viewProjection_);

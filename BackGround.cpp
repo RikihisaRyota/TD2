@@ -2,16 +2,25 @@
 
 #include "MyMath.h"
 
-void BackGround::Initialize(uint32_t textureHandle) {
-	plane_.reset(PlaneRenderer::Create());
-	worldTransform_.Initialize();
-	worldTransform_.scale_ = { 500.0f,500.0f,500.0f };
-	worldTransform_.translation_ = { 50.0f,0.0f,1.0f };
-	worldTransform_.rotation_ = { 0.0f,0.0f,DegToRad(90.0f)};
-	worldTransform_.UpdateMatrix();
-	textureHandle_ = textureHandle;
+BackGround::~BackGround() {
+	for (auto& sprite : sprite_) {
+		delete sprite;
+	}
+	sprite_.clear();
+}
+
+void BackGround::Initialize(std::vector<uint32_t> textureHandle) {
+	spritePosition_ = { 1280.0f * 0.5f,720.0f * 0.5f };
+	for (size_t i = 0; i < static_cast<size_t>(Type::kCount); i++) {
+		sprite_.emplace_back(Sprite::Create(textureHandle.at(i), spritePosition_, Vector4(1.0f, 1.0f, 1.0f, 1.0f), Vector2(0.5f, 0.5f)));
+	}
+}
+
+void BackGround::Update() {
 }
 
 void BackGround::Draw(const ViewProjection& viewProjection) {
-	plane_->Draw(worldTransform_,viewProjection,textureHandle_);
+	for (auto& sprite : sprite_) {
+		sprite->Draw();
+	}
 }
