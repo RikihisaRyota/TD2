@@ -27,6 +27,7 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
+
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
 	boss_ = std::make_unique<Boss>();
@@ -44,17 +45,21 @@ void GameScene::Initialize() {
 	uvulaBody_= std::make_unique<Model>();
 	fade_ = std::make_unique<Fade>();
 #pragma endregion
+
 #pragma region 初期化
 	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
 	backGround_->Initialize(textureHandle);
+
 	// 枠組み
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
 	frame_->Initialize();
+	
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
+	
 	// プレイヤー
 	playerModel_.emplace_back(Model::Create("playerBody"));
 	playerModel_.emplace_back(Model::Create("playerLegLeft"));
@@ -83,6 +88,7 @@ void GameScene::Initialize() {
 	//enemyManager_->Initialize(enemyModel_.get());
 	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_);
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
+	
 	// CSVからデータの読み込み
 	std::unique_ptr<CSV> csv = std::make_unique<CSV>();
 	csv->LoadCSV("Spaw");
@@ -97,6 +103,7 @@ void GameScene::Initialize() {
 	uvulaBody_.reset(Model::Create("uvulaBody"));
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
+	
 	// ボス
 	bossModel_.emplace_back(Model::Create("bossOnJaw"));
 	bossModel_.emplace_back(Model::Create("bossLowerJaw"));
@@ -203,6 +210,7 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
 #pragma endregion
+
 #pragma region 3Dオブジェクト描画
 	// 3Dオブジェクト描画前処理
 	CubeRenderer::PreDraw(commandList);
@@ -232,8 +240,6 @@ void GameScene::Draw() {
 	OBJ::PostDraw();
 	CubeRenderer::PostDraw();
 #pragma endregion
-
-
 
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
