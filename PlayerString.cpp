@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 
+#include "Collision.h"
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
@@ -57,6 +58,7 @@ void PlayerString::Update() {
 		Shrink();
 	}
 	StringBodyUpdate();
+	MoveLimit();
 }
 
 void PlayerString::Extend() {
@@ -99,20 +101,23 @@ void PlayerString::Extend() {
 			string.worldTransform_.translation_.x -= gravity;
 			string.worldTransform_.UpdateMatrix();
 		}
+		// 徐々にサイズを大きくしていく
+		float scale = kPlaneSize_ * static_cast<float>(extendCount_) / static_cast<float>(kExtendCountMax_);
+		headWorldTransform_.scale_ = { scale,scale,1.0f };
+		headWorldTransform_.UpdateMatrix();
+		playerWorldTransform_.UpdateMatrix();
+		player_->SetTranslation(playerWorldTransform_.translation_);
+		player_->UpdateMatrix();
 	}
 	else {
 		playerWorldTransform_.translation_.x = 0.0f;
 		playerWorldTransform_.UpdateMatrix();
 		player_->SetWorldTransform(playerWorldTransform_);
+		player_->UpdateMatrix();
 		acceleration_ = { 0.0f ,0.0f ,0.0f };
-		player_->SetBehavior(Player::Behavior::kLanding);
+		player_->SetBehavior(Player::Behavior::kDoNothing);
 	}
-	// 徐々にサイズを大きくしていく
-	float scale = kPlaneSize_ * static_cast<float>(extendCount_) / static_cast<float>(kExtendCountMax_);
-	headWorldTransform_.scale_ = { scale,scale,1.0f };
-	headWorldTransform_.UpdateMatrix();
-	playerWorldTransform_.UpdateMatrix();
-	player_->SetTranslation(playerWorldTransform_.translation_);
+
 	// 場所を保存
 	if (setStringWorldTransformCount_ % kSetStringWorldTransformInterval == 0) {
 		StringBody save;
@@ -144,6 +149,7 @@ void PlayerString::Shrink() {
 		}
 		shootOutVector_.Normalize();
 		player_->SetBehavior(Player::Behavior::kJump);
+		return;
 	}
 	else {
 		float t = static_cast<float>(shrinkCount_) / static_cast<float>(kShrinkCountMax_);
@@ -160,6 +166,7 @@ void PlayerString::Shrink() {
 		headWorldTransform_.UpdateMatrix();
 		// プレイヤーのワールド変換を設定
 		player_->SetTranslation(headWorldTransform_.translation_);
+		player_->UpdateMatrix();
 	}
 
 }
@@ -167,7 +174,9 @@ void PlayerString::Shrink() {
 
 void PlayerString::Draw(const ViewProjection& viewProjection) {
 	for (size_t i = 0; i < stringBody_.size(); i++) {
-		plane_.at(i)->Draw(stringBody_.at(i).worldTransform_, viewProjection);
+		if (stringBody_.at(i).isAlive_) {
+			plane_.at(i)->Draw(stringBody_.at(i).worldTransform_, viewProjection);
+		}
 	}
 	if (isExtend_) {
 		head_->Draw(headWorldTransform_, viewProjection);
@@ -206,17 +215,17 @@ void PlayerString::Debug() {
 	ImGui::End();
 }
 
+void PlayerString::MoveLimit() {
+	float playerSize = player_->GetSize();
+	headWorldTransform_.translation_.x = std::clamp(headWorldTransform_.translation_.x, -player_->GetWidth() + playerSize, player_->GetWidth() - playerSize);
+	headWorldTransform_.translation_.y = std::clamp(headWorldTransform_.translation_.y, -player_->GetHeight() + playerSize, player_->GetHeight() - playerSize);
+	headWorldTransform_.UpdateMatrix();
+}
+
 void PlayerString::StringBodyUpdate() {
 	for (auto& body : stringBody_) {
-		if (!IsInsideFrustum(Sphere(body.worldTransform_.translation_, 1.0f), *viewProjection_)) {
+		if (IsCollision(Sphere(player_->GetTranslation(), 0.5f), Sphere(body.worldTransform_.translation_, 0.5f))) {
 			body.isAlive_ = false;
 		}
 	}
-	// 削除する要素のイテレータを見つける
-	auto it = std::remove_if(stringBody_.begin(), stringBody_.end(), [](const StringBody& body) {
-		return !body.isAlive_;
-		});
-
-	// 削除する要素を実際に削除
-	stringBody_.erase(it, stringBody_.end());
 }

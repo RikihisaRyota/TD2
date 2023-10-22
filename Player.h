@@ -24,6 +24,13 @@
 /// </summary>
 class Player : public Collider{
 public:
+	enum Parts {
+		kBody,
+		kLegLeft,
+		kLegRight,
+
+		kPartsCount,
+	};
 	enum Behavior {
 		kMove,
 		kPullingMove,
@@ -31,16 +38,18 @@ public:
 		kJump,
 		kLanding,
 		kStun,
+		kDoNothing,
 
 		kCount
 	};
 public:
+	~Player();
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	/// <param name= "model">モデル</param>
 	/// <param name= "textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model);
+	void Initialize(std::vector<Model*> models);
 
 	/// <summary>
 	/// 更新
@@ -53,6 +62,7 @@ public:
 	/// <param name= "viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(const ViewProjection& viewProjection);
 
+	void UpdateMatrix();
 	void Reset();
 
 	// 当たり判定
@@ -61,7 +71,10 @@ public:
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 #pragma region getter,setter
+	float GetSize() { return radius_; }
+	Vector3 GetInitialPosition() { return kInitialPosition_; }
 	uint32_t GetWeightNum() { return weightCount_; }
+	void SetWeightNum(uint32_t num) { weightCount_ = num; }
 	uint32_t GetWeightMax() { return kWeightMax_; }
 	bool GetIsPulling() { return isPulling_; }
 	void SetIsPulling(bool flg) { isPulling_= flg; }
@@ -72,7 +85,8 @@ public:
 	void SetPlayerBulletManager(PlayerBulletManager* PlayerBulletManager) { playerBulletManager_ = PlayerBulletManager; }
 	PlayerBulletManager* GetPlayerBulletManager() { return playerBulletManager_; }
 	PlayerJump* GetPlayerJump() { return playerJump_.get(); }
-	PlayerPullingMove* GetPlayerMove() { return playerPullingMove_.get(); }
+	PlayerPullingMove* GetPlayerPullingMove() { return playerPullingMove_.get(); }
+	PlayerMove* GetPlayerMove() { return playerMove_.get(); }
 	PlayerString* GetPlayerString() { return playerString_.get(); }
 	PlayerStun* GetPlayerStun() { return playerStun_.get(); }
 	void SetScale(const Vector3& scale);
@@ -83,6 +97,25 @@ public:
 	const Vector3 GetTranslation() const { return worldTransform_.translation_; }
 	void SetWorldTransform(const WorldTransform& worldTransform);
 	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
+	void SetMotionScale(const Vector3& scale);
+	const Vector3 GetMotionScale() const { return motion_.scale_; }
+	void SetMotionRotation(const Vector3& rotation);
+	const Vector3 GetMotionRotation() const { return motion_.rotation_; }
+	void SetMotionTranslation(const Vector3& translation);
+	const Vector3 GetMotionTranslation() const { return motion_.translation_; }
+	void SetMotionWorldTransform(const WorldTransform& worldTransform);
+	const WorldTransform& GetMotionWorldTransform() const { return motion_; }
+
+	void SetPartsScale(const Vector3& scale,size_t num);
+	const Vector3 GetPartsScale(size_t num) const { return parts_.at(num).scale_; }
+	void SetPartsRotation(const Vector3& rotation, size_t num);
+	const Vector3 GetPartsRotation(size_t num) const { return parts_.at(num).rotation_; }
+	void SetPartsTranslation(const Vector3& translation, size_t num);
+	const Vector3 GetPartsTranslation(size_t num) const { return parts_.at(num).translation_; }
+	void SetPartsWorldTransform(const WorldTransform& worldTransform, size_t num);
+	const WorldTransform& GetPartsWorldTransform(size_t num) const { return parts_.at(num); }
+
 	void SetBehavior(const std::optional<Behavior>& behaviorRequest);
 	Behavior GetBehavior() const { return behavior_; }
 	void SetHeight(float height) { kHeight_ = height; }
@@ -90,6 +123,8 @@ public:
 	void SetWidth(float width) { kWidth_ = width; }
 	float GetWidth() { return kWidth_; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection;}
+	bool GetIsHitStop() { return isHitStop_; }
+	void SetIsHitStop(bool flg) { isHitStop_ = flg; }
 #pragma endregion
 private:
 	void Debug();
@@ -98,16 +133,20 @@ private:
 	void InvincibleUpdate();
 
 	uint32_t kWeightMax_ = 20;
-
-	float radius_ = 5.0f;
+	Vector3 kInitialPosition_ = { 80.0f,-10.0f,0.0f };
+	float kRadiusMax_ = 10.0f;
+	float kRadiusMin_ = 5.0f;
+	float radius_ = kRadiusMin_;
 	PlayerBulletManager* playerBulletManager_;
 	Input* input_;
 	ViewProjection* viewProjection_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
+	WorldTransform motion_;
+	std::vector<WorldTransform> parts_;
 	OBB obb_; // 当たり判定用
 	// モデル
-	Model* model_ = nullptr;
+	std::vector<Model*> models_;
 	// ふるまい
 	Behavior behavior_ = Behavior::kMove;
 	std::optional<Behavior> behaviorRequest_ = std::nullopt;
@@ -130,4 +169,6 @@ private:
 	bool isInvincible_;
 	uint32_t invincibleCount_;
 	uint32_t kInvincibleMax_ = 60;
+	// ヒットストップ
+	bool isHitStop_;
 };

@@ -8,18 +8,20 @@
 void Uvula::Initialize(Model* head, Model* body) {
 	headModel_ = head;
 	bodyModel_ = body;
+	headWorldTransform_.Initialize();
+	bodyWorldTransforms_.Initialize();
 	Reset();
 	HitBoxInitialize();
 }
 
 void Uvula::Reset() {
-	headWorldTransform_.Initialize();
-	headWorldTransform_.translation_.x = -10.0f;
+	headWorldTransform_.translation_ = kInitialPosition_;
 	headWorldTransform_.UpdateMatrix();
-	createModelCount_ = 0;
-	bodyModels_.clear();
-	bodyWorldTransforms_.clear();
-	angle_ = 0.0f;
+	bodyWorldTransforms_.scale_ = { 1.0f,2.0f,1.0f };
+	bodyWorldTransforms_.rotation_ = { 0.0f,0.0f,0.0f };
+	bodyWorldTransforms_.translation_ = kInitialPosition_;
+	bodyWorldTransforms_.UpdateMatrix();
+
 	isPlayerChase_ = true;
 	HitBoxUpdate();
 }
@@ -27,37 +29,54 @@ void Uvula::Reset() {
 void Uvula::Update() {
 	if (isPlayerChase_) {
 		// プレイヤーを追っている最中
-		angle_ += 0.1f;
-		float chase = Lerp(kChaseMin_, kChaseMax_,player_->GetTranslation().x / kWidth_);
+		float chase = Lerp(kChaseMin_, kChaseMax_, player_->GetTranslation().x / kWidth_);
 		headWorldTransform_.translation_ = Lerp(headWorldTransform_.translation_, player_->GetTranslation(), chase);
-		if (createModelCount_ >= kCreateModelInterval_) {
-			WorldTransform bodyWorldTransform{};
-			bodyWorldTransform.Initialize();
-			bodyWorldTransform.translation_ = headWorldTransform_.translation_;
-			bodyWorldTransform.UpdateMatrix();
-			bodyWorldTransforms_.emplace_back(bodyWorldTransform);
-			bodyModels_.emplace_back(bodyModel_);
-			createModelCount_ = 0;
+		Vector3 distance = headWorldTransform_.translation_ - kInitialPosition_;
+		bodyWorldTransforms_.scale_.x = distance.x * 0.5f;
+		Vector3 rotate{};
+		if (distance.Length() > 0) {
+			rotate = Normalize(distance);
 		}
+		float angle = std::atan2(rotate.y, rotate.x);
+		bodyWorldTransforms_.rotation_.z = angle;
+		bodyWorldTransforms_.translation_ = distance * 0.5f + kInitialPosition_;
 		headWorldTransform_.UpdateMatrix();
+		bodyWorldTransforms_.UpdateMatrix();
 		HitBoxUpdate();
-		createModelCount_++;
 	}
 	else {
-		headWorldTransform_.translation_ = player_->GetTranslation();
-		headWorldTransform_.translation_.x -= 2.0f;
-		headWorldTransform_.UpdateMatrix();
-	}
-	if (player_->GetTranslation().x <= 0.0f) {
-		isPlayerChase_ = true;
-		Reset();
+		// 地面に着いたときにリセット、プレイヤーを追いかけるフラグはOFF
+		if (player_->GetBehavior() == Player::Behavior::kLanding) {
+			Reset();
+			isPlayerChase_ = false;
+		}
+		// 引っ張られているとき
+		if (player_->GetIsPulling()) {
+			headWorldTransform_.translation_ = player_->GetTranslation();
+			headWorldTransform_.translation_.x -= 2.0f;
+			Vector3 distance = headWorldTransform_.translation_ - kInitialPosition_;
+			bodyWorldTransforms_.scale_.x = distance.x * 0.5f;
+			Vector3 rotate{};
+			if (distance.Length() > 0) {
+				rotate = Normalize(distance);
+			}
+			float angle = std::atan2(rotate.y, rotate.x);
+			bodyWorldTransforms_.rotation_.z = angle;
+			bodyWorldTransforms_.translation_ = distance * 0.5f + kInitialPosition_;
+			headWorldTransform_.UpdateMatrix();
+			bodyWorldTransforms_.UpdateMatrix();
+		}
+		// プレイヤーがMoveに入ったら追いかけるフラグON
+		if (player_->GetBehavior() == Player::Behavior::kMove) {
+			isPlayerChase_ = true;
+		}
 	}
 }
 
 void Uvula::Draw(const ViewProjection& viewProjection) {
-	headModel_->Draw(headWorldTransform_, viewProjection);
-	for (size_t i = 0; i < bodyModels_.size(); i++) {
-		bodyModels_.at(i)->Draw(bodyWorldTransforms_.at(i), viewProjection);
+	if (!player_->GetIsLanding()) {
+		headModel_->Draw(headWorldTransform_, viewProjection);
+		bodyModel_->Draw(bodyWorldTransforms_, viewProjection);
 	}
 }
 
@@ -75,7 +94,7 @@ void Uvula::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
 	{
-    	Reset();
+		Reset();
 		isPlayerChase_ = false;
 	}
 	break;
@@ -91,12 +110,12 @@ void Uvula::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemy):
 	{
-		
+
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
 	{
-		
+
 	}
 	break;
 	default:

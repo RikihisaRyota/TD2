@@ -39,13 +39,13 @@ void GameScene::Initialize() {
 	followCamera_ = std::make_unique<FollowCamera>();
 	player_ = std::make_unique<Player>();
 	playerBulletManager_ = std::make_unique<PlayerBulletManager>();
-	playerModel_ = std::make_unique<Model>();
 	playerBulletModel_ = std::make_unique<Model>();
 	uvula_ = std::make_unique<Uvula>();
 	uvulaHead_ = std::make_unique<Model>();
 	uvulaBody_ = std::make_unique<Model>();
 #pragma endregion
 #pragma region 初期化
+	hitStopCount_ = 0;
 	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
 	backGround_->Initialize(textureHandle);
 	// 枠組み
@@ -57,11 +57,13 @@ void GameScene::Initialize() {
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
 	// プレイヤー
-	playerModel_.reset(Model::Create("Player"));
+	playerModel_.emplace_back(Model::Create("playerBody"));
+	playerModel_.emplace_back(Model::Create("playerLegLeft"));
+	playerModel_.emplace_back(Model::Create("playerLegRight"));
 	playerBulletModel_.reset(Model::Create("playerBullet"));
 	player_->SetViewProjection(&viewProjection_);
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
-	player_->Initialize(playerModel_.get());
+	player_->Initialize(playerModel_);
 	playerBulletManager_->SetViewProjection(&viewProjection_);
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 
@@ -105,28 +107,38 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	if (!IsDebugCamera_) {
-		frame_->Update();
-		player_->Update();
-		// デバック
-		enemyManager_->SetIsDebug(IsDebugCamera_);
-		//
-		enemyManager_->Update();
-		playerBulletManager_->Update();
-		enemyBulletManager_->Update();
-		uvula_->Update();
-		boss_->Update();
-		// 敵生成
-		collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-		// 0を押すとカメラを切り替える
-		if (input_->TriggerKey(DIK_0)) {
-			IsDebugCamera_ ^= true;
+		if (!player_->GetIsHitStop()) {
+			frame_->Update();
+			player_->Update();
+			// デバック
+			enemyManager_->SetIsDebug(IsDebugCamera_);
+			//
+			enemyManager_->Update();
+			playerBulletManager_->Update();
+			enemyBulletManager_->Update();
+			uvula_->Update();
+			boss_->Update();
+			// 敵生成
+			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
+			// shiftを押すとカメラを切り替える
+			if (input_->TriggerKey(DIK_LSHIFT)) {
+				IsDebugCamera_ ^= true;
+			}
+			followCamera_->Update();
+			viewProjection_ = followCamera_->GetViewProjection();
 		}
-		followCamera_->Update();
-		viewProjection_ = followCamera_->GetViewProjection();
+		else {
+			const uint32_t kHitStopMax = 5;
+			hitStopCount_++;
+			if (hitStopCount_ >= kHitStopMax) {
+				hitStopCount_ = 0;
+				player_->SetIsHitStop(false);
+			}
+		}
 	}
 	else {
-		// 0を押すとカメラを切り替える
-		if (input_->TriggerKey(DIK_0)) {
+		// shiftを押すとカメラを切り替える
+		if (input_->TriggerKey(DIK_LSHIFT)) {
 			IsDebugCamera_ ^= true;
 		}
 		enemyEditor_->Update(enemyManager_.get());
@@ -174,7 +186,6 @@ void GameScene::Draw() {
 	playerBulletManager_->Draw(viewProjection_);
 	boss_->Draw(viewProjection_);
 
-	player_->HitBoxDraw(viewProjection_);
 	PrimitiveDrawer::GetInstance()->Draw();
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
