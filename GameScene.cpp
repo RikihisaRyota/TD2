@@ -99,6 +99,8 @@ void GameScene::Initialize() {
 	// ボス
 	bossModel_.emplace_back(Model::Create("bossOnJaw"));
 	bossModel_.emplace_back(Model::Create("bossLowerJaw"));
+	bossModel_.emplace_back(Model::Create("shellfishDown"));
+	bossModel_.emplace_back(Model::Create("shellfishUp"));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 #pragma endregion

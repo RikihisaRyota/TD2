@@ -17,6 +17,9 @@ PlayerPullingMove::~PlayerPullingMove() {}
 
 void PlayerPullingMove::Initialize() {
 	player_->SetMotionRotation(Vector3(0.0f, 0.0f, 0.0f));
+	for (size_t i = 0; i < static_cast<size_t>(Player::Parts::kPartsCount); ++i) {
+		player_->SetPartsRotation(Vector3(0.0f, 0.0f, 0.0f), i);
+	}
 	player_->SetIsPulling(true);
 }
 

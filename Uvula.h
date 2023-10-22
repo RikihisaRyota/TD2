@@ -21,7 +21,7 @@ private:
 	float kChaseMin_ = 0.01f;
 	float kChaseMax_ = 0.045f;
 	float kWidth_=1000.0f;
-	Vector3 kInitialPosition_ = { -20.0f,-10.0f,0.0f };
+	Vector3 kInitialPosition_ = { -20.0f,-12.0f,0.0f };
 	// 当たり判定
 	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
