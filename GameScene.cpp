@@ -19,6 +19,7 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Initialize() {
+	srand((unsigned int)time(NULL));
 	dxCommon_ = DirectXCommon::GetInstance();
 	// デバックカメラ
 	debugCamera_ = new DebugCamera();
@@ -73,7 +74,7 @@ void GameScene::Initialize() {
 		Model::Create("octopusHead"), Model::Create("octopusLeg")
 	};
 	enemyModels_Type1_ = {
-		Model::Create("toge")
+		Model::Create("spikeBody"), Model::Create("spikePrick")
 	};
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyBulletManager_->SetPlayer(player_.get());
