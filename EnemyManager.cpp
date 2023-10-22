@@ -23,6 +23,27 @@ void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vecto
 }
 
 void EnemyManager::Update() {
+	if (player_->GetIsLanding()) {
+		Reset();
+		// CSVからデータの読み込み
+		std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+
+		if (spawn0_) {
+			csv->LoadCSV("Spaw");
+		}
+		else if (spawn1_) {
+			csv->LoadCSV("Spaw");
+		}
+		else if (spawn2_) {
+			csv->LoadCSV("Spaw");
+		}
+		std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+		// 読み込んだデータから生成
+		for (CSV::Data data : datas) {
+			Create(data.position, data.type);
+		}
+
+	}
 
 	for (auto& enemy : enemies_) {
 		enemy->Update();

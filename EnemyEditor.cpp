@@ -57,8 +57,56 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
         for (auto& enemy : enemyManager->GetEnemies()) {
             datas.emplace_back(enemy->GetWorldTransform().translation_, enemy->GetType());
         }
-        csv->WritingData(datas);
+        if (spawn0_) {
+            csv->WritingData("spawn", datas);
+        }
+        else if (spawn1_) {
+            csv->WritingData("spawn", datas);
+        }
+        else if (spawn2_) {
+            csv->WritingData("spawn", datas);
+        }
     }
+
+    ImGui::Checkbox("SpawnPattern : 0", &spawn0_);
+    if (spawn0_) {
+        spawn1_ = false;
+        spawn2_ = false;
+    }
+    ImGui::Checkbox("SpawnPattern : 1", &spawn1_);
+    if (spawn1_) {
+        spawn0_ = false;
+        spawn2_ = false;
+    }
+    ImGui::Checkbox("SpawnPattern : 2", &spawn2_);
+    if (spawn2_) {
+        spawn0_ = false;
+        spawn1_ = false;
+    }
+
+    enemyManager->SetSpawn0(spawn0_);
+    enemyManager->SetSpawn1(spawn1_);
+    enemyManager->SetSpawn2(spawn2_);
+
+    if (ImGui::Button("Reset")) {
+        // CSVからデータの読み込み
+        std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+        if (spawn0_) {
+            csv->LoadCSV("Spaw");
+        }
+        else if (spawn1_) {
+            csv->LoadCSV("Spaw");
+        }
+        else if (spawn2_) {
+            csv->LoadCSV("Spaw");
+        }
+        std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+        // 読み込んだデータから生成
+        for (CSV::Data data : datas) {
+            enemyManager->Create(data.position, data.type);
+        }
+    }
+
 
     ImGui::End();
 #endif // _DEBUG

@@ -30,6 +30,9 @@ public:
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
 	
 	void SetIsDebug(bool flg) { isDebug_ = flg; }
+	void SetSpawn0(bool spawn0) { spawn0_ = spawn0; }
+	void SetSpawn1(bool spawn1) { spawn1_ = spawn1; }
+	void SetSpawn2(bool spawn2) { spawn2_ = spawn2; }
 private:
 	Model* model_;
 	Input* input_;
@@ -42,5 +45,9 @@ private:
 	std::vector<EnemyState> splits_;
 	// デバック
 	bool isDebug_;
+	// CSV選択
+	bool spawn0_ = true;
+	bool spawn1_ = false;
+	bool spawn2_ = false;
 };
 

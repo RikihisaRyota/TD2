@@ -75,9 +75,9 @@ std::vector<CSV::Data> CSV::UpdateDataCommands() {
 	return result;
 }
 
-void CSV::WritingData(std::vector<Data> datas)
+void CSV::WritingData(std::string fileName, std::vector<Data> datas)
 {
-	std::ofstream outputFile("Resources/CSV/spaw.csv");
+	std::ofstream outputFile("Resources/CSV/" + fileName + ".csv");
 	outputFile << "// width 1000.0f(10/18)";
 	outputFile << '\n';
 	outputFile << "// height 50.0f(10/18)";

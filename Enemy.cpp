@@ -41,6 +41,7 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	isAlive_ = true;
 	isDrawing_ = true;
 	EnemyCreateFlag = false;
+	
 }
 
 void Enemy::Update() {
@@ -97,16 +98,6 @@ void Enemy::Update() {
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
 
-	if (player_->GetIsLanding()) {
-		isAlive_ = true;
-		isDrawing_ = true;
-		radius_ = InitialRadius_;
-		worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
-		worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
-
-	}
-
-
 	// 演出用
 	worldTransform_type0_[kHead].translation_ = worldTransform_.translation_;
 	worldTransform_type0_[kHead].UpdateMatrix();
@@ -132,11 +123,11 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 void Enemy::SetMatWorld() {
 	worldTransform_type0_[kHead].translation_ = worldTransform_.translation_;
 	worldTransform_type0_[kHead].UpdateMatrix();
-	worldTransform_type0_[kLeg].translation_ = worldTransform_.translation_;
 	worldTransform_type0_[kLeg].UpdateMatrix();
 
 	worldTransform_type1_[kBody].translation_ = worldTransform_.translation_;
 	worldTransform_type1_[kBody].UpdateMatrix();
+	worldTransform_type1_[kPrick].UpdateMatrix();
 }
 
 void Enemy::OnCollision(uint32_t type, Sphere* sphere) {

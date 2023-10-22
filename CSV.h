@@ -29,7 +29,7 @@ public:
 	/// <summary>
 	/// データの書き込み
 	/// </summary>
-	void WritingData(std::vector<Data> datas);
+	void WritingData(std::string fileName, std::vector<Data> datas);
 
 private:
 	// 発生コマンド
