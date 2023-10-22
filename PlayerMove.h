@@ -19,7 +19,8 @@ public:
 	void Debug();
 private:
 	void MoveLimit();
-	float kPower_ = 0.002f;
+	float kPowerMin_ = 0.15f;
+	float kPowerMax_ = 0.3f;
 	float kInertia_ = 0.98f;
 	float kAngle_ = 60.0f;
 

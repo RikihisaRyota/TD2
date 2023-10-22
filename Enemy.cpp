@@ -93,7 +93,7 @@ void Enemy::Update() {
 			isDrawing_ = true;
 		}
 	}
-	
+
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
 
@@ -143,10 +143,8 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-		if (player_->GetIsPulling()) {
- 			isAlive_ = false;
-			isDrawing_ = false;
-		}
+		isAlive_ = false;
+		isDrawing_ = false;
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
@@ -205,8 +203,7 @@ void Enemy::HitBoxDraw(const ViewProjection& viewProjection) {
 	DrawSphere(sphere_, viewProjection, Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 }
 
-void Enemy::BehaviorRequestCheck()
-{
+void Enemy::BehaviorRequestCheck() {
 	if (behaviorRequest_) {
 		// ふるまいを変更
 		behavior_ = behaviorRequest_.value();
@@ -236,42 +233,35 @@ void Enemy::BehaviorRequestCheck()
 	}
 }
 
-void Enemy::StandbyInitialize()
-{
+void Enemy::StandbyInitialize() {
 	times_[Behavior::kStandby] = 0;
 }
 
-void Enemy::ShotInitialize()
-{
+void Enemy::ShotInitialize() {
 	times_[Behavior::kShot] = 0;
 	easeTime_ = 0;
 }
 
-void Enemy::SplitInitialize()
-{
+void Enemy::SplitInitialize() {
 	times_[Behavior::kSplit] = 0;
 	radius_ = InitialRadius_;
 	worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 	worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 }
 
-void Enemy::DamageInitialize()
-{
+void Enemy::DamageInitialize() {
 	times_[Behavior::kDamage] = 0;
 }
 
-void Enemy::ClingInitialize()
-{
+void Enemy::ClingInitialize() {
 	times_[Behavior::kCling] = 0;
 }
 
-void Enemy::GrowInitialize()
-{
+void Enemy::GrowInitialize() {
 	times_[Behavior::kGrow] = 0;
 }
 
-void Enemy::StandbyUpdate()
-{
+void Enemy::StandbyUpdate() {
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		if (isDrawing_) {
 			times_[Behavior::kStandby]++;
@@ -286,8 +276,7 @@ void Enemy::StandbyUpdate()
 	}
 }
 
-void Enemy::ShotUpdate()
-{
+void Enemy::ShotUpdate() {
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		if (!player_->GetIsPulling()) {
 			times_[Behavior::kShot]++;
@@ -327,8 +316,7 @@ void Enemy::ShotUpdate()
 	}
 }
 
-void Enemy::SplitUpdate()
-{
+void Enemy::SplitUpdate() {
 	EnemyCreateFlag = true;
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		float degree = float(rand() / 360);
@@ -345,13 +333,12 @@ void Enemy::SplitUpdate()
 	else {
 		splitPos_ = worldTransform_.translation_;
 		worldTransform_.translation_.y += 5.0f;
-		splitPos_.y  -= 5.0f;
+		splitPos_.y -= 5.0f;
 	}
 	behaviorRequest_ = Behavior::kStandby;
 }
 
-void Enemy::DamageUpdate()
-{
+void Enemy::DamageUpdate() {
 	worldTransform_type0_[kHead].rotation_.z += 0.1f;
 	worldTransform_type1_[kBody].rotation_.z += 0.1f;
 	if (times_[Behavior::kDamage] == DamageTime_) {
@@ -362,14 +349,12 @@ void Enemy::DamageUpdate()
 	times_[Behavior::kDamage]++;
 }
 
-void Enemy::ClingUpdate()
-{
+void Enemy::ClingUpdate() {
 
 
 }
 
-void Enemy::GrowUpdate()
-{
+void Enemy::GrowUpdate() {
 	if (radius_ < 5.0f) {
 		radius_ += 1.0f;
 		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {

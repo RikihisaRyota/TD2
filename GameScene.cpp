@@ -118,7 +118,7 @@ void GameScene::Update() {
 			enemyManager_->Update();
 			playerBulletManager_->Update();
 			enemyBulletManager_->Update();
-			uvula_->Update();
+			//uvula_->Update();
 			boss_->Update();
 			// 敵生成
 			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
