@@ -135,8 +135,8 @@ void Enemy::SetMatWorld() {
 	worldTransform_type0_[kLeg].translation_ = worldTransform_.translation_;
 	worldTransform_type0_[kLeg].UpdateMatrix();
 
-	worldTransform_type1_[kBoll].translation_ = worldTransform_.translation_;
-	worldTransform_type1_[kBoll].UpdateMatrix();
+	worldTransform_type1_[kBody].translation_ = worldTransform_.translation_;
+	worldTransform_type1_[kBody].UpdateMatrix();
 }
 
 void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
