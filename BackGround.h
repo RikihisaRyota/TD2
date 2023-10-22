@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+class Player;
 class BackGround {
 public:
 	enum Type {
@@ -20,10 +21,14 @@ public:
 	~BackGround();
 	void Initialize(std::vector<uint32_t> textureHandle);
 	void Update();
-	void Draw(const ViewProjection& viewProjection);
+	void Draw();
+	void SetPlayer(Player* player) { player_=player; }
 private:
-	Vector2 spritePosition_;
-	std::vector<Sprite*>sprite_;
+	Player* player_;
+	std::vector<Vector2> position_;
+	std::vector<Sprite*> backSprite_;
+	std::vector<Sprite*> middleSprite_;
+	std::vector<Sprite*> frontSprite_;
 	uint32_t textureHandle_;
 };
 

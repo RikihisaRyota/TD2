@@ -49,6 +49,7 @@ void GameScene::Initialize() {
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
+	backGround_->SetPlayer(player_.get());
 	backGround_->Initialize(backGroundTextureHandles_);
 	// 枠組み
 	frame_->SetPlayer(player_.get());
@@ -112,6 +113,7 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	if (!IsDebugCamera_) {
 		if (!player_->GetIsHitStop()) {
+			backGround_->Update();
 			frame_->Update();
 			player_->Update();
 			// デバック
@@ -120,7 +122,7 @@ void GameScene::Update() {
 			enemyManager_->Update();
 			playerBulletManager_->Update();
 			enemyBulletManager_->Update();
-			//uvula_->Update();
+			uvula_->Update();
 			boss_->Update();
 			// 敵生成
 			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
@@ -165,7 +167,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-	backGround_->Draw(viewProjection_);
+	backGround_->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
