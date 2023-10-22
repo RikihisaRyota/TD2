@@ -6,14 +6,16 @@
 #include "Draw.h"
 #include "MyMath.h"
 
-void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1, const Vector3& position, uint32_t type) {
+void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1, const std::vector<Model*>& type2, const Vector3& position, uint32_t type) {
 	models_type0_ = type0;
 	models_type1_ = type1;
+	models_type2_ = type2;
 	type_ = type;
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 
+	radius_ = initialRadius_;
 	float scale = radius_ * 0.5f;
 	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.UpdateMatrix();
@@ -28,6 +30,8 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	worldTransform_type1_[kBody].rotation_.y = 9.6f;
 	worldTransform_type1_[kPrick].Initialize();
 	worldTransform_type1_[kPrick].parent_ = &worldTransform_type1_[kBody];
+	worldTrasnform_type2_.Initialize();
+	worldTrasnform_type2_.scale_ = { scale, scale, scale };
 
 	times_.clear();
 	for (int i = 0; i < kCount; i++) {
@@ -106,16 +110,32 @@ void Enemy::Update() {
 	worldTransform_type1_[kBody].translation_ = worldTransform_.translation_;
 	worldTransform_type1_[kBody].UpdateMatrix();
 	worldTransform_type1_[kPrick].UpdateMatrix();
+	
+	worldTrasnform_type2_.translation_ = worldTransform_.translation_;
+	worldTrasnform_type2_.UpdateMatrix();
+
+	//Debug();
+
+#ifdef DEBUG
+	
+	Debug();
+
+#endif // DEBUG
+
+
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	if (type_ == static_cast<size_t>(EnemyType::kOctopus)) {
+	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		models_type0_[kHead]->Draw(worldTransform_type0_[kHead], viewProjection);
 		models_type0_[kLeg]->Draw(worldTransform_type0_[kLeg], viewProjection);
 	}
-	else if (type_ == static_cast<size_t>(EnemyType::kSpike)) {
+	else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
 		models_type1_[kBody]->Draw(worldTransform_type1_[kBody], viewProjection);
 		models_type1_[kPrick]->Draw(worldTransform_type1_[kPrick], viewProjection);
+	}
+	else if (type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+		models_type2_[0]->Draw(worldTrasnform_type2_, viewProjection);
 	}
 }
 
@@ -128,6 +148,8 @@ void Enemy::SetMatWorld() {
 	worldTransform_type1_[kBody].translation_ = worldTransform_.translation_;
 	worldTransform_type1_[kBody].UpdateMatrix();
 	worldTransform_type1_[kPrick].UpdateMatrix();
+
+	worldTrasnform_type2_.translation_ = worldTransform_.translation_;
 }
 
 void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
@@ -241,9 +263,10 @@ void Enemy::ShotInitialize()
 void Enemy::SplitInitialize()
 {
 	times_[Behavior::kSplit] = 0;
-	radius_ = InitialRadius_;
+	radius_ = initialRadius_;
 	worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 	worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+	worldTrasnform_type2_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 }
 
 void Enemy::DamageInitialize()
@@ -259,6 +282,9 @@ void Enemy::ClingInitialize()
 void Enemy::GrowInitialize()
 {
 	times_[Behavior::kGrow] = 0;
+	easeMin_ = radius_;
+	easeMax_ = radius_ + onceUpSize_;
+	easeTime_ = 0;
 }
 
 void Enemy::StandbyUpdate()
@@ -266,7 +292,7 @@ void Enemy::StandbyUpdate()
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		if (isDrawing_) {
 			times_[Behavior::kStandby]++;
-			if (times_[Behavior::kStandby] >= ShotTime_ * radius_) {
+			if (times_[Behavior::kStandby] >= shotTime_ * radius_) {
 				behaviorRequest_ = Behavior::kShot;
 				times_[Behavior::kStandby] = 0;
 			}
@@ -283,30 +309,34 @@ void Enemy::ShotUpdate()
 		if (!player_->GetIsPulling()) {
 			times_[Behavior::kShot]++;
 
-			if (times_[Behavior::kShot] == 20) {
+			/*if (times_[Behavior::kShot] == 20) {
 				enemyBulletManager_->CreateBullet(
 					{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * radius_), worldTransform_.translation_.z },
 					radius_);
 				worldTransform_type0_[kLeg].translation_.y = 0.0f;
 				easeMax_ = radius_ * 0.5f;
 				easeMin_ = worldTransform_type0_[kHead].scale_.x;
-			}
-			else if (times_[Behavior::kShot] > 20) {
+			}*/
+			if (times_[Behavior::kShot] > 20) {
 				float easedT = 1.0f - std::powf(1.0f - easeTime_, 3.0f);
 				float scale = (1.0f - easedT) * easeMin_ + easedT * easeMax_;
 				worldTransform_type0_[kHead].scale_ = { scale, scale, scale };
 				if (easeTime_ < 1.0f) {
-					easeTime_ += 0.01f;
+					easeTime_ += 0.05f;
 				}
 				else {
+					enemyBulletManager_->CreateBullet(
+						{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * radius_), worldTransform_.translation_.z },
+						radius_);
+					worldTransform_type0_[kLeg].translation_.y = 0.0f;
 					behaviorRequest_ = Behavior::kStandby;
 				}
 			}
 			else if (times_[Behavior::kShot] < 20) {
 				worldTransform_type0_[kHead].scale_ += {0.01f, 0.01f, 0.01f};
-				worldTransform_type0_[kLeg].translation_.y += 0.01f;
 				worldTransform_type0_[kLeg].rotation_.y += 1.0f;
-		
+				easeMax_ = radius_ * 0.5f;
+				easeMin_ = worldTransform_type0_[kHead].scale_.x;
 			}
 
 		}
@@ -359,17 +389,47 @@ void Enemy::ClingUpdate()
 
 void Enemy::GrowUpdate()
 {
-	if (radius_ < 5.0f) {
-		radius_ += 1.0f;
+	if (radius_ < maxSize_) {
+		const float c1 = 1.70158f;
+		const float c2 = c1 + 1.0f;
+		float easedT = 1 + c2 * std::powf(easeTime_ - 1.0f, 3.0) + c1 * std::powf(easeTime_ - 1.0f, 2.0f);
+		float radius = (1.0f - easedT) * easeMin_ + easeMax_ * easedT;
+		radius_ = radius;
 		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 			worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
 		else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
 			worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
-		behaviorRequest_ = Behavior::kStandby;
+		else if (type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+			worldTrasnform_type2_.scale_ = { radius_ * 0.5f, radius_ * 0.5f, radius_ * 0.5f };
+		}
+
+		if (easeTime_ < 1.0f) {
+			easeTime_ += easeSecond_Grow_;
+		}
+		else {
+			behaviorRequest_ = Behavior::kStandby;
+		}
 	}
 	else {
 		behaviorRequest_ = Behavior::kSplit;
 	}
+}
+
+void Enemy::Debug()
+{
+	//ImGui::Begin("Enemy");
+
+	//ImGui::DragInt("ShotSpeed", &shotTime_, 1, 0, 1000);
+	//ImGui::DragFloat("MaxSize", &maxSize_);
+	//ImGui::DragFloat("onceUpSize", &onceUpSize_);
+	//ImGui::DragFloat("easeSecond_Shot", &easeSecond_Shot_);
+	//ImGui::DragFloat("easeSecond_Grow", &easeSecond_Grow_);
+	//ImGui::DragFloat("InitialRadius", &initialRadius_);
+
+	//ImGui::End();
+
+
+
 }

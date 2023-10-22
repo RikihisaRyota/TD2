@@ -16,6 +16,9 @@ GameScene::~GameScene() {
 	for (auto& model : enemyModels_Type1_) {
 		delete model;
 	}
+	for (auto& model : enemyModels_Type2_) {
+		delete model;
+	}
 }
 
 void GameScene::Initialize() {
@@ -76,13 +79,16 @@ void GameScene::Initialize() {
 	enemyModels_Type1_ = {
 		Model::Create("spikeBody"), Model::Create("spikePrick")
 	};
+	enemyModels_Type2_ = {
+		Model::Create("feed")
+	};
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyBulletManager_->SetPlayer(player_.get());
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->SetPlayer(player_.get());
 	//enemyManager_->Initialize(enemyModel_.get());
-	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_);
+	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_, enemyModels_Type2_);
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	// CSVからデータの読み込み
 	std::unique_ptr<CSV> csv = std::make_unique<CSV>();

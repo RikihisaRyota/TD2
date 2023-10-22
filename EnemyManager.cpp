@@ -15,10 +15,11 @@ void EnemyManager::Initialize(Model* model) {
 
 }
 
-void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1)
+void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1, const std::vector<Model*>& type2 )
 {
     models_type0_ = type0;
     models_type1_ = type1;
+	models_type2_ = type2;
     Reset();
 }
 
@@ -83,9 +84,51 @@ void EnemyManager::Reset() {
 void EnemyManager::Create(const Vector3& position, uint32_t type) {
 	Enemy* enemy = new Enemy();
 	//enemy->Initialize(model_, position, type);
-    enemy->Initialize(models_type0_, models_type1_, position, type);
+    enemy->Initialize(models_type0_, models_type1_, models_type2_, position, type);
 	enemy->SetViewProjection(viewProjection_);
 	enemy->SetEnemyBulletManager(enemyBulletManager_);
 	enemy->SetPlayer(player_);
 	enemies_.emplace_back(enemy);
+}
+
+void EnemyManager::SetShotTime(int shotTime)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetShotTime(shotTime);
+	}
+}
+
+void EnemyManager::SetMaxSize(float maxSize)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetMaxSize(maxSize);
+	}
+}
+
+void EnemyManager::SetEaseSecond_Grow(float easeSecond_Grow)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetEaseSecond_Grow(easeSecond_Grow);
+	}
+}
+
+void EnemyManager::SetEaseSecond_Shot(float easeSecond_Shot)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetEaseSecond_Shot(easeSecond_Shot);
+	}
+}
+
+void EnemyManager::SetOnceUpSize(float onceUpSize)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetOnceUpSize(onceUpSize);
+	}
+}
+
+void EnemyManager::SetInitialRadius(float initialRadius)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetInitialRadius(initialRadius);
+	}
 }

@@ -17,13 +17,19 @@ public:
 public:
 	~EnemyManager();
 	void Initialize(Model* model);
-	void Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1);
+	void Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1, const std::vector<Model*>& type2);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void Reset();
 	void Create(const Vector3& position, uint32_t type);
 
 	std::vector<Enemy*>& GetEnemies() { return enemies_; }
+	int GetShotTime() { return enemies_[0]->GetShotTime(); }
+	float GetMaxSize() { return enemies_[0]->GetMaxSize(); }
+	float GetEaseSecond_Grow() { return enemies_[0]->GetEaseSecond_Grow(); }
+	float GetEaseSecond_Shot() { return enemies_[0]->GetEaseSecond_Shot(); }
+	float GetOnceUpSize() { return enemies_[0]->GetOnceUpSize(); }
+	float GetInitialRadius() { return enemies_[0]->GetInitialRadius(); }
 
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
@@ -33,6 +39,14 @@ public:
 	void SetSpawn0(bool spawn0) { spawn0_ = spawn0; }
 	void SetSpawn1(bool spawn1) { spawn1_ = spawn1; }
 	void SetSpawn2(bool spawn2) { spawn2_ = spawn2; }
+
+	void SetShotTime(int shotTime);
+	void SetMaxSize(float maxSize);
+	void SetEaseSecond_Grow(float easeSecond_Grow);
+	void SetEaseSecond_Shot(float easeSecond_Shot);
+    void SetOnceUpSize(float onceUpSize);
+    void SetInitialRadius(float initialRadius);
+
 private:
 	Model* model_;
 	Input* input_;
@@ -42,6 +56,7 @@ private:
 	Player* player_;
 	std::vector<Model*> models_type0_;
 	std::vector<Model*> models_type1_;
+	std::vector<Model*> models_type2_;
 	std::vector<EnemyState> splits_;
 	// デバック
 	bool isDebug_;

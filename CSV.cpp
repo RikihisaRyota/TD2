@@ -84,7 +84,7 @@ void CSV::WritingData(std::string fileName, std::vector<Data> datas)
 	outputFile << '\n';
 	outputFile << "// コマンド,x,y,z";
 	outputFile << '\n';
-	outputFile << "// コマンド,0:タコ,1:とげ";
+	outputFile << "// コマンド,0:タコ,1:とげ,2:エサ";
 	outputFile << '\n';
 	for (auto& data : datas) {
 		outputFile << "Position,";

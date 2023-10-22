@@ -98,6 +98,7 @@ private: // メンバ変数
 
 	std::vector<Model*> enemyModels_Type0_;
 	std::vector<Model*> enemyModels_Type1_;
+	std::vector<Model*> enemyModels_Type2_;
 
 	std::stringstream enemyPopCommands_;
 

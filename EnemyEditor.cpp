@@ -9,19 +9,45 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
 #ifdef _DEBUG
     uint32_t count = 0;
     ImGui::Begin("Enemy");
+    int shotTime = enemyManager->GetShotTime();
+    float sizeMax = enemyManager->GetMaxSize();
+    float easeSecond_Shot = enemyManager->GetEaseSecond_Shot();
+    float easeSecond_Grow = enemyManager->GetEaseSecond_Grow();
+    float onceUpSize = enemyManager->GetOnceUpSize();
+    float initialRadius = enemyManager->GetInitialRadius();
     for (auto it = enemyManager->GetEnemies().begin(); it != enemyManager->GetEnemies().end(); ) {
         auto& enemy = *it;
 
         if (ImGui::TreeNode((std::to_string(count)).c_str())) {
             Vector3 translation = enemy->GetWorldTransform().translation_;
             Vector3 rotation = enemy->GetWorldTransform().rotation_;
+
+            bool type0 = false;
+            bool type1 = false;
+            bool type2 = false;
+
+            if (enemy->GetType() == static_cast<uint32_t>(Enemy::EnemyType::kOctopus)) {
+                type0 = true;
+            }
+            else if (enemy->GetType() == static_cast<uint32_t>(Enemy::EnemyType::kSpike)) {
+                type1 = true;
+            }
+            else if (enemy->GetType() == static_cast<uint32_t>(Enemy::EnemyType::kfeed)) {
+                type2 = true;
+            }
             ImGui::DragFloat3("position", &translation.x, 0.1f);
             ImGui::DragFloat3("rotation", &rotation.x, 0.01f);
-            if (ImGui::Button("TYPE:0")) {
-                enemy->SetType(0);
+            ImGui::Checkbox("Type0", &type0);
+            ImGui::Checkbox("Type1", &type1);
+            ImGui::Checkbox("Type2", &type2);
+            if (type0) {
+                enemy->SetType(static_cast<uint32_t>(Enemy::EnemyType::kOctopus));
             }
-            if (ImGui::Button("TYPE:1")) {
-                enemy->SetType(1);
+            else if (type1) {
+                enemy->SetType(static_cast<uint32_t>(Enemy::EnemyType::kSpike));
+            }
+            else if (type2) {
+                enemy->SetType(static_cast<uint32_t>(Enemy::EnemyType::kfeed));
             }
             enemy->SetTranslation(translation);
             enemy->SetRotate(rotation);
@@ -42,8 +68,6 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
             count++;
         }
     }
-
-
 
     if (ImGui::Button("Create")) {
         Vector3 position = {};
@@ -107,6 +131,20 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
             enemyManager->Create(data.position, data.type);
         }
     }
+
+    ImGui::DragInt("ShotSpeed", &shotTime, 1, 0, 1000);
+    ImGui::DragFloat("MaxSize", &sizeMax);
+    ImGui::DragFloat("onceUpSize", &onceUpSize);
+    ImGui::DragFloat("easeSecond_Shot", &easeSecond_Shot);
+    ImGui::DragFloat("easeSecond_Grow", &easeSecond_Grow);
+    ImGui::DragFloat("InitialRadius", &initialRadius);
+
+    enemyManager->SetShotTime(shotTime);
+    enemyManager->SetEaseSecond_Grow(easeSecond_Grow);
+    enemyManager->SetEaseSecond_Shot(easeSecond_Shot);
+    enemyManager->SetMaxSize(sizeMax);
+    enemyManager->SetOnceUpSize(onceUpSize);
+    enemyManager->SetInitialRadius(initialRadius);
 
 
     ImGui::End();
