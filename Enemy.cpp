@@ -23,10 +23,11 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	worldTransform_type0_[kHead].rotation_.y = 9.5f;
 	worldTransform_type0_[kLeg].Initialize();
 	worldTransform_type0_[kLeg].parent_ = &worldTransform_type0_[kHead];
-	worldTransform_type1_[kBoll].Initialize();
-	worldTransform_type1_[kBoll].scale_ = { scale ,scale ,scale };
-	worldTransform_type1_[kBoll].rotation_.y = 9.6f;
-	worldTransform_type1_[ks].Initialize();
+	worldTransform_type1_[kBody].Initialize();
+	worldTransform_type1_[kBody].scale_ = { scale ,scale ,scale };
+	worldTransform_type1_[kBody].rotation_.y = 9.6f;
+	worldTransform_type1_[kPrick].Initialize();
+	worldTransform_type1_[kPrick].parent_ = &worldTransform_type1_[kBody];
 
 	times_.clear();
 	for (int i = 0; i < kCount; i++) {
@@ -99,9 +100,10 @@ void Enemy::Update() {
 	if (player_->GetIsLanding()) {
 		isAlive_ = true;
 		isDrawing_ = true;
-		radius_ = 2.0f;
+		radius_ = InitialRadius_;
 		worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
-		worldTransform_type1_[kBoll].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+		worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+
 	}
 
 
@@ -110,8 +112,9 @@ void Enemy::Update() {
 	worldTransform_type0_[kHead].UpdateMatrix();
 	worldTransform_type0_[kLeg].UpdateMatrix();
 
-	worldTransform_type1_[kBoll].translation_ = worldTransform_.translation_;
-	worldTransform_type1_[kBoll].UpdateMatrix();
+	worldTransform_type1_[kBody].translation_ = worldTransform_.translation_;
+	worldTransform_type1_[kBody].UpdateMatrix();
+	worldTransform_type1_[kPrick].UpdateMatrix();
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
@@ -120,7 +123,8 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 		models_type0_[kLeg]->Draw(worldTransform_type0_[kLeg], viewProjection);
 	}
 	else if (type_ == static_cast<size_t>(EnemyType::kSpike)) {
-		models_type1_[kBoll]->Draw(worldTransform_type1_[0], viewProjection);
+		models_type1_[kBody]->Draw(worldTransform_type1_[kBody], viewProjection);
+		models_type1_[kPrick]->Draw(worldTransform_type1_[kPrick], viewProjection);
 	}
 }
 
@@ -230,14 +234,15 @@ void Enemy::StandbyInitialize()
 void Enemy::ShotInitialize()
 {
 	times_[Behavior::kShot] = 0;
+	easeTime_ = 0;
 }
 
 void Enemy::SplitInitialize()
 {
 	times_[Behavior::kSplit] = 0;
-	radius_ = 2.0f;
+	radius_ = InitialRadius_;
 	worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
-	worldTransform_type1_[kBoll].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+	worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 }
 
 void Enemy::DamageInitialize()
@@ -258,21 +263,58 @@ void Enemy::GrowInitialize()
 void Enemy::StandbyUpdate()
 {
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-		times_[Behavior::kStandby]++;
-		if (times_[Behavior::kStandby] == ShotTime_ * radius_) {
-			behaviorRequest_ = Behavior::kShot;
+		if (isDrawing_) {
+			times_[Behavior::kStandby]++;
+			if (times_[Behavior::kStandby] >= ShotTime_ * radius_) {
+				behaviorRequest_ = Behavior::kShot;
+				times_[Behavior::kStandby] = 0;
+			}
 		}
+	}
+	else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
+
 	}
 }
 
 void Enemy::ShotUpdate()
 {
-	if (!player_->GetIsPulling()) {
-		enemyBulletManager_->CreateBullet(
-			{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * radius_) , worldTransform_.translation_.z },
-			radius_);
+	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+		if (!player_->GetIsPulling()) {
+			times_[Behavior::kShot]++;
+
+			if (times_[Behavior::kShot] == 30) {
+				easeMax_ = worldTransform_.translation_.y;
+				enemyBulletManager_->CreateBullet(
+					{ worldTransform_.translation_.x, worldTransform_.translation_.y - (1.5f * radius_), worldTransform_.translation_.z },
+					radius_);
+				worldTransform_.translation_.y += 5.0f;
+				worldTransform_type0_[kLeg].translation_.y = 0.0f;
+				easeMin_ = worldTransform_.translation_.y;
+			}
+			else if (times_[Behavior::kShot] > 30) {
+				float easedT = easeTime_ * easeTime_ * easeTime_;
+				worldTransform_.translation_.y = (1.0f - easedT) * easeMin_ + easedT * easeMax_;
+				if (easeTime_ < 1.0f) {
+					easeTime_ += 0.05f;
+				}
+				else {
+					behaviorRequest_ = Behavior::kStandby;
+				}
+			}
+			/*else if (times_[Behavior::kShot] > 30) {
+				worldTransform_.translation_.y += ;
+				easeMin_ = worldTransform_.translation_.y;
+			}*/
+			else if (times_[Behavior::kShot] < 30) {
+				worldTransform_type0_[kLeg].translation_.y += 0.01f;
+				worldTransform_type0_[kLeg].rotation_.y += 1.0f;
+			}
+
+		}
 	}
-	behaviorRequest_ = Behavior::kStandby;
+	else {
+		behaviorRequest_ = Behavior::kStandby;
+	}
 }
 
 void Enemy::SplitUpdate()
@@ -301,10 +343,10 @@ void Enemy::SplitUpdate()
 void Enemy::DamageUpdate()
 {
 	worldTransform_type0_[kHead].rotation_.z += 0.1f;
-	worldTransform_type1_[kBoll].rotation_.z += 0.1f;
+	worldTransform_type1_[kBody].rotation_.z += 0.1f;
 	if (times_[Behavior::kDamage] == DamageTime_) {
 		worldTransform_type0_[kHead].rotation_.z = 0.0f;
-		worldTransform_type1_[kBoll].rotation_.z = 0.0f;
+		worldTransform_type1_[kBody].rotation_.z = 0.0f;
 		behaviorRequest_ = Behavior::kStandby;
 	}
 	times_[Behavior::kDamage]++;
@@ -324,7 +366,7 @@ void Enemy::GrowUpdate()
 			worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
 		else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
-			worldTransform_type1_[kBoll].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+			worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
 		behaviorRequest_ = Behavior::kStandby;
 	}
