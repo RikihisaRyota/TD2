@@ -16,6 +16,12 @@ GameScene::~GameScene() {
 	for (auto& model : enemyModels_Type1_) {
 		delete model;
 	}
+	for (auto& model : bossModel_) {
+		delete model;
+	}
+	for (auto& model : playerModel_) {
+		delete model;
+	}
 }
 
 void GameScene::Initialize() {
