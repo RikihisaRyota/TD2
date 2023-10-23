@@ -142,28 +142,36 @@ void GameScene::Update() {
 
 	if (isGameStart_ == true) {
 		if (!IsDebugCamera_) {
-			frame_->Update();
-			player_->Update();
-			// デバック
-			enemyManager_->SetIsDebug(IsDebugCamera_);
-			//
-			enemyManager_->Update();
-			playerBulletManager_->Update();
-			enemyBulletManager_->Update();
-			uvula_->Update();
-			boss_->Update();
-			fade_->FadeInUpdate();
-
-			// 敵生成
-			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-			
-			// shiftを押すとカメラを切り替える
-			if (input_->TriggerKey(DIK_LSHIFT)) {
-				IsDebugCamera_ ^= true;
+			if (!player_->GetIsHitStop()) {
+				backGround_->Update();
+				frame_->Update();
+				player_->Update();
+				fade_->FadeInUpdate();
+				// デバック
+				enemyManager_->SetIsDebug(IsDebugCamera_);
+				//
+				enemyManager_->Update();
+				playerBulletManager_->Update();
+				enemyBulletManager_->Update();
+				//uvula_->Update();
+				boss_->Update();
+				// 敵生成
+				collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
+				// shiftを押すとカメラを切り替える
+				if (input_->TriggerKey(DIK_LSHIFT)) {
+					IsDebugCamera_ ^= true;
+				}
+				followCamera_->Update();
+				viewProjection_ = followCamera_->GetViewProjection();
 			}
-			
-			followCamera_->Update();
-			viewProjection_ = followCamera_->GetViewProjection();
+			else {
+				const uint32_t kHitStopMax = 5;
+				hitStopCount_++;
+				if (hitStopCount_ >= kHitStopMax) {
+					hitStopCount_ = 0;
+					player_->SetIsHitStop(false);
+				}
+			}
 		}
 		else {
 			// shiftを押すとカメラを切り替える
@@ -175,47 +183,6 @@ void GameScene::Update() {
 			debugCamera_->Update(&viewProjection_);
 			enemyManager_->SetIsDebug(IsDebugCamera_);
 		}
-	if (!IsDebugCamera_) {
-		if (!player_->GetIsHitStop()) {
-			backGround_->Update();
-			frame_->Update();
-			player_->Update();
-			// デバック
-			enemyManager_->SetIsDebug(IsDebugCamera_);
-			//
-			enemyManager_->Update();
-			playerBulletManager_->Update();
-			enemyBulletManager_->Update();
-			//uvula_->Update();
-			boss_->Update();
-			// 敵生成
-			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-			// shiftを押すとカメラを切り替える
-			if (input_->TriggerKey(DIK_LSHIFT)) {
-				IsDebugCamera_ ^= true;
-			}
-			followCamera_->Update();
-			viewProjection_ = followCamera_->GetViewProjection();
-		}
-		else {
-			const uint32_t kHitStopMax = 5;
-			hitStopCount_++;
-			if (hitStopCount_ >= kHitStopMax) {
-				hitStopCount_ = 0;
-				player_->SetIsHitStop(false);
-			}
-		}
-	}
-	else {
-		// shiftを押すとカメラを切り替える
-		if (input_->TriggerKey(DIK_LSHIFT)) {
-			IsDebugCamera_ ^= true;
-		}
-		enemyEditor_->Update(enemyManager_.get());
-		// デバックカメラ
-		debugCamera_->Update(&viewProjection_);
-		enemyManager_->SetIsDebug(IsDebugCamera_);
-	}
 
 	}
 
