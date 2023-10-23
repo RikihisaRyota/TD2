@@ -125,19 +125,6 @@ void GameScene::Update() {
 	}
 
 	if (isGameStart_ == true) {
-		frame_->Update();
-		player_->Update();
-		enemyManager_->Update();
-		playerBulletManager_->Update();
-		enemyBulletManager_->Update();
-		uvula_->Update();
-		boss_->Update();
-		fade_->FadeInUpdate();
-
-		// 敵生成
-		//enemyEditor_->Update(enemyManager_.get(), enemyModel_.get());
-		collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-
 		if (!IsDebugCamera_) {
 			frame_->Update();
 			player_->Update();
@@ -149,12 +136,16 @@ void GameScene::Update() {
 			enemyBulletManager_->Update();
 			uvula_->Update();
 			boss_->Update();
+			fade_->FadeInUpdate();
+
 			// 敵生成
 			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
+			
 			// shiftを押すとカメラを切り替える
 			if (input_->TriggerKey(DIK_LSHIFT)) {
 				IsDebugCamera_ ^= true;
 			}
+			
 			followCamera_->Update();
 			viewProjection_ = followCamera_->GetViewProjection();
 		}
@@ -179,10 +170,12 @@ void GameScene::Update() {
 
 	if (input_->PushKey(DIK_8)) {
 		isGameEnd_ = true;
+		isGameStart_ = false;
 	}
 
 	if (input_->PushKey(DIK_9)) {
 		isGameOver_ = true;
+		isGameStart_ = false;
 	}
 
 	if (fade_->GetColor(0) > 1.0f && isGameEnd_ == true) {

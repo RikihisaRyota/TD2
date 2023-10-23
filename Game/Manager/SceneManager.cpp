@@ -31,8 +31,8 @@ void SceneManager::Run() {
 		sceneNumber_ = sceneArray_[sceneNumber_]->GetSceneNumber();
 
 		if (sceneNumber_ != preSceneNumber_) {
-			sceneArray_[preSceneNumber_]->Finalize();
 			sceneArray_[sceneNumber_]->Initialize();
+			sceneArray_[preSceneNumber_]->Finalize();
 		}
 
 		sceneArray_[sceneNumber_]->Update();
