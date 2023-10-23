@@ -90,7 +90,6 @@ void GameScene::Initialize() {
 
 	// 敵
 	enemyModel_.reset(Model::Create("octopusBullet"));
-	enemyModel_.reset(Model::Create("Enemy", true));
 	//enemyModels_.clear();
 	enemyModels_Type0_ = {
 		Model::Create("octopusHead",true), Model::Create("octopusLeg",true)
@@ -106,7 +105,6 @@ void GameScene::Initialize() {
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->SetPlayer(player_.get());
-	//enemyManager_->Initialize(enemyModel_.get());
 	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_, enemyModels_Type2_);
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	// CSVからデータの読み込み
@@ -144,7 +142,7 @@ void GameScene::Update() {
 			enemyManager_->Update();
 			playerBulletManager_->Update();
 			enemyBulletManager_->Update();
-			//uvula_->Update();
+			uvula_->Update();
 			boss_->Update();
 			// 敵生成
 			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());

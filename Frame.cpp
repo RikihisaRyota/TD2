@@ -21,7 +21,7 @@ Frame::~Frame() {
 void Frame::Initialize(std::vector<Model*>model) {
 	width_ = 1000.0f;
 	height_ = 50.0f;
-	const float kDispersionInterval = 3.0f;
+	const float kDispersionInterval = 2.0f;
 	const float kDispersionRotate = 5.0f;
 	// 床
 	for (size_t i = 0; i < width_ / 20.0f; i++) {
