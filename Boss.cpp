@@ -12,10 +12,7 @@
 Boss::Boss() {}
 
 Boss::~Boss() {
-	for (size_t i = 0; i < static_cast<size_t>(Parts::kCount); i++) {
-		delete models_.at(i);
-	}
-	models_.clear();
+	
 }
 
 void Boss::Initialize(std::vector<Model*> models) {

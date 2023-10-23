@@ -85,6 +85,7 @@ private: // メンバ変数
 	std::unique_ptr<CollisionManager> collisionManager_;
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Frame> frame_;
+	std::vector<Model*>frameModel_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<PlayerBulletManager> playerBulletManager_;
 	std::vector<Model*> playerModel_;

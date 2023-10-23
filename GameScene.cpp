@@ -16,6 +16,15 @@ GameScene::~GameScene() {
 	for (auto& model : enemyModels_Type1_) {
 		delete model;
 	}
+	for (auto& model : bossModel_) {
+		delete model;
+	}
+	for (auto& model : frameModel_) {
+		delete model;
+	}
+	for (auto& model : playerModel_) {
+		delete model;
+	}
 }
 
 void GameScene::Initialize() {
@@ -52,18 +61,20 @@ void GameScene::Initialize() {
 	backGround_->SetPlayer(player_.get());
 	backGround_->Initialize(backGroundTextureHandles_);
 	// 枠組み
+	frameModel_.emplace_back(Model::Create("rockBlock2",true));
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
-	frame_->Initialize();
+	frame_->SetViewProjection(&viewProjection_);
+	frame_->Initialize(frameModel_);
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
 	// プレイヤー
-	playerModel_.emplace_back(Model::Create("playerBody"));
-	playerModel_.emplace_back(Model::Create("playerLegLeft"));
-	playerModel_.emplace_back(Model::Create("playerLegRight"));
-	playerBulletModel_.reset(Model::Create("playerBullet"));
+	playerModel_.emplace_back(Model::Create("playerBody",true));
+	playerModel_.emplace_back(Model::Create("playerLegLeft", true));
+	playerModel_.emplace_back(Model::Create("playerLegRight", true));
+	playerBulletModel_.reset(Model::Create("playerBullet", true));
 	player_->SetViewProjection(&viewProjection_);
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_);
@@ -71,13 +82,13 @@ void GameScene::Initialize() {
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 
 	// 敵
-	enemyModel_.reset(Model::Create("Enemy"));
+	enemyModel_.reset(Model::Create("Enemy", true));
 	//enemyModels_.clear();
 	enemyModels_Type0_ = {
-		Model::Create("octopusHead"), Model::Create("octopusLeg")
+		Model::Create("octopusHead",true), Model::Create("octopusLeg",true)
 	};
 	enemyModels_Type1_ = {
-		Model::Create("spikeBody"), Model::Create("spikePrick")
+		Model::Create("spikeBody",true), Model::Create("spikePrick",true)
 	};
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyBulletManager_->SetPlayer(player_.get());
@@ -96,15 +107,15 @@ void GameScene::Initialize() {
 		SpawnEnemy(data.position, data.type);
 	}
 	// ベロ
-	uvulaHead_.reset(Model::Create("uvulaHead"));
-	uvulaBody_.reset(Model::Create("uvulaBody"));
+	uvulaHead_.reset(Model::Create("uvulaHead", true));
+	uvulaBody_.reset(Model::Create("uvulaBody", true));
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 	// ボス
-	bossModel_.emplace_back(Model::Create("bossOnJaw"));
-	bossModel_.emplace_back(Model::Create("bossLowerJaw"));
-	bossModel_.emplace_back(Model::Create("shellfishDown"));
-	bossModel_.emplace_back(Model::Create("shellfishUp"));
+	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
+	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
+	bossModel_.emplace_back(Model::Create("shellfishDown", true));
+	bossModel_.emplace_back(Model::Create("shellfishUp",true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 #pragma endregion
@@ -122,7 +133,7 @@ void GameScene::Update() {
 			enemyManager_->Update();
 			playerBulletManager_->Update();
 			enemyBulletManager_->Update();
-			uvula_->Update();
+			//uvula_->Update();
 			boss_->Update();
 			// 敵生成
 			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());

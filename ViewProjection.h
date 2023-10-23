@@ -26,13 +26,13 @@ struct ViewProjection
 
 #pragma region 射影行列の設定
 	// 垂直方向視野角
-	float fovAngleY_ = 45.0f * 3.141592654f / 180.0f;
+	float fovAngleY_ = 25.0f * 3.141592654f / 180.0f;
 	// ビューポートのアスペクト比
 	float aspectRatio_ = (float)16 / 9;
 	// 深度限界（手前側）
-	float nearZ_ = 0.1f;
+	float nearZ_ = 70.0f;
 	// 深度限界（奥側）
-	float farZ_ = 1000.0f;
+	float farZ_ = 300.0f;
 #pragma endregion
 
 	// ビュー行列

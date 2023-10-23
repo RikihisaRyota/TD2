@@ -10,10 +10,7 @@
 
 
 Player::~Player() {
-	for (size_t i = 0; i < static_cast<size_t>(Parts::kPartsCount); i++) {
-		delete models_.at(i);
-	}
-	models_.clear();
+	
 }
 
 void Player::Initialize(std::vector<Model*> models) {
