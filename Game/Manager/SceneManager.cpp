@@ -21,7 +21,7 @@ void SceneManager::Run() {
 
 		imguiManager->Begin();
 		input->Update();
-		//audio->Update();
+		audio->Update();
 
 		TextureManager::GetInstance()->PreDraw();
 		dxCommon->PreDraw();
@@ -125,7 +125,7 @@ void SceneManager::Initialize() {
 	imguiManager->Initialize(win, dxCommon);
 
 	// Audio
-	Audio* audio = Audio::GetInstance();
+	audio = Audio::GetInstance();
 	audio->Initialize();
 
 	sceneArray_[TITLE_SCENE] = std::make_unique<TitleScene>();
