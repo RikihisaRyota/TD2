@@ -26,6 +26,7 @@ public:
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void Debug();
 private:
+	void MoveLimit();
 	void StringBodyUpdate();
 	ViewProjection* viewProjection_;
 	float kAddAngle_ = 3.5f;

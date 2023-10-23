@@ -9,9 +9,18 @@
 class Player;
 class Boss : public Collider {
 public:
+	enum Type {
+		kFirstBoss,
+		kMiddleBoss,
+		kLastBoss,
+
+		kCount,
+	};
 	enum class Parts {
 		kOnJaw,
 		kLowerJaw,
+		kShellfishUp,
+		kShellfishDown,
 
 		kCount,
 	};
@@ -41,6 +50,8 @@ public:
 	void Reset();
 
 	void Debug();
+
+	bool GetIsClear() { return isClear_; }
 	// 当たり判定
 	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
@@ -48,8 +59,8 @@ public:
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 private:
 	void UpdateMatrix();
-	void DeathAnimation(float t);
-	void AttackAnimation(float t);
+	void DeathAnimation();
+	void AttackAnimation();
 	uint32_t kHP_ = 4;
 	uint32_t HP_;
 	uint32_t kAnimationMax_ = 120;
@@ -70,5 +81,13 @@ private:
 	Random::RandomNumberGenerator rnd;
 	
 	uint32_t shakeCount_;
+
+	Type bossType_ = Type::kFirstBoss;
+	// ボスのリスポーン
+	bool isRespawn_;
+	// アニメーションが終わったかどうか
+	bool isAnimation_;
+	// クリア
+	bool isClear_;
 };
 

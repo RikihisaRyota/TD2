@@ -22,8 +22,8 @@ public:
 		kLeg
 	};
 	enum SpikeParts {
-		kBoll,
-		ks
+		kBody,
+		kPrick
 	};
 
 	enum Behavior {
@@ -85,7 +85,8 @@ private:
 	Model* model_ = nullptr;
 	Player* player_;
 	uint32_t type_;
-	float radius_ = 4.0f;
+	const float InitialRadius_ = 2.0f;
+	float radius_ = InitialRadius_;
 	bool isAlive_ = true;
 	bool isDrawing_ = true;
 
@@ -109,6 +110,9 @@ private:
 
 	// 弾発生用の変数
 	EnemyBulletManager* enemyBulletManager_;
+	float easeTime_ = 0;
+	float easeMin_ = 0;
+	float easeMax_ = 0;
 
 	// 分裂用の変数
 	bool EnemyCreateFlag = false;

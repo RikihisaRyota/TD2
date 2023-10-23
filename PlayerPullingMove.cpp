@@ -17,6 +17,9 @@ PlayerPullingMove::~PlayerPullingMove() {}
 
 void PlayerPullingMove::Initialize() {
 	player_->SetMotionRotation(Vector3(0.0f, 0.0f, 0.0f));
+	for (size_t i = 0; i < static_cast<size_t>(Player::Parts::kPartsCount); ++i) {
+		player_->SetPartsRotation(Vector3(0.0f, 0.0f, 0.0f), i);
+	}
 	player_->SetIsPulling(true);
 }
 
@@ -42,7 +45,7 @@ void PlayerPullingMove::Update() {
 	if (worldTransform_.translation_.x > 0.0f) {
 		float gravity = Lerp(kGravityMin_, kGravityMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
 		float gravityLimit= Lerp(kGravityLimitMin_, kGravityLimitMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
-		Vector3 vector = -worldTransform_.translation_;
+		Vector3 vector =Vector3(-20.0f,-10.0f,0.0f) - worldTransform_.translation_;
 		vector.Normalize();
 		acceleration_ += vector * gravity;
 		acceleration_.x = std::clamp(acceleration_.x,-gravityLimit, 10.0f);
@@ -72,7 +75,7 @@ void PlayerPullingMove::Debug() {
 }
 
 void PlayerPullingMove::MoveLimit() {
-	float playerSize = 2.0f;
+	float playerSize = player_->GetSize();
 	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -player_->GetWidth() + playerSize, player_->GetWidth() - playerSize);
 	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -player_->GetHeight() + playerSize, player_->GetHeight() - playerSize);
 	worldTransform_.UpdateMatrix();

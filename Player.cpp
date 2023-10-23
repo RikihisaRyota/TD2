@@ -68,7 +68,7 @@ void Player::Reset() {
 	float scale = radius_ * 0.5f;
 	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.rotation_ = { 0.0f,11.0f,0.0f };
-	worldTransform_.translation_ = { 20.0f,0.0f,0.0f };
+	worldTransform_.translation_ = kInitialPosition_;
 	UpdateMatrix();
 
 	playerJump_->Initialize({ 0.0f,0.0f,0.0f });
@@ -81,6 +81,8 @@ void Player::Reset() {
 	weightCount_ = 0;
 	isInvincible_ = false;
 	invincibleCount_ = 0;
+
+	isHitStop_ = false;
 
 	HitBoxUpdate();
 }
@@ -169,21 +171,12 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-		// 引っ張られていたら
-		if (isPulling_) {
-			weightCount_++;
-			radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
-			float scale = radius_ * 0.5f;
-			worldTransform_.scale_ = { scale ,scale ,scale };
-			UpdateMatrix();
-		}
-		else {
-			if (behavior_ != Player::Behavior::kStun &&
-				!isInvincible_) {
-				behaviorRequest_ = Player::Behavior::kStun;
-				BehaviorInitialize();
-			}
-		}
+		isHitStop_ = true;
+		weightCount_++;
+		radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
+		float scale = radius_ * 0.5f;
+		worldTransform_.scale_ = { scale ,scale ,scale };
+		UpdateMatrix();
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):

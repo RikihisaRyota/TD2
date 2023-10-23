@@ -20,23 +20,19 @@ public:
 private:
 	float kChaseMin_ = 0.01f;
 	float kChaseMax_ = 0.045f;
-
 	float kWidth_=1000.0f;
+	Vector3 kInitialPosition_ = { -20.0f,-12.0f,0.0f };
 	// 当たり判定
 	void OnCollision(uint32_t type, Sphere* sphere)override;
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 
-	uint32_t kCreateModelInterval_ = 5;
 	float radius_ = 3.0f;
 	Player* player_;
 	Model* headModel_;
 	Model* bodyModel_;
-	std::vector<Model*> bodyModels_;
 	WorldTransform headWorldTransform_;
-	std::vector<WorldTransform> bodyWorldTransforms_;
-	uint32_t createModelCount_;
-	float angle_;
+	WorldTransform bodyWorldTransforms_;
 	bool isPlayerChase_;
 };

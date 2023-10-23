@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 
+#include "Collision.h"
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
@@ -57,6 +58,7 @@ void PlayerString::Update() {
 		Shrink();
 	}
 	StringBodyUpdate();
+	MoveLimit();
 }
 
 void PlayerString::Extend() {
@@ -115,7 +117,7 @@ void PlayerString::Extend() {
 		acceleration_ = { 0.0f ,0.0f ,0.0f };
 		player_->SetBehavior(Player::Behavior::kDoNothing);
 	}
-	
+
 	// 場所を保存
 	if (setStringWorldTransformCount_ % kSetStringWorldTransformInterval == 0) {
 		StringBody save;
@@ -172,7 +174,9 @@ void PlayerString::Shrink() {
 
 void PlayerString::Draw(const ViewProjection& viewProjection) {
 	for (size_t i = 0; i < stringBody_.size(); i++) {
-		plane_.at(i)->Draw(stringBody_.at(i).worldTransform_, viewProjection);
+		if (stringBody_.at(i).isAlive_) {
+			plane_.at(i)->Draw(stringBody_.at(i).worldTransform_, viewProjection);
+		}
 	}
 	if (isExtend_) {
 		head_->Draw(headWorldTransform_, viewProjection);
@@ -211,17 +215,17 @@ void PlayerString::Debug() {
 	ImGui::End();
 }
 
+void PlayerString::MoveLimit() {
+	float playerSize = player_->GetSize();
+	headWorldTransform_.translation_.x = std::clamp(headWorldTransform_.translation_.x, -player_->GetWidth() + playerSize, player_->GetWidth() - playerSize);
+	headWorldTransform_.translation_.y = std::clamp(headWorldTransform_.translation_.y, -player_->GetHeight() + playerSize, player_->GetHeight() - playerSize);
+	headWorldTransform_.UpdateMatrix();
+}
+
 void PlayerString::StringBodyUpdate() {
 	for (auto& body : stringBody_) {
-		if (!IsInsideFrustum(Sphere(body.worldTransform_.translation_, 1.0f), *viewProjection_)) {
+		if (IsCollision(Sphere(player_->GetTranslation(), 0.5f), Sphere(body.worldTransform_.translation_, 0.5f))) {
 			body.isAlive_ = false;
 		}
 	}
-	// 削除する要素のイテレータを見つける
-	auto it = std::remove_if(stringBody_.begin(), stringBody_.end(), [](const StringBody& body) {
-		return !body.isAlive_;
-		});
-
-	// 削除する要素を実際に削除
-	stringBody_.erase(it, stringBody_.end());
 }

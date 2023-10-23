@@ -5,10 +5,12 @@
 
 void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	model_ = model;
+	radius_ = 4.0f;
+	float scale = radius_ * 0.5f;
 	worldTransform_.Initialize();
+	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.translation_ = position;
 	worldTransform_.UpdateMatrix();
-	radius_ = 2.0f;
 	isAlive_ = true;
 	HitBoxInitialize();
 }
