@@ -10,11 +10,15 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
     uint32_t count = 0;
     ImGui::Begin("Enemy");
     int shotTime = enemyManager->GetShotTime();
+    int bulletShotCount = static_cast<int>(enemyManager->GetBulletShotCount());
     float sizeMax = enemyManager->GetMaxSize();
     float easeSecond_Shot = enemyManager->GetEaseSecond_Shot();
     float easeSecond_Grow = enemyManager->GetEaseSecond_Grow();
     float onceUpSize = enemyManager->GetOnceUpSize();
     float initialRadius = enemyManager->GetInitialRadius();
+    float scaleUpValue_Shot = enemyManager->GetScaleUpValue_Shot();
+    float rotateValue_Shot = enemyManager->GetRotateValue_Shot();
+
     for (auto it = enemyManager->GetEnemies().begin(); it != enemyManager->GetEnemies().end(); ) {
         auto& enemy = *it;
 
@@ -134,10 +138,13 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
 
     ImGui::DragInt("ShotSpeed", &shotTime, 1, 0, 1000);
     ImGui::DragFloat("MaxSize", &sizeMax);
-    ImGui::DragFloat("onceUpSize", &onceUpSize);
-    ImGui::DragFloat("easeSecond_Shot", &easeSecond_Shot);
-    ImGui::DragFloat("easeSecond_Grow", &easeSecond_Grow);
+    ImGui::DragFloat("OnceUpSize", &onceUpSize);
+    ImGui::DragFloat("EaseSecond_Shot", &easeSecond_Shot);
+    ImGui::DragFloat("EaseSecond_Grow", &easeSecond_Grow);
     ImGui::DragFloat("InitialRadius", &initialRadius);
+    ImGui::DragInt("BulletShotCount", &bulletShotCount);
+    ImGui::DragFloat("ScaleUpValue_Shot", &scaleUpValue_Shot);
+    ImGui::DragFloat("rotateValue_Shot", &rotateValue_Shot);
 
     enemyManager->SetShotTime(shotTime);
     enemyManager->SetEaseSecond_Grow(easeSecond_Grow);
@@ -145,7 +152,9 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
     enemyManager->SetMaxSize(sizeMax);
     enemyManager->SetOnceUpSize(onceUpSize);
     enemyManager->SetInitialRadius(initialRadius);
-
+    enemyManager->SetBulletShotCount(static_cast<uint32_t>(bulletShotCount));
+    enemyManager->SetScaleUpValue_Shot(scaleUpValue_Shot);
+    enemyManager->SetRotateValue_Shot(rotateValue_Shot);
 
     ImGui::End();
 #endif // _DEBUG

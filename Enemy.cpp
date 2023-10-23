@@ -19,6 +19,7 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	float scale = radius_ * 0.5f;
 	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.UpdateMatrix();
+	maxSize_ = radius_ * 5.0f;
 
 	worldTransform_type0_[kHead].Initialize();
 	worldTransform_type0_[kHead].scale_ = { scale ,scale ,scale };
@@ -282,8 +283,8 @@ void Enemy::ClingInitialize()
 void Enemy::GrowInitialize()
 {
 	times_[Behavior::kGrow] = 0;
-	easeMin_ = radius_;
-	easeMax_ = radius_ + onceUpSize_;
+	easeMin_[0] = radius_;
+	easeMax_[0] = radius_ + onceUpSize_;
 	easeTime_ = 0;
 }
 
@@ -317,12 +318,12 @@ void Enemy::ShotUpdate()
 				easeMax_ = radius_ * 0.5f;
 				easeMin_ = worldTransform_type0_[kHead].scale_.x;
 			}*/
-			if (times_[Behavior::kShot] > 20) {
+			if (times_[Behavior::kShot] > bulletShotCount_) {
 				float easedT = 1.0f - std::powf(1.0f - easeTime_, 3.0f);
-				float scale = (1.0f - easedT) * easeMin_ + easedT * easeMax_;
+				float scale = (1.0f - easedT) * easeMin_[0] + easedT * easeMax_[0];
 				worldTransform_type0_[kHead].scale_ = { scale, scale, scale };
 				if (easeTime_ < 1.0f) {
-					easeTime_ += 0.05f;
+					easeTime_ += easeSecond_Shot_;
 				}
 				else {
 					enemyBulletManager_->CreateBullet(
@@ -332,11 +333,11 @@ void Enemy::ShotUpdate()
 					behaviorRequest_ = Behavior::kStandby;
 				}
 			}
-			else if (times_[Behavior::kShot] < 20) {
-				worldTransform_type0_[kHead].scale_ += {0.01f, 0.01f, 0.01f};
-				worldTransform_type0_[kLeg].rotation_.y += 1.0f;
-				easeMax_ = radius_ * 0.5f;
-				easeMin_ = worldTransform_type0_[kHead].scale_.x;
+			else if (times_[Behavior::kShot] < bulletShotCount_) {
+				worldTransform_type0_[kHead].scale_ += {scaleUpValue_Shot_, scaleUpValue_Shot_, scaleUpValue_Shot_};
+				worldTransform_type0_[kLeg].rotation_.y += rotateValue_Shot_;
+				easeMax_[0] = radius_ * 0.5f;
+				easeMin_[0] = worldTransform_type0_[kHead].scale_.x;
 			}
 
 		}
@@ -348,25 +349,49 @@ void Enemy::ShotUpdate()
 
 void Enemy::SplitUpdate()
 {
-	EnemyCreateFlag = true;
-	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-		float degree = float(rand() / 360);
-		splitPos_ = {
-			.x{cosf(degree) * 10.0f},
-			.y{sinf(degree) * 10.0f},
-			.z{0}
-		};
-		Vector3 Center = worldTransform_.translation_;
-		worldTransform_.translation_ = { splitPos_ + Center };
-		splitPos_ *= -1.0f;
-		splitPos_ += Center;
+	if (!EnemyCreateFlag) {
+		EnemyCreateFlag = true;
+		easeMax_[0] = initialRadius_ * 0.5f;
+		easeMin_[0] = 0;
+		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			float degree = float(rand() / 360);
+			splitPos_ = {
+				.x{cosf(degree) * 10.0f},
+				.y{sinf(degree) * 10.0f},
+				.z{0}
+			};
+			Vector3 Center = worldTransform_.translation_;
+			easeMax_Vector3_ = { splitPos_ + Center };
+			easeMin_Vector3_ = worldTransform_.translation_;
+			worldTransform_.translation_ = { splitPos_ + Center };
+			splitPos_ *= -1.0f;
+			splitPos_ += Center;
+			behaviorRequest_ = Behavior::kStandby;
+		}
+		else if(type_ == static_cast<uint32_t>(EnemyType::kSpike)){
+			splitPos_ = worldTransform_.translation_;
+			worldTransform_.translation_.y += 5.0f;
+			easeMax_Vector3_ = worldTransform_.translation_;
+			easeMax_Vector3_.y += distance_Split_;
+			easeMin_Vector3_ = worldTransform_.translation_;
+			splitPos_.y -= distance_Split_;
+			behaviorRequest_ = Behavior::kStandby;
+		}
+		behaviorRequest_ = Behavior::kStandby;
 	}
 	else {
-		splitPos_ = worldTransform_.translation_;
-		worldTransform_.translation_.y += 5.0f;
-		splitPos_.y  -= 5.0f;
+		float easedT = 1 - std::cosf((easeTime_ * 3.14f) / 2);
+		float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
+		worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+		worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+		if (easeTime_ < 1.0f) {
+			easeTime_ += easeSecond_Split_;
+		}
+		else {
+			behaviorRequest_ = Behavior::kStandby;
+		}
+
 	}
-	behaviorRequest_ = Behavior::kStandby;
 }
 
 void Enemy::DamageUpdate()
@@ -390,18 +415,23 @@ void Enemy::ClingUpdate()
 void Enemy::GrowUpdate()
 {
 	if (radius_ < maxSize_) {
-		const float c1 = 1.70158f;
-		const float c2 = c1 + 1.0f;
-		float easedT = 1 + c2 * std::powf(easeTime_ - 1.0f, 3.0) + c1 * std::powf(easeTime_ - 1.0f, 2.0f);
-		float radius = (1.0f - easedT) * easeMin_ + easeMax_ * easedT;
-		radius_ = radius;
+		
 		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			const float c1 = 1.70158f;
+			const float c2 = c1 + 1.0f;
+			float easedT = 1 + c2 * std::powf(easeTime_ - 1.0f, 3.0) + c1 * std::powf(easeTime_ - 1.0f, 2.0f);
+			float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
+			radius_ = radius;
 			worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
 		else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
+			float easedT = easeTime_ * easeTime_;
+			float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
 			worldTransform_type1_[kBody].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
 		else if (type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+			float easedT = easeTime_ * easeTime_;
+			float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
 			worldTrasnform_type2_.scale_ = { radius_ * 0.5f, radius_ * 0.5f, radius_ * 0.5f };
 		}
 

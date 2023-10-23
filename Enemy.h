@@ -48,6 +48,7 @@ public:
 	bool GetIsCreateFlag() { return EnemyCreateFlag; }
 	uint32_t GetType() { return type_; }
 	uint32_t GetShotTime() { return shotTime_; }
+	uint32_t GetBulletShotCount() { return bulletShotCount_; }
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 	Vector3 GetSplitPos() { return splitPos_; }
 	float GetMaxSize() { return maxSize_; }
@@ -55,6 +56,9 @@ public:
 	float GetEaseSecond_Shot() { return easeSecond_Shot_; }
 	float GetOnceUpSize() { return onceUpSize_; }
 	float GetInitialRadius() { return initialRadius_; }
+	float GetScaleUpValue_Shot() { return scaleUpValue_Shot_; }
+	float GetRotateValue_Shot() { return rotateValue_Shot_; }
+
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 	void SetEnemyBulletManager(EnemyBulletManager* enemyBulletManager) { enemyBulletManager_ = enemyBulletManager; }
@@ -68,6 +72,10 @@ public:
 	void SetEaseSecond_Shot(float easeSecond_Shot) { easeSecond_Shot_ = easeSecond_Shot; }
 	void SetOnceUpSize(float onceUpSize) { onceUpSize_ = onceUpSize; }
 	void SetInitialRadius(float InitialRadius) {initialRadius_ = InitialRadius;}
+	void SetBulletShotCount(uint32_t bulletShotCount) { bulletShotCount_ = bulletShotCount; }
+	void SetScaleUpValue_Shot(float scaleUpValue_Shot) { scaleUpValue_Shot_ = scaleUpValue_Shot; }
+	void SetRotateValue_Shot(float rotateValue_Shot) { rotateValue_Shot_ = rotateValue_Shot; }
+
 private:
 	// 当たり判定
 	// 衝突したら呼び出される処理
@@ -101,7 +109,7 @@ private:
 	Player* player_;
 	uint32_t type_;
 	float initialRadius_ = 2.0f;
-	float radius_ = 2.0;
+	float radius_;
 	bool isAlive_ = true;
 	bool isDrawing_ = true;
 
@@ -120,8 +128,8 @@ private:
 
 	// イージング
 	float easeTime_ = 0;
-	float easeMin_ = 0;
-	float easeMax_ = 0;
+	float easeMin_[2] = {0};
+	float easeMax_[2] = {0};
 
 	// 時間管理用の変数
 	int shotTime_ = 180;
@@ -130,14 +138,21 @@ private:
 
 	// 弾発生用の変数
 	EnemyBulletManager* enemyBulletManager_;
-	float easeSecond_Shot_ = 0.01f;
-
+	float easeSecond_Shot_ = 0.05f;
+	uint32_t bulletShotCount_ = 20;
+	float scaleUpValue_Shot_ = 0.01f;
+	float rotateValue_Shot_ = 1.0f;
+	
 	// 分裂用の変数
 	bool EnemyCreateFlag = false;
 	Vector3 splitPos_;
+	float easeSecond_Split_ = 0.01f;
+	Vector3 easeMin_Vector3_;
+	Vector3 easeMax_Vector3_;
+	float distance_Split_;
 
 	// 成長用の変数
-	float maxSize_ = 5.0f;
+	float maxSize_ = 20.0f;
 	float onceUpSize_ = 1.0f;
 	float easeSecond_Grow_ = 0.01f;
 

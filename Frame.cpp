@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "ImGuiManager.h"
 #include "Uvula.h"
+#include "EnemyManager.h"
 
 void Frame::Initialize() {
 	width_ = 1000.0f;
@@ -77,5 +78,7 @@ void Frame::UpdateMatrix() {
 	worldTransforms_[Wall::kBottom].UpdateMatrix();
 	player_->SetHeight(height_);
 	player_->SetWidth(width_);
+	//enemyManager_->SetHeight(height_);
+	//enemyManager_->SetWidth(width_);
 	uvula_->SetWidth(width_);
 }

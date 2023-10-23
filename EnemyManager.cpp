@@ -132,3 +132,24 @@ void EnemyManager::SetInitialRadius(float initialRadius)
 		enemy->SetInitialRadius(initialRadius);
 	}
 }
+
+void EnemyManager::SetBulletShotCount(uint32_t bulletShotCount)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetBulletShotCount(bulletShotCount);
+	}
+}
+
+void EnemyManager::SetScaleUpValue_Shot(float scaleUpValue_Shot)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetScaleUpValue_Shot(scaleUpValue_Shot);
+	}
+}
+
+void EnemyManager::SetRotateValue_Shot(float rotateValue_Shot)
+{
+	for (auto& enemy : enemies_) {
+		enemy->SetRotateValue_Shot(rotateValue_Shot);
+	}
+}

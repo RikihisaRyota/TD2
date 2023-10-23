@@ -25,11 +25,14 @@ public:
 
 	std::vector<Enemy*>& GetEnemies() { return enemies_; }
 	int GetShotTime() { return enemies_[0]->GetShotTime(); }
+	uint32_t GetBulletShotCount() { return enemies_[0]->GetBulletShotCount(); }
 	float GetMaxSize() { return enemies_[0]->GetMaxSize(); }
 	float GetEaseSecond_Grow() { return enemies_[0]->GetEaseSecond_Grow(); }
 	float GetEaseSecond_Shot() { return enemies_[0]->GetEaseSecond_Shot(); }
 	float GetOnceUpSize() { return enemies_[0]->GetOnceUpSize(); }
 	float GetInitialRadius() { return enemies_[0]->GetInitialRadius(); }
+	float GetScaleUpValue_Shot() { return enemies_[0]->GetScaleUpValue_Shot(); }
+	float GetRotateValue_Shot() { return enemies_[0]->GetRotateValue_Shot(); }
 
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
@@ -46,6 +49,9 @@ public:
 	void SetEaseSecond_Shot(float easeSecond_Shot);
     void SetOnceUpSize(float onceUpSize);
     void SetInitialRadius(float initialRadius);
+	void SetBulletShotCount(uint32_t bulletShotCount);
+	void SetScaleUpValue_Shot(float scaleUpValue_Shot);
+	void SetRotateValue_Shot(float rotateValue_Shot);
 
 private:
 	Model* model_;
