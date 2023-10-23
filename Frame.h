@@ -3,7 +3,9 @@
 #include <array>
 
 #include "Model.h"
+#include "Random.h"
 
+class EnemyManager;
 class Player;
 class Uvula;
 class Frame {
@@ -26,6 +28,9 @@ private:
 	void Debug();
 	void UpdateMatrix();
 
+	float kRockInterval_ = 18.0f;
+	float kRockFrameDistance_ = 4.0f;
+
 	float width_;
 	float height_;
 	Player* player_;
@@ -33,5 +38,6 @@ private:
 	ViewProjection* viewProjection_;
 	std::vector<Wall*> topWalls_;
 	std::vector<Wall*> bottomWalls_;
+	Random::RandomNumberGenerator rnd;
 };
 
