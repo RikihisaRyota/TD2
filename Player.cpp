@@ -29,6 +29,7 @@ void Player::Initialize(std::vector<Model*> models) {
 	}
 
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 
 	playerJump_ = std::make_unique<PlayerJump>();
 	playerJump_->SetPlayer(this);
@@ -172,6 +173,7 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
 		isHitStop_ = true;
+		audio_->SoundPlayWave(enemyEatSoundHandle_);
 		weightCount_++;
 		radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
 		float scale = radius_ * 0.5f;

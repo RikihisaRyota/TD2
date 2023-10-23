@@ -35,6 +35,7 @@ void GameScene::Initialize() {
 	IsDebugCamera_ = false;
 	// 入力
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
 #pragma region 生成
@@ -78,6 +79,9 @@ void GameScene::Initialize() {
 	player_->SetViewProjection(&viewProjection_);
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_);
+	// 音
+	player_->GetPlayerMove()->SetMoveSoundHandle(audio_->SoundLoadWave("Resources/Audios/playerMove.wav"));
+	player_->SetEnemyEatSoundHandle(audio_->SoundLoadWave("Resources/Audios/enemyEat.wav"));
 	playerBulletManager_->SetViewProjection(&viewProjection_);
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 
