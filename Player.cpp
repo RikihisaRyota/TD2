@@ -152,6 +152,11 @@ void Player::Debug() {
 	ImGui::Begin("Player");
 	ImGui::Text("translation\n");
 	ImGui::Text("x:%.4f,y:%.4f,z:%.4f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	float behavior = static_cast<float>(behavior_);
+	ImGui::Text("Behavior:%f", behavior);
+	ImGui::Text("isPulling:%d", isPulling_);
+	ImGui::Text("isLanding:%d", isLanding_);
+	ImGui::Text("HP:%d", Hp_);
 	float weightCount = static_cast<float>(weightCount_);
 	float weightMax = static_cast<float>(kWeightMax_);
 	ImGui::SliderFloat("weightCount", &weightCount, 0.0f, weightMax);
@@ -164,11 +169,6 @@ void Player::Debug() {
 	ImGui::SliderFloat("invincibleMax", &invincibleMax, 0.0f, 60.0f);
 	invincibleCount_ = static_cast<uint32_t>(invincibleCount);
 	kInvincibleMax_ = static_cast<uint32_t>(invincibleMax);
-	float behavior = static_cast<float>(behavior_);
-	ImGui::Text("Behavior:%f", behavior);
-	ImGui::Text("isPulling:%d", isPulling_);
-	ImGui::Text("isLanding:%d", isLanding_);
-	ImGui::Text("HP:%d", Hp_);
 	ImGui::End();
 }
 

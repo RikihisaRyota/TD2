@@ -78,7 +78,8 @@ void Uvula::Update() {
 }
 
 void Uvula::Draw(const ViewProjection& viewProjection) {
-	if (!player_->GetIsLanding()) {
+	if (!player_->GetIsLanding() ||
+		player_->GetBehavior()==Player::Behavior::kDoNothing) {
 		headModel_->Draw(headWorldTransform_, viewProjection);
 		bodyModel_->Draw(bodyWorldTransforms_, viewProjection);
 	}

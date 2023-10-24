@@ -101,7 +101,7 @@ public:
 	void SetTranslation(const Vector3& translation);
 	const Vector3 GetTranslation() const { return worldTransform_.translation_; }
 	void SetWorldTransform(const WorldTransform& worldTransform);
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	void SetMotionScale(const Vector3& scale);
 	const Vector3 GetMotionScale() const { return motion_.scale_; }
