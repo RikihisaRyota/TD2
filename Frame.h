@@ -22,6 +22,7 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetEnemyManager(EnemyManager* enemyManager) {	enemyManager_ = enemyManager; }
 	void SetUvula(Uvula* uvula) { uvula_ = uvula; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
 private:
@@ -34,6 +35,7 @@ private:
 	float width_;
 	float height_;
 	Player* player_;
+	EnemyManager* enemyManager_;
 	Uvula* uvula_;
 	ViewProjection* viewProjection_;
 	std::vector<Wall*> topWalls_;

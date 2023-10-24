@@ -46,7 +46,7 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	isAlive_ = true;
 	isDrawing_ = true;
 	EnemyCreateFlag = false;
-	
+
 }
 
 void Enemy::Update() {
@@ -111,14 +111,14 @@ void Enemy::Update() {
 	worldTransform_type1_[kBody].translation_ = worldTransform_.translation_;
 	worldTransform_type1_[kBody].UpdateMatrix();
 	worldTransform_type1_[kPrick].UpdateMatrix();
-	
+
 	worldTrasnform_type2_.translation_ = worldTransform_.translation_;
 	worldTrasnform_type2_.UpdateMatrix();
 
 	//Debug();
 
 #ifdef DEBUG
-	
+
 	Debug();
 
 #endif // DEBUG
@@ -157,12 +157,23 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-			player_->SetBehavior(Player::Behavior::kStun);
+		// とげの時だけプレイヤーはスタン
+		if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
+			if (player_->GetBehavior() != Player::Behavior::kStun &&
+				!player_->GetInvincible()) {
+				player_->SetBehavior(Player::Behavior::kStun);
+			}
 		}
-
+		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			isAlive_ = false;
+			isDrawing_ = false;
+		}
+		if (type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+			isAlive_ = false;
+			isDrawing_ = false;
+		}
 		if (player_->GetIsPulling()) {
- 			isAlive_ = false;
+			isAlive_ = false;
 			isDrawing_ = false;
 		}
 	}
@@ -342,8 +353,7 @@ void Enemy::ShotUpdate() {
 	}
 }
 
-void Enemy::SplitUpdate()
-{
+void Enemy::SplitUpdate() {
 	bool check = false;
 	if (!EnemyCreateFlag) {
 		while (!check) {
@@ -377,7 +387,7 @@ void Enemy::SplitUpdate()
 				//behaviorRequest_ = Behavior::kStandby;
 			}
 		}
-		
+
 		behaviorRequest_ = Behavior::kStandby;
 	}
 	else {
@@ -395,8 +405,7 @@ void Enemy::SplitUpdate()
 	}
 }
 
-void Enemy::DamageUpdate()
-{
+void Enemy::DamageUpdate() {
 	worldTransform_type0_[kHead].rotation_.z += 0.1f;
 	worldTransform_type1_[kBody].rotation_.z += 0.1f;
 	if (times_[Behavior::kDamage] == DamageTime_) {
@@ -412,10 +421,9 @@ void Enemy::ClingUpdate() {
 
 }
 
-void Enemy::GrowUpdate()
-{
-	if (radius_ < initialRadius_ *  maxSize_) {
-		
+void Enemy::GrowUpdate() {
+	if (radius_ < initialRadius_ * maxSize_) {
+
 		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 			const float c1 = 1.70158f;
 			const float c2 = c1 + 1.0f;
@@ -447,8 +455,7 @@ void Enemy::GrowUpdate()
 	}
 }
 
-void Enemy::Debug()
-{
+void Enemy::Debug() {
 	//ImGui::Begin("Enemy");
 
 	//ImGui::DragInt("ShotSpeed", &shotTime_, 1, 0, 1000);

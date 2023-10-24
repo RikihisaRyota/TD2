@@ -10,7 +10,7 @@
 
 
 Player::~Player() {
-	
+
 }
 
 void Player::Initialize(std::vector<Model*> models) {
@@ -172,13 +172,16 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-		isHitStop_ = true;
-		audio_->SoundPlayWave(enemyEatSoundHandle_);
-		weightCount_++;
-		radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
-		float scale = radius_ * 0.5f;
-		worldTransform_.scale_ = { scale ,scale ,scale };
-		UpdateMatrix();
+		if (behavior_ != Player::Behavior::kStun &&
+			!isInvincible_) {
+			isHitStop_ = true;
+			audio_->SoundPlayWave(enemyEatSoundHandle_);
+			weightCount_++;
+			radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
+			float scale = radius_ * 0.5f;
+			worldTransform_.scale_ = { scale ,scale ,scale };
+			UpdateMatrix();
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):

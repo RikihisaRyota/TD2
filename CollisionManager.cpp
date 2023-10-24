@@ -60,8 +60,10 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 		// プレイヤー対敵
 		if (collisionAttributeA & kCollisionAttributePlayer &&
 			collisionAttributeB & kCollisionAttributeEnemy) {
-			colliderA->OnCollision(static_cast<uint32_t>(Type::kPlayerVSEnemy), b);
+			// 敵
 			colliderB->OnCollision(static_cast<uint32_t>(Type::kPlayerVSEnemy), a);
+			// プレイヤー
+			colliderA->OnCollision(static_cast<uint32_t>(Type::kPlayerVSEnemy), b);
 		}
 		// プレイヤー対敵の弾
 		else if (collisionAttributeA & kCollisionAttributePlayer &&
