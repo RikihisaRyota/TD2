@@ -70,12 +70,7 @@ void Uvula::Update() {
 		if (player_->GetBehavior() == Player::Behavior::kMove) {
 			isPlayerChase_ = true;
 		}
-
-				isPlayerChase_ = true;
-			}
-		}
 	}
-
 }
 
 void Uvula::Draw(const ViewProjection& viewProjection) {
