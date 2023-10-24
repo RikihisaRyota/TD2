@@ -2,6 +2,7 @@
 
 #include "WorldTransform.h"
 
+class Audio;
 class Input;
 class Player;
 class PlayerMove {
@@ -16,6 +17,7 @@ public:
 	void SetAcceleration(const Vector3& acceleration) { acceleration_ = acceleration; }
 	void SetIsEating(bool flg) { isEating_ = flg; }
 	void SetRotateVelocity(float velocity) { rotateVelocity_ = velocity; }
+	void SetMoveSoundHandle(size_t handle) { moveSoundHandle_ = handle; }
 	void Debug();
 private:
 	void MoveLimit();
@@ -28,6 +30,7 @@ private:
 
 	Player* player_;
 	Input* input_;
+	Audio* audio_;
 
 	WorldTransform worldTransform_;
 	Vector3 acceleration_;
@@ -44,5 +47,7 @@ private:
 	uint32_t swellCount_;
 	float playerCurrentLegLeftRotate_;
 	float playerCurrentLegRightRotate_;
+	// サウンドハンドル
+	size_t moveSoundHandle_;
 };
 

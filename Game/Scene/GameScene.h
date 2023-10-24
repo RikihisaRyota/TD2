@@ -78,6 +78,7 @@ public: // メンバ関数
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
+	Audio* audio_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 	ViewProjection viewProjection_;
 	Audio* audio_ = nullptr;
@@ -109,6 +110,7 @@ private: // メンバ変数
 
 	std::vector<Model*> enemyModels_Type0_;
 	std::vector<Model*> enemyModels_Type1_;
+	std::vector<Model*> enemyModels_Type2_;
 
 	std::stringstream enemyPopCommands_;
 

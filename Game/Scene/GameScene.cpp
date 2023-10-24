@@ -16,6 +16,9 @@ GameScene::~GameScene() {
 	for (auto& model : enemyModels_Type1_) {
 		delete model;
 	}
+	for (auto& model : enemyModels_Type2_) {
+		delete model;
+	}
 	for (auto& model : bossModel_) {
 		delete model;
 	}
@@ -39,7 +42,8 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
-
+	isClear_ = false;
+	isGameOver_ = false;
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
 	boss_ = std::make_unique<Boss>();
@@ -70,6 +74,7 @@ void GameScene::Initialize() {
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
 	frame_->SetViewProjection(&viewProjection_);
+	frame_->SetEnemyManager(enemyManager_.get());
 	frame_->Initialize(frameModel_);
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
@@ -88,11 +93,14 @@ void GameScene::Initialize() {
 	player_->SetViewProjection(&viewProjection_);
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_);
+	// 音
+	player_->GetPlayerMove()->SetMoveSoundHandle(audio_->SoundLoadWave("Resources/Audios/playerMove.wav"));
+	player_->SetEnemyEatSoundHandle(audio_->SoundLoadWave("Resources/Audios/enemyEat.wav"));
 	playerBulletManager_->SetViewProjection(&viewProjection_);
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 
 	// 敵
-	enemyModel_.reset(Model::Create("Enemy", true));
+	enemyModel_.reset(Model::Create("octopusBullet"));
 	//enemyModels_.clear();
 	enemyModels_Type0_ = {
 		Model::Create("octopusHead",true), Model::Create("octopusLeg",true)
@@ -100,18 +108,20 @@ void GameScene::Initialize() {
 	enemyModels_Type1_ = {
 		Model::Create("spikeBody",true), Model::Create("spikePrick",true)
 	};
+	enemyModels_Type2_ = {
+		Model::Create("feed")
+	};
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyBulletManager_->SetPlayer(player_.get());
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->SetPlayer(player_.get());
-	//enemyManager_->Initialize(enemyModel_.get());
-	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_);
+	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_, enemyModels_Type2_);
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	
 	// CSVからデータの読み込み
 	std::unique_ptr<CSV> csv = std::make_unique<CSV>();
-	csv->LoadCSV("Spaw");
+	csv->LoadCSV("Spaw0");
 	std::vector<CSV::Data> datas = csv->UpdateDataCommands();
 	// 読み込んだデータから生成
 	for (CSV::Data data : datas) {
@@ -125,10 +135,10 @@ void GameScene::Initialize() {
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 	
 	// ボス
-	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
-	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
 	bossModel_.emplace_back(Model::Create("shellfishDown", true));
 	bossModel_.emplace_back(Model::Create("shellfishUp",true));
+	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
+	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 
@@ -141,6 +151,53 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	isClear_= boss_->GetIsClear();
+	isGameOver_ = player_->GetIsGameOver();
+	ImGui::Begin("Flag");
+	ImGui::Text("clear:%d",isClear_);
+	ImGui::Text("over:%d", isGameOver_);
+	ImGui::End();
+	if (!IsDebugCamera_) {
+		if (!player_->GetIsHitStop()) {
+			backGround_->Update();
+			frame_->Update();
+			player_->Update();
+			// デバック
+			enemyManager_->SetIsDebug(IsDebugCamera_);
+			//
+			enemyManager_->Update();
+			playerBulletManager_->Update();
+			enemyBulletManager_->Update();
+			uvula_->Update();
+			boss_->Update();
+			// 敵生成
+			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
+			// shiftを押すとカメラを切り替える
+			if (input_->TriggerKey(DIK_LSHIFT)) {
+				IsDebugCamera_ ^= true;
+			}
+			followCamera_->Update();
+			viewProjection_ = followCamera_->GetViewProjection();
+		}
+		else {
+			const uint32_t kHitStopMax = 5;
+			hitStopCount_++;
+			if (hitStopCount_ >= kHitStopMax) {
+				hitStopCount_ = 0;
+				player_->SetIsHitStop(false);
+			}
+		}
+	}
+	else {
+		// shiftを押すとカメラを切り替える
+		if (input_->TriggerKey(DIK_LSHIFT)) {
+			IsDebugCamera_ ^= true;
+		}
+		enemyEditor_->Update(enemyManager_.get());
+		// デバックカメラ
+		debugCamera_->Update(&viewProjection_);
+		enemyManager_->SetIsDebug(IsDebugCamera_);
+	}
 	fade_->FadeOutUpdate();
 	if (fade_->GetColor(1) < 0.0f) {
 		isGameStart_ = true;

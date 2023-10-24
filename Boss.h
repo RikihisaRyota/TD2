@@ -17,10 +17,10 @@ public:
 		kCount,
 	};
 	enum class Parts {
-		kOnJaw,
-		kLowerJaw,
 		kShellfishUp,
 		kShellfishDown,
+		kOnJaw,
+		kLowerJaw,
 
 		kCount,
 	};
@@ -57,11 +57,15 @@ public:
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
+
+	uint32_t GetBossHP() {return HP_;}
 private:
 	void UpdateMatrix();
 	void DeathAnimation();
 	void AttackAnimation();
-	uint32_t kHP_ = 4;
+	uint32_t kFirstBossHP_ = 4;
+	uint32_t kMiddleBossHP_ = 10;
+	uint32_t kLastBossHP_ = 15;
 	uint32_t HP_;
 	uint32_t kAnimationMax_ = 120;
 
