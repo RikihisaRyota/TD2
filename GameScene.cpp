@@ -67,6 +67,7 @@ void GameScene::Initialize() {
 	backGround_->SetPlayer(player_.get());
 	backGround_->Initialize(backGroundTextureHandles_);
 	// 枠組み
+	frameModel_.emplace_back(Model::Create("rockBlock",true));
 	frameModel_.emplace_back(Model::Create("rockBlock2",true));
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
@@ -151,7 +152,7 @@ void GameScene::Update() {
 			enemyManager_->Update();
 			playerBulletManager_->Update();
 			enemyBulletManager_->Update();
-			uvula_->Update();
+			//uvula_->Update();
 			boss_->Update();
 			// 敵生成
 			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
