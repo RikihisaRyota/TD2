@@ -21,6 +21,7 @@ private:
 
 	Audio* audio_ = nullptr;
 	size_t soundHandle_;
+	size_t selectSoundHandle_;
 
 	bool isStart_ = true;
 };

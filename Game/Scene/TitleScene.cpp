@@ -19,9 +19,11 @@ void TitleScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/titleBGM.wav");
+	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
+	selectSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/selectSound.wav");
 	audio_->SoundPlayLoopStart(soundHandle_);
-
+	audio_->SetValume(soundHandle_, 0.05f);
+	
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
 }
@@ -31,6 +33,11 @@ void TitleScene::Update() {
 	ImGui::InputInt("SceneNumber", &sceneNumber_);
 	ImGui::Text("GameTitle Scene");
 	ImGui::End();
+
+	if (input_->PushKey(DIK_SPACE)) {
+		fade_->FadeInFlagSet(true);
+		audio_->SoundPlayWave(selectSoundHandle_);
+	}
 
 	fade_->FadeInUpdate();
 
@@ -92,10 +99,6 @@ void TitleScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
-	
-	if (input_->PushKey(DIK_SPACE)) {
-		fade_->FadeInFlagSet(true);
-	}
 
 	fade_->FadeInDraw();
 	

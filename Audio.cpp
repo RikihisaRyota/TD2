@@ -237,7 +237,6 @@ bool Audio::IsValidPlayHandle(size_t playHandle) {
     return playHandle < kMaxNumPlayHandles && sourceVoices_[playHandle] != nullptr;
 }
 
-
 size_t Audio::FindUnusedPlayHandle() {
     for (size_t i = 0; i < kMaxNumPlayHandles; ++i) {
         if (sourceVoices_[i] == nullptr) {

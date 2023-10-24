@@ -35,8 +35,15 @@ void GameScene::Initialize() {
 	IsDebugCamera_ = false;
 	// 入力
 	input_ = Input::GetInstance();
+	// 音楽
+	audio_ = Audio::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
+
+	// ゲームBGM
+	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
+	audio_->SoundPlayLoopStart(inGameSoundHandle_);
+	audio_->SetValume(inGameSoundHandle_, 0.05f);
 
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
@@ -73,9 +80,6 @@ void GameScene::Initialize() {
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
-	// ゲームBGM
-	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/ingameBGM.wav");
-	audio_->SoundPlayLoopStart(inGameSoundHandle_);
 
 	// プレイヤー
 	playerModel_.emplace_back(Model::Create("playerBody",true));
@@ -195,12 +199,12 @@ void GameScene::Update() {
 	ImGui::End();
 
 
-	if (input_->PushKey(DIK_8)) {
+	if (input_->PushKey(DIK_1)) {
 		isGameEnd_ = true;
 		isGameStart_ = false;
 	}
 
-	if (input_->PushKey(DIK_9)) {
+	if (input_->PushKey(DIK_2)) {
 		isGameOver_ = true;
 		isGameStart_ = false;
 	}
@@ -209,14 +213,13 @@ void GameScene::Update() {
 		sceneNumber_ = CLEAR_SCENE;
 		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
-	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
+	if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
 		sceneNumber_ = OVER_SCENE;
 		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
 }
 
 void GameScene::Draw() {
-	
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
