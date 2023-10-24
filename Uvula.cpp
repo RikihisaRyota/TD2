@@ -71,6 +71,9 @@ void Uvula::Update() {
 			isPlayerChase_ = true;
 		}
 
+				isPlayerChase_ = true;
+			}
+		}
 	}
 
 }

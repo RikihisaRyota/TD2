@@ -40,6 +40,7 @@ public:
 	
 public:
 	void Initialize(const std::vector<Model*>& type0,const std::vector<Model*>&type1,const std::vector<Model*> &type2, const Vector3& position, uint32_t type);
+	void Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1, const std::vector<Model*>& type2, const Vector3& max, const Vector3& min, uint32_t type);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 
@@ -50,7 +51,6 @@ public:
 	uint32_t GetShotTime() { return shotTime_; }
 	uint32_t GetBulletShotCount() { return bulletShotCount_; }
 	WorldTransform GetWorldTransform() { return worldTransform_; }
-	Vector3 GetSplitPos() { return splitPos_; }
 	float GetMaxSize() { return maxSize_; }
 	float GetEaseSecond_Grow() { return easeSecond_Grow_; }
 	float GetEaseSecond_Shot() { return easeSecond_Shot_; }
@@ -58,6 +58,9 @@ public:
 	float GetInitialRadius() { return initialRadius_; }
 	float GetScaleUpValue_Shot() { return scaleUpValue_Shot_; }
 	float GetRotateValue_Shot() { return rotateValue_Shot_; }
+	Vector3 GetMax() { return splitPos_Max_; }
+	Vector3 GetMin() { return splitPos_Min_; }
+
 
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
@@ -154,14 +157,15 @@ private:
 	// 分裂用の変数
 	bool EnemyCreateFlag = false;
 	bool splitFlag_ = false;
-	Vector3 splitPos_;
+	Vector3 splitPos_Max_;
+	Vector3 splitPos_Min_;
 	float easeSecond_Split_ = 0.01f;
 	Vector3 easeMin_Vector3_;
 	Vector3 easeMax_Vector3_;
 	float distance_Split_;
 
 	// 成長用の変数
-	float maxSize_ = 2.0f;
+	float maxSize_;
 	float onceUpSize_ = 1.0f;
 	float easeSecond_Grow_ = 0.01f;
 

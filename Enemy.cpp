@@ -19,7 +19,7 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	float scale = radius_ * 0.5f;
 	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.UpdateMatrix();
-	maxSize_ = 2.0f;
+	maxSize_ = 1.5f;
 
 	worldTransform_type0_Head_.Initialize();
 	worldTransform_type0_Head_.scale_ = { scale ,scale ,scale };
@@ -46,12 +46,63 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	isAlive_ = true;
 	isDrawing_ = true;
 	EnemyCreateFlag = false;
+	
+}
+
+void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model*>& type1, const std::vector<Model*>& type2, const Vector3& max, const Vector3& min, uint32_t type)
+{
+	models_type0_ = type0;
+	models_type1_ = type1;
+	models_type2_ = type2;
+	type_ = type;
+
+	easeMax_Vector3_ = max;
+	easeMin_Vector3_ = min;
+
+	worldTransform_.Initialize();
+
+	radius_ = initialRadius_;
+	float scale = radius_ * 0.5f;
+	maxSize_ = 1.5f;
+
+	worldTransform_type0_Head_.Initialize();
+	worldTransform_type0_Head_.scale_ = { scale ,scale ,scale };
+	worldTransform_type0_Head_.rotation_.y = 9.5f;
+	worldTransform_type0_Leg_.Initialize();
+	worldTransform_type0_Leg_.parent_ = &worldTransform_type0_Head_;
+	worldTransform_type1_Body_.Initialize();
+	worldTransform_type1_Body_.scale_ = { scale ,scale ,scale };
+	worldTransform_type1_Body_.rotation_.y = 9.6f;
+	worldTransform_type1_Prick_.Initialize();
+	worldTransform_type1_Prick_.parent_ = &worldTransform_type1_Body_;
+	worldTrasnform_type2_.Initialize();
+	worldTrasnform_type2_.scale_ = { scale, scale, scale };
+
+	times_.clear();
+	for (int i = 0; i < kCount; i++) {
+		uint32_t time = 0;
+		times_.push_back(time);
+	}
+
+	HitBoxInitialize();
+
+	input_ = Input::GetInstance();
+	isAlive_ = true;
+	isDrawing_ = true;
+	EnemyCreateFlag = false;
+	splitFlag_ = true;
+
+	behaviorRequest_ = Behavior::kSplit;
 
 }
 
 void Enemy::Update() {
 	if (isAlive_) {
 		EnemyCreateFlag = false;
+		if (radius_ > initialRadius_ * maxSize_) {
+			behaviorRequest_ = Behavior::kSplit;
+		}
+
 		if (input_->PushKey(DIK_0)) {
 			behaviorRequest_ = Behavior::kStandby;
 		}
@@ -187,7 +238,9 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
 	{
-		behaviorRequest_ = Behavior::kGrow;
+		if (!splitFlag_) {
+			behaviorRequest_ = Behavior::kGrow;
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemyBullet):
@@ -202,8 +255,10 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
 	{
-		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-			behaviorRequest_ = Behavior::kGrow;
+		if (!splitFlag_) {
+			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+				behaviorRequest_ = Behavior::kGrow;
+			}
 		}
 	}
 	break;
@@ -281,7 +336,8 @@ void Enemy::SplitInitialize() {
 	worldTransform_type0_Head_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 	worldTransform_type1_Body_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 	worldTrasnform_type2_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
-	splitFlag_ = false;
+	easeMax_[0] = initialRadius_ * 0.5f;
+	easeMin_[0] = 0;
 }
 
 void Enemy::DamageInitialize() {
@@ -294,7 +350,7 @@ void Enemy::ClingInitialize() {
 
 void Enemy::GrowInitialize() {
 	times_[Behavior::kGrow] = 0;
-	easeMin_[0] = radius_;
+  	easeMin_[0] = radius_;
 	easeMax_[0] = radius_ + onceUpSize_;
 	easeTime_ = 0;
 }
@@ -366,22 +422,23 @@ void Enemy::SplitUpdate() {
 			easeMin_[0] = 0;
 			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 				float degree = float(rand() / 360);
-				splitPos_ = {
+				splitPos_Max_ = {
 					.x{cosf(degree) * 10.0f},
 					.y{sinf(degree) * 10.0f},
 					.z{0}
 				};
 				Vector3 Center = worldTransform_.translation_;
-				easeMax_Vector3_ = { splitPos_ + Center };
+				easeMax_Vector3_ = { splitPos_Max_ + Center };
 				easeMin_Vector3_ = worldTransform_.translation_;
-				worldTransform_.translation_ = { splitPos_ + Center };
-				splitPos_ *= -1.0f;
-				splitPos_ += Center;
+				//worldTransform_.translation_ = { splitPos_ + Center };
+				splitPos_Max_ *= -1.0f;
+				splitPos_Max_ += Center;
+				splitPos_Min_ = Center;
 
-				if (worldTransform_.translation_.y > height_ || worldTransform_.translation_.y < -height_) {
+				if (easeMax_Vector3_.y > height_ || easeMax_Vector3_.y < -height_) {
 					check = false;
 				}
-				else if (splitPos_.y > height_ || splitPos_.y < -height_) {
+				else if (splitPos_Max_.y > height_ || splitPos_Max_.y < -height_) {
 					check = false;
 				}
 				else {
@@ -406,15 +463,48 @@ void Enemy::SplitUpdate() {
 		//behaviorRequest_ = Behavior::kStandby;
 	}
 	else {
-		float easedT = 1 - std::cosf((easeTime_ * 3.14f) / 2);
+
+		/*float easedT = 1 - std::cosf((easeTime_ * 3.14f) / 2);
 		float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
 		worldTransform_type0_Head_.scale_ = { radius ,radius ,radius };
 		worldTransform_type1_Body_.scale_ = { radius ,radius ,radius };
+		worldTransform_.translation_ = Slerp(easeMin_Vector3_, easeMax_Vector3_, easeTime_);*/
+
+		float easedT = easeTime_ * easeTime_ * easeTime_;
+		float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
+		worldTransform_type0_Head_.scale_ = { radius ,radius ,radius };
+		worldTransform_type1_Body_.scale_ = { radius ,radius ,radius };
+		Vector3 pos;
+ 		pos.x = (1.0f - easedT) * easeMin_Vector3_.x + easeMax_Vector3_.x * easedT;
+		pos.y = (1.0f - easedT) * easeMin_Vector3_.y + easeMax_Vector3_.y * easedT;
+		pos.z = (1.0f - easedT) * easeMin_Vector3_.z + easeMax_Vector3_.z * easedT;
+		worldTransform_.translation_ = pos;
+
+
+		/*if (easeTime_ < 0.5f) {
+			float easedT2 = (1 - sqrtf(1 - 2 * easeTime_)) * 0.5f;
+			Vector3 pos;
+			pos.x = (1.0f - easedT2) * easeMin_Vector3_.x + easeMax_Vector3_.x * easedT2;
+			pos.y = (1.0f - easedT2) * easeMin_Vector3_.y + easeMax_Vector3_.y * easedT2;
+			pos.z = (1.0f - easedT2) * easeMin_Vector3_.z + easeMax_Vector3_.z * easedT2;
+			worldTransform_.translation_ = pos;
+		}
+		else {
+			float easedT2 = (1 + sqrtf(2 * easeTime_ - 1)) * 0.5f;
+			Vector3 pos;
+			pos.x = (1.0f - easedT2) * easeMin_Vector3_.x + easeMax_Vector3_.x * easedT2;
+			pos.y = (1.0f - easedT2) * easeMin_Vector3_.y + easeMax_Vector3_.y * easedT2;
+			pos.z = (1.0f - easedT2) * easeMin_Vector3_.z + easeMax_Vector3_.z * easedT2;
+			worldTransform_.translation_ = pos;
+		}*/
+
+
 		if (easeTime_ < 1.0f) {
 			easeTime_ += easeSecond_Split_;
 		}
 		else {
 			behaviorRequest_ = Behavior::kStandby;
+			splitFlag_ = false;
 		}
 
 	}
@@ -462,7 +552,7 @@ void Enemy::GrowUpdate() {
 			easeTime_ += easeSecond_Grow_;
 		}
 		else {
-			behaviorRequest_ = Behavior::kStandby;
+ 			behaviorRequest_ = Behavior::kStandby;
 		}
 	}
 	else {
