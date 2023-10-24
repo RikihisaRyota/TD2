@@ -69,9 +69,8 @@ void GameScene::Initialize() {
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
 	frame_->SetViewProjection(&viewProjection_);
-	frame_->Initialize(frameModel_);
 	frame_->SetEnemyManager(enemyManager_.get());
-	frame_->Initialize();
+	frame_->Initialize(frameModel_);
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());

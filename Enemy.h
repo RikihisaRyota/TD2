@@ -123,8 +123,10 @@ private:
 	std::vector<Model*> models_type0_;
 	std::vector<Model*> models_type1_;
 	std::vector<Model*> models_type2_;
-	WorldTransform worldTransform_type0_[2];
-	WorldTransform worldTransform_type1_[2];
+	WorldTransform worldTransform_type0_Head_;
+	WorldTransform worldTransform_type0_Leg_;
+	WorldTransform worldTransform_type1_Body_;
+	WorldTransform worldTransform_type1_Prick_;
 	WorldTransform worldTrasnform_type2_;
 	
 
@@ -138,7 +140,7 @@ private:
 	float easeMax_[2] = {0};
 
 	// 時間管理用の変数
-	int shotTime_ = 180;
+	int shotTime_ = 60;
 	const uint32_t DamageTime_ = 60;
 	std::vector<uint32_t> times_;
 

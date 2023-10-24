@@ -20,33 +20,33 @@ void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vecto
     models_type0_ = type0;
     models_type1_ = type1;
 	models_type2_ = type2;
-	height_ = 0.0f;
-	width_ = 0.0f;
     Reset();
 }
 
 void EnemyManager::Update() {
 	if (player_->GetIsLanding()) {
-		Reset();
-		// CSVからデータの読み込み
-		std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+		if (!preIsLanding) {
+			Reset();
+			// CSVからデータの読み込み
+			std::unique_ptr<CSV> csv = std::make_unique<CSV>();
 
-		if (spawn0_) {
-			csv->LoadCSV("Spaw0");
+			if (spawn0_) {
+				csv->LoadCSV("Spaw0");
+			}
+			else if (spawn1_) {
+				csv->LoadCSV("Spaw1");
+			}
+			else if (spawn2_) {
+				csv->LoadCSV("Spaw2");
+			}
+			std::vector<CSV::Data> datas = csv->UpdateDataCommands();
+			// 読み込んだデータから生成
+			for (CSV::Data data : datas) {
+				Create(data.position, data.type);
+			}
 		}
-		else if (spawn1_) {
-			csv->LoadCSV("Spaw1");
-		}
-		else if (spawn2_) {
-			csv->LoadCSV("Spaw2");
-		}
-		std::vector<CSV::Data> datas = csv->UpdateDataCommands();
-		// 読み込んだデータから生成
-		for (CSV::Data data : datas) {
-			Create(data.position, data.type);
-		}
-
 	}
+	preIsLanding = player_->GetIsLanding();
 
 	for (auto& enemy : enemies_) {
 		enemy->Update();

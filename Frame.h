@@ -24,6 +24,7 @@ public:
 	void SetPlayer(Player* player) { player_ = player; }
 	void SetUvula(Uvula* uvula) { uvula_ = uvula; }
 	void SetViewProjection(ViewProjection* viewProjection) { viewProjection_ = viewProjection; }
+	void SetEnemyManager(EnemyManager* enemyManager) { enemyManager_ = enemyManager; }
 private:
 	void Debug();
 	void UpdateMatrix();
@@ -35,6 +36,7 @@ private:
 	float height_;
 	Player* player_;
 	Uvula* uvula_;
+	EnemyManager* enemyManager_;
 	ViewProjection* viewProjection_;
 	std::vector<Wall*> topWalls_;
 	std::vector<Wall*> bottomWalls_;

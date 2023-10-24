@@ -29,7 +29,11 @@ void Uvula::Reset() {
 }
 
 void Uvula::Update() {
-	if (isDebug_) {
+	if (Input::GetInstance()->TriggerKey(DIK_M)) {
+		isDebug_ = true;
+	}
+
+	if (!isDebug_) {
 		if (isPlayerChase_) {
 			// プレイヤーを追っている最中
 			float chase = Lerp(kChaseMin_, kChaseMax_, player_->GetTranslation().x / kWidth_);

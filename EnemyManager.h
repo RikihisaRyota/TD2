@@ -76,5 +76,7 @@ private:
 	bool spawn0_ = true;
 	bool spawn1_ = false;
 	bool spawn2_ = false;
+
+	bool preIsLanding = false;
 };
 

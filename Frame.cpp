@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "Draw.h"
+#include "EnemyManager.h"
 #include "Player.h"
 #include "ImGuiManager.h"
 #include "Uvula.h"
