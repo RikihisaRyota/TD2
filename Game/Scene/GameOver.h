@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Audio.h"
 #include "IScene.h"
 #include "Input.h"
 #include "TextureManager.h"
@@ -17,6 +18,9 @@ private:
 	std::unique_ptr<Fade> fade_;
 
 	Input* input_ = nullptr;
+
+	Audio* audio_ = nullptr;
+	size_t soundHandle_;
 
 	bool isStart_ = true;
 };

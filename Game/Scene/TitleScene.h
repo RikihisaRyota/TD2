@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "Input.h"
 #include "Fade.h"
+#include "Audio.h"
 
 class TitleScene : public IScene {
 public:
@@ -18,5 +19,9 @@ private:
 	std::unique_ptr<Fade> fade_;
 
 	Input* input_ = nullptr;
+	
+	Audio* audio_ = nullptr;
+	size_t soundHandle_;
+
 	int count_;
 };

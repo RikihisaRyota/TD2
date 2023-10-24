@@ -17,6 +17,10 @@ TitleScene::~TitleScene() {
 
 void TitleScene::Initialize() {
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+
+	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/titleBGM.wav");
+	audio_->SoundPlayLoopStart(soundHandle_);
 
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -32,6 +36,7 @@ void TitleScene::Update() {
 
 	if (fade_->GetColor(0) > 1.0f) {
 		sceneNumber_ = GAME_SCENE;
+		audio_->SoundPlayLoopEnd(soundHandle_);
 	}
 
 	if (sceneNumber_ < 0) {

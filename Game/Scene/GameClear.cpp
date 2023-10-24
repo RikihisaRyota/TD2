@@ -13,6 +13,10 @@
 
 void GameClear::Initialize() {
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
+
+	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/clearBGM.wav");
+	audio_->SoundPlayLoopStart(soundHandle_);
 
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -32,8 +36,9 @@ void GameClear::Update() {
 		isStart_ = false;
 	}
 
-	if (input_->PushKey(DIK_0)&& input_->PrePushKey(DIK_0)) {
+	if (input_->PushKey(DIK_SPACE)) {
 		sceneNumber_ = OVER_SCENE;
+		audio_->SoundPlayLoopEnd(soundHandle_);
 	}
 
 	if (sceneNumber_ > 4) {
