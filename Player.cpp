@@ -64,6 +64,7 @@ void Player::UpdateMatrix() {
 }
 
 void Player::Reset() {
+	isGameOver_ = false;
 	radius_ = kRadiusMin_;
 
 	float scale = radius_ * 0.5f;
@@ -84,6 +85,8 @@ void Player::Reset() {
 	invincibleCount_ = 0;
 
 	isHitStop_ = false;
+
+	Hp_ = 3;
 
 	HitBoxUpdate();
 }
@@ -114,11 +117,6 @@ void Player::Update() {
 	InvincibleUpdate();
 	MoveLimit();
 	HitBoxUpdate();
-	playerMove_->Debug();
-	playerPullingMove_->Debug();
-	playerString_->Debug();
-	playerJump_->Debug();
-	playerStun_->Debug();
 	Debug();
 }
 
@@ -146,6 +144,11 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Debug() {
+	playerMove_->Debug();
+	playerPullingMove_->Debug();
+	playerString_->Debug();
+	playerJump_->Debug();
+	playerStun_->Debug();
 	ImGui::Begin("Player");
 	ImGui::Text("translation\n");
 	ImGui::Text("x:%.4f,y:%.4f,z:%.4f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
@@ -249,6 +252,13 @@ void Player::HitBoxUpdate() {
 
 void Player::HitBoxDraw(const ViewProjection& viewProjection) {
 	DrawSphere(sphere_, viewProjection, Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+}
+
+void Player::SubtractionPlayerHP() {
+	Hp_--;
+	if (Hp_ <= 0) {
+		isGameOver_ = true;
+	}
 }
 
 void Player::BehaviorInitialize() {

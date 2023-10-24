@@ -107,4 +107,7 @@ private: // メンバ変数
 
 	// ヒットストップ用
 	uint32_t hitStopCount_;
+	// クリアフラグ
+	bool isClear_;
+	bool isGameOver_;
 };

@@ -12,7 +12,7 @@
 Boss::Boss() {}
 
 Boss::~Boss() {
-	
+
 }
 
 void Boss::Initialize(std::vector<Model*> models) {
@@ -22,7 +22,6 @@ void Boss::Initialize(std::vector<Model*> models) {
 	isAnimation_ = false;
 	isRespawn_ = false;
 	animationCount_ = 0;
-	HP_ = kHP_;
 
 	worldTransform_.Initialize();
 	worldTransform_.scale_ = { 20.0f,20.0f,20.0f };
@@ -63,6 +62,7 @@ void Boss::Update() {
 				player_->GetPlayerMove()->SetAcceleration(Vector3(1.5f, 0.0f, 0.0f));
 				player_->GetPlayerMove()->SetIsEating(true);
 				player_->GetPlayerMove()->SetRotateVelocity(50.0f);
+				player_->SubtractionPlayerHP();
 			}
 			Reset();
 		}
@@ -88,7 +88,17 @@ void Boss::Reset() {
 	isAnimation_ = false;
 	isRespawn_ = false;
 	animationCount_ = 0;
-	HP_ = kHP_;
+	switch (bossType_) {
+	case Boss::kFirstBoss:
+		HP_ = kFirstBossHP_;
+		break;
+	case Boss::kMiddleBoss:
+		HP_ = kMiddleBossHP_;
+		break;
+	case Boss::kLastBoss:
+		HP_ = kLastBossHP_;
+		break;
+	}
 	worldTransform_.scale_ = { 20.0f,20.0f,20.0f };
 	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
 	worldTransform_.translation_ = { -20.0f,-15.0f,0.0f };
@@ -107,9 +117,15 @@ void Boss::Reset() {
 
 void Boss::Debug() {
 	ImGui::Begin("Boss");
-	float hp = static_cast<float>(kHP_);
-	ImGui::SliderFloat("HP", &hp, 0.0f, 10.0f);
-	kHP_ = static_cast<uint32_t>(hp);
+	float hp = static_cast<float>(kFirstBossHP_);
+	ImGui::SliderFloat("FirstBossHP", &hp, 0.0f, 10.0f);
+	kFirstBossHP_ = static_cast<uint32_t>(hp);
+	hp = static_cast<float>(kMiddleBossHP_);
+	ImGui::SliderFloat("MiddleBossHP", &hp, 0.0f, 20.0f);
+	kMiddleBossHP_ = static_cast<uint32_t>(hp);
+	hp = static_cast<float>(kLastBossHP_);
+	ImGui::SliderFloat("LastBossHP", &hp, 0.0f, 30.0f);
+	kLastBossHP_ = static_cast<uint32_t>(hp);
 	ImGui::End();
 }
 

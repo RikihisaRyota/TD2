@@ -72,6 +72,9 @@ public:
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 #pragma region getter,setter
+	bool GetIsGameOver() { return isGameOver_; }
+	uint32_t GetPlayerHP() { return Hp_; }
+	void SubtractionPlayerHP();
 	void SetEnemyEatSoundHandle(size_t handle) { enemyEatSoundHandle_ = handle; }
 	float GetSize() { return radius_; }
 	Vector3 GetInitialPosition() { return kInitialPosition_; }
@@ -160,6 +163,8 @@ private:
 	std::unique_ptr<PlayerString> playerString_;
 	std::unique_ptr<PlayerStun> playerStun_;
 	std::unique_ptr<PlayerLanding> playerLanding_;
+	// プレイヤーのHP
+	uint32_t Hp_;
 	// プレイヤーの行動範囲
 	float kWidth_ = 100.0f;
 	float kHeight_ = 50.0f;
@@ -176,4 +181,6 @@ private:
 	bool isHitStop_;
 	// 音
 	size_t enemyEatSoundHandle_;
+	// ゲームオーバー
+	bool isGameOver_;
 };

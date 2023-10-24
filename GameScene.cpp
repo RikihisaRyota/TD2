@@ -41,6 +41,8 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
+	isClear_ = false;
+	isGameOver_ = false;
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
 	boss_ = std::make_unique<Boss>();
@@ -132,6 +134,8 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+	isClear_= boss_->GetIsClear();
+	isGameOver_ = player_->GetIsGameOver();
 	if (!IsDebugCamera_) {
 		if (!player_->GetIsHitStop()) {
 			backGround_->Update();
