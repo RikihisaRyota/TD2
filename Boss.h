@@ -17,10 +17,10 @@ public:
 		kCount,
 	};
 	enum class Parts {
-		kOnJaw,
-		kLowerJaw,
 		kShellfishUp,
 		kShellfishDown,
+		kOnJaw,
+		kLowerJaw,
 
 		kCount,
 	};

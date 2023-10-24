@@ -124,10 +124,10 @@ void GameScene::Initialize() {
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 	// ボス
-	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
-	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
 	bossModel_.emplace_back(Model::Create("shellfishDown", true));
 	bossModel_.emplace_back(Model::Create("shellfishUp",true));
+	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
+	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 #pragma endregion
@@ -136,6 +136,10 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	isClear_= boss_->GetIsClear();
 	isGameOver_ = player_->GetIsGameOver();
+	ImGui::Begin("Flag");
+	ImGui::Text("clear:%d",isClear_);
+	ImGui::Text("over:%d", isGameOver_);
+	ImGui::End();
 	if (!IsDebugCamera_) {
 		if (!player_->GetIsHitStop()) {
 			backGround_->Update();

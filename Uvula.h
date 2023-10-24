@@ -35,5 +35,4 @@ private:
 	WorldTransform headWorldTransform_;
 	WorldTransform bodyWorldTransforms_;
 	bool isPlayerChase_;
-	bool isDebug_;
 };
