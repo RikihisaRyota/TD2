@@ -54,6 +54,7 @@ void GameScene::Initialize() {
 	// 枠組み
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
+	frame_->SetEnemyManager(enemyManager_.get());
 	frame_->Initialize();
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());

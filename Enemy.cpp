@@ -19,7 +19,7 @@ void Enemy::Initialize(const std::vector<Model*>& type0, const std::vector<Model
 	float scale = radius_ * 0.5f;
 	worldTransform_.scale_ = { scale ,scale ,scale };
 	worldTransform_.UpdateMatrix();
-	maxSize_ = radius_ * 5.0f;
+	maxSize_ = 2.0f;
 
 	worldTransform_type0_[kHead].Initialize();
 	worldTransform_type0_[kHead].scale_ = { scale ,scale ,scale };
@@ -157,6 +157,10 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
+		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			player_->SetBehavior(Player::Behavior::kStun);
+		}
+
 		if (player_->GetIsPulling()) {
  			isAlive_ = false;
 			isDrawing_ = false;
@@ -349,34 +353,40 @@ void Enemy::ShotUpdate()
 
 void Enemy::SplitUpdate()
 {
+	bool check = false;
 	if (!EnemyCreateFlag) {
-		EnemyCreateFlag = true;
-		easeMax_[0] = initialRadius_ * 0.5f;
-		easeMin_[0] = 0;
-		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-			float degree = float(rand() / 360);
-			splitPos_ = {
-				.x{cosf(degree) * 10.0f},
-				.y{sinf(degree) * 10.0f},
-				.z{0}
-			};
-			Vector3 Center = worldTransform_.translation_;
-			easeMax_Vector3_ = { splitPos_ + Center };
-			easeMin_Vector3_ = worldTransform_.translation_;
-			worldTransform_.translation_ = { splitPos_ + Center };
-			splitPos_ *= -1.0f;
-			splitPos_ += Center;
-			behaviorRequest_ = Behavior::kStandby;
+		while (!check) {
+			EnemyCreateFlag = true;
+			easeMax_[0] = initialRadius_ * 0.5f;
+			easeMin_[0] = 0;
+			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+				float degree = float(rand() / 360);
+				splitPos_ = {
+					.x{cosf(degree) * 10.0f},
+					.y{sinf(degree) * 10.0f},
+					.z{0}
+				};
+				Vector3 Center = worldTransform_.translation_;
+				easeMax_Vector3_ = { splitPos_ + Center };
+				easeMin_Vector3_ = worldTransform_.translation_;
+				worldTransform_.translation_ = { splitPos_ + Center };
+				//if(worldTransform_.translation_.x > )
+				splitPos_ *= -1.0f;
+				splitPos_ += Center;
+				check = true;
+				//behaviorRequest_ = Behavior::kStandby;
+			}
+			else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
+				splitPos_ = worldTransform_.translation_;
+				worldTransform_.translation_.y += 5.0f;
+				easeMax_Vector3_ = worldTransform_.translation_;
+				easeMax_Vector3_.y += distance_Split_;
+				easeMin_Vector3_ = worldTransform_.translation_;
+				splitPos_.y -= distance_Split_;
+				//behaviorRequest_ = Behavior::kStandby;
+			}
 		}
-		else if(type_ == static_cast<uint32_t>(EnemyType::kSpike)){
-			splitPos_ = worldTransform_.translation_;
-			worldTransform_.translation_.y += 5.0f;
-			easeMax_Vector3_ = worldTransform_.translation_;
-			easeMax_Vector3_.y += distance_Split_;
-			easeMin_Vector3_ = worldTransform_.translation_;
-			splitPos_.y -= distance_Split_;
-			behaviorRequest_ = Behavior::kStandby;
-		}
+		
 		behaviorRequest_ = Behavior::kStandby;
 	}
 	else {
@@ -414,7 +424,7 @@ void Enemy::ClingUpdate()
 
 void Enemy::GrowUpdate()
 {
-	if (radius_ < maxSize_) {
+	if (radius_ < initialRadius_ *  maxSize_) {
 		
 		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 			const float c1 = 1.70158f;

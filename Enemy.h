@@ -66,6 +66,9 @@ public:
 	void SetRotate(const Vector3& rotate) { worldTransform_.rotation_ = rotate; }
 	void SetType(uint32_t type) { type_ = type; }
 	void SetMatWorld();
+	void SetWidth(float width) { width_ = width; }
+	void SetHeight(float height) { height_ = height; }
+	
 	void SetShotTime(uint32_t time) { shotTime_ = time; }
 	void SetMaxSize(float maxSize) { maxSize_ = maxSize; }
 	void SetEaseSecond_Grow(float easeSecond_Grow) { easeSecond_Grow_ = easeSecond_Grow; }
@@ -113,6 +116,9 @@ private:
 	bool isAlive_ = true;
 	bool isDrawing_ = true;
 
+	float width_;
+	float height_;
+
 	// 演出用
 	std::vector<Model*> models_type0_;
 	std::vector<Model*> models_type1_;
@@ -152,7 +158,7 @@ private:
 	float distance_Split_;
 
 	// 成長用の変数
-	float maxSize_ = 20.0f;
+	float maxSize_ = 2.0f;
 	float onceUpSize_ = 1.0f;
 	float easeSecond_Grow_ = 0.01f;
 

@@ -53,6 +53,9 @@ public:
 	void SetScaleUpValue_Shot(float scaleUpValue_Shot);
 	void SetRotateValue_Shot(float rotateValue_Shot);
 
+	void SetHeight(float height);
+	void SetWidth(float width);
+
 private:
 	Model* model_;
 	Input* input_;
@@ -64,6 +67,9 @@ private:
 	std::vector<Model*> models_type1_;
 	std::vector<Model*> models_type2_;
 	std::vector<EnemyState> splits_;
+
+	float height_;
+	float width_;
 	// デバック
 	bool isDebug_;
 	// CSV選択

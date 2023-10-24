@@ -20,6 +20,8 @@ void EnemyManager::Initialize(const std::vector<Model*>& type0, const std::vecto
     models_type0_ = type0;
     models_type1_ = type1;
 	models_type2_ = type2;
+	height_ = 0.0f;
+	width_ = 0.0f;
     Reset();
 }
 
@@ -88,6 +90,8 @@ void EnemyManager::Create(const Vector3& position, uint32_t type) {
 	enemy->SetViewProjection(viewProjection_);
 	enemy->SetEnemyBulletManager(enemyBulletManager_);
 	enemy->SetPlayer(player_);
+	enemy->SetHeight(height_);
+	enemy->SetWidth(width_);
 	enemies_.emplace_back(enemy);
 }
 
@@ -152,4 +156,14 @@ void EnemyManager::SetRotateValue_Shot(float rotateValue_Shot)
 	for (auto& enemy : enemies_) {
 		enemy->SetRotateValue_Shot(rotateValue_Shot);
 	}
+}
+
+void EnemyManager::SetHeight(float height)
+{
+	height_ = height;
+}
+
+void EnemyManager::SetWidth(float width)
+{
+	width_ = width;
 }
