@@ -80,6 +80,7 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 	ViewProjection viewProjection_;
+	Audio* audio_ = nullptr;
 
 	bool IsDebugCamera_;
 
@@ -110,6 +111,8 @@ private: // メンバ変数
 	std::vector<Model*> enemyModels_Type1_;
 
 	std::stringstream enemyPopCommands_;
+
+	size_t inGameSoundHandle_;
 
 	// ヒットストップ用
 	uint32_t hitStopCount_;

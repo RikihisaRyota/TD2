@@ -73,7 +73,10 @@ void GameScene::Initialize() {
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
-	
+	// ゲームBGM
+	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/ingameBGM.wav");
+	audio_->SoundPlayLoopStart(inGameSoundHandle_);
+
 	// プレイヤー
 	playerModel_.emplace_back(Model::Create("playerBody",true));
 	playerModel_.emplace_back(Model::Create("playerLegLeft", true));
@@ -204,9 +207,11 @@ void GameScene::Update() {
 
 	if (fade_->GetColor(0) > 1.0f && isGameEnd_ == true) {
 		sceneNumber_ = CLEAR_SCENE;
+		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
 	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
 		sceneNumber_ = OVER_SCENE;
+		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
 }
 
