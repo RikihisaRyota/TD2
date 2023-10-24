@@ -81,7 +81,6 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 	ViewProjection viewProjection_;
-	Audio* audio_ = nullptr;
 
 	bool IsDebugCamera_;
 
@@ -123,6 +122,6 @@ private: // メンバ変数
 
 	// フェード管理用
 	bool isGameStart_ = false;
-	bool isGameEnd_ = false;
+	bool isClear_ = false;
 	bool isGameOver_ = false;
 };

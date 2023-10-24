@@ -42,8 +42,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
-	isClear_ = false;
-	isGameOver_ = false;
+
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
 	boss_ = std::make_unique<Boss>();
@@ -145,8 +144,9 @@ void GameScene::Initialize() {
 	fade_->Initialize();
 
 	isGameStart_ = false;
-	isGameEnd_ = false;
+	isClear_ = false;
 	isGameOver_ = false;
+
 #pragma endregion
 }
 
@@ -157,47 +157,7 @@ void GameScene::Update() {
 	ImGui::Text("clear:%d",isClear_);
 	ImGui::Text("over:%d", isGameOver_);
 	ImGui::End();
-	if (!IsDebugCamera_) {
-		if (!player_->GetIsHitStop()) {
-			backGround_->Update();
-			frame_->Update();
-			player_->Update();
-			// デバック
-			enemyManager_->SetIsDebug(IsDebugCamera_);
-			//
-			enemyManager_->Update();
-			playerBulletManager_->Update();
-			enemyBulletManager_->Update();
-			uvula_->Update();
-			boss_->Update();
-			// 敵生成
-			collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
-			// shiftを押すとカメラを切り替える
-			if (input_->TriggerKey(DIK_LSHIFT)) {
-				IsDebugCamera_ ^= true;
-			}
-			followCamera_->Update();
-			viewProjection_ = followCamera_->GetViewProjection();
-		}
-		else {
-			const uint32_t kHitStopMax = 5;
-			hitStopCount_++;
-			if (hitStopCount_ >= kHitStopMax) {
-				hitStopCount_ = 0;
-				player_->SetIsHitStop(false);
-			}
-		}
-	}
-	else {
-		// shiftを押すとカメラを切り替える
-		if (input_->TriggerKey(DIK_LSHIFT)) {
-			IsDebugCamera_ ^= true;
-		}
-		enemyEditor_->Update(enemyManager_.get());
-		// デバックカメラ
-		debugCamera_->Update(&viewProjection_);
-		enemyManager_->SetIsDebug(IsDebugCamera_);
-	}
+	
 	fade_->FadeOutUpdate();
 	if (fade_->GetColor(1) < 0.0f) {
 		isGameStart_ = true;
@@ -256,7 +216,7 @@ void GameScene::Update() {
 
 
 	if (input_->PushKey(DIK_1)) {
-		isGameEnd_ = true;
+		isClear_ = true;
 		isGameStart_ = false;
 	}
 
@@ -265,7 +225,7 @@ void GameScene::Update() {
 		isGameStart_ = false;
 	}
 
-	if (fade_->GetColor(0) > 1.0f && isGameEnd_ == true) {
+	if (fade_->GetColor(0) > 1.0f && isClear_ == true) {
 		sceneNumber_ = CLEAR_SCENE;
 		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
@@ -335,7 +295,7 @@ void GameScene::Draw() {
 		fade_->FadeOutDraw();
 	}
 
-	if (isGameEnd_ == true || isGameOver_ == true) {
+	if (isClear_ == true || isGameOver_ == true) {
 		fade_->FadeInFlagSet(true);
 		fade_->FadeInDraw();
 	}
