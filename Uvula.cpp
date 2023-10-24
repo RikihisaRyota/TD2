@@ -29,9 +29,6 @@ void Uvula::Reset() {
 }
 
 void Uvula::Update() {
-	if (Input::GetInstance()->TriggerKey(DIK_M)) {
-		isDebug_ = true;
-	}
 
 	if (!isDebug_) {
 		if (isPlayerChase_) {
