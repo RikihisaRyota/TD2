@@ -29,8 +29,9 @@ private:
 	void Debug();
 	void UpdateMatrix();
 
-	float kRockInterval_ = 18.0f;
-	float kRockFrameDistance_ = 4.0f;
+	float kRockInterval_ = 30.0f;
+	float kRockFrameDistance_ = 14.0f;
+	float kRockScale_ = 4.0f;
 
 	float width_;
 	float height_;

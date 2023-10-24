@@ -27,9 +27,14 @@ void Frame::Initialize(std::vector<Model*>model) {
 	// 床
 	for (size_t i = 0; i < width_ / 20.0f; i++) {
 		Wall* topWall = new Wall();
-		topWall->model_ = model.at(0);
+		if (rnd.NextIntLimit() % 4 == 0) {
+			topWall->model_ = model.at(0);
+		}
+		else {
+			topWall->model_ = model.at(1);
+		}
 		topWall->worldTransform_.Initialize();
-		topWall->worldTransform_.translation_ = { float(i) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,height_ + kRockFrameDistance_ ,0.0f};
+		topWall->worldTransform_.translation_ = { float(i) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,height_ + kRockFrameDistance_ ,0.0f };
 		topWall->worldTransform_.rotation_.z = DegToRad(180.0f);
 		topWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
 		if (rnd.NextIntLimit() % 3 == 0) {
@@ -39,7 +44,12 @@ void Frame::Initialize(std::vector<Model*>model) {
 		topWall->isAlive_ = true;
 		topWalls_.emplace_back(topWall);
 		Wall* bottomWall = new Wall();
-		bottomWall->model_ = model.at(0);
+		if (rnd.NextIntLimit() % 4 == 0) {
+			bottomWall->model_ = model.at(1);
+		}
+		else {
+			bottomWall->model_ = model.at(0);
+		}
 		bottomWall->worldTransform_.Initialize();
 		bottomWall->worldTransform_.translation_ = { float(i) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,-height_ - kRockFrameDistance_ ,0.0f };
 		bottomWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
@@ -81,19 +91,22 @@ void Frame::Debug() {
 	ImGui::Begin("Frame");
 	ImGui::SliderFloat("width", &width_, 20.0f, 1000.0f);
 	ImGui::SliderFloat("height", &height_, 20.0f, 100.0f);
-	ImGui::SliderFloat("RockInterval", &kRockInterval_, 15.0f, 30.0f);
-	ImGui::SliderFloat("RockFrameDistance", &kRockFrameDistance_, 0.0f, 10.0f);
+	ImGui::SliderFloat("RockInterval", &kRockInterval_, 15.0f, 50.0f);
+	ImGui::SliderFloat("RockFrameDistance", &kRockFrameDistance_, 0.0f, 50.0f);
+	ImGui::SliderFloat("RockScale", &kRockScale_, 0.0f, 15.0f);
 	ImGui::End();
 	UpdateMatrix();
 }
 
 void Frame::UpdateMatrix() {
-	/*for (size_t i = 0; i < topWalls_.size(); i++) {
+	for (size_t i = 0; i < topWalls_.size(); i++) {
 		topWalls_.at(i)->worldTransform_.translation_= { float(i) * kRockInterval_ ,height_ + kRockFrameDistance_ ,0.0f };
+		topWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
 		topWalls_.at(i)->worldTransform_.UpdateMatrix();
 		bottomWalls_.at(i)->worldTransform_.translation_ = { float(i) * kRockInterval_ ,-height_ - kRockFrameDistance_ ,0.0f };
+		bottomWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
 		bottomWalls_.at(i)->worldTransform_.UpdateMatrix();
-	}*/
+	}
 	player_->SetHeight(height_);
 	player_->SetWidth(width_);
 	enemyManager_->SetHeight(height_);

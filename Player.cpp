@@ -245,10 +245,18 @@ void Player::HitBoxInitialize() {
 
 void Player::HitBoxUpdate() {
 	// Sphere
+	if (!isPulling_) {
 	sphere_ = {
 		.center_{worldTransform_.translation_},
-		.radius_{radius_ },
+		.radius_{radius_ * 0.5f},
 	};
+	}
+	else {
+		sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_},
+		};
+	}
 }
 
 void Player::HitBoxDraw(const ViewProjection& viewProjection) {
