@@ -11,7 +11,8 @@
 class EnemyManager {
 public:
 	struct EnemyState {
-		Vector3 position;
+		Vector3 max;
+		Vector3 min;
 		uint32_t type;
 	};
 public:
@@ -22,6 +23,7 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 	void Reset();
 	void Create(const Vector3& position, uint32_t type);
+	void Create(const Vector3& max, const Vector3& min, uint32_t type);
 
 	std::vector<Enemy*>& GetEnemies() { return enemies_; }
 	int GetShotTime() { return enemies_[0]->GetShotTime(); }

@@ -52,7 +52,8 @@ void EnemyManager::Update() {
 		enemy->Update();
 		if (enemy->GetIsCreateFlag()) {
 			EnemyState split = {
-				.position{enemy->GetSplitPos()},
+				.max{enemy->GetMax()},
+				.min{enemy->GetMin()},
 				.type{enemy->GetType()}
 			};
 			splits_.emplace_back(split);
@@ -60,7 +61,7 @@ void EnemyManager::Update() {
 	}
 
 	for (auto& split : splits_) {
-		Create(split.position, split.type);
+ 		Create(split.max,split.min, split.type);
 	}
 	splits_.clear();
 
@@ -93,6 +94,19 @@ void EnemyManager::Create(const Vector3& position, uint32_t type) {
 	enemy->SetHeight(height_);
 	enemy->SetWidth(width_);
 	enemies_.emplace_back(enemy);
+}
+
+void EnemyManager::Create(const Vector3& max, const Vector3& min, uint32_t type)
+{
+	Enemy* enemy = new Enemy();
+	enemy->Initialize(models_type0_, models_type1_, models_type2_, max, min, type);
+	enemy->SetViewProjection(viewProjection_);
+	enemy->SetEnemyBulletManager(enemyBulletManager_);
+	enemy->SetPlayer(player_);
+	enemy->SetHeight(height_);
+	enemy->SetWidth(width_);
+	enemies_.emplace_back(enemy);
+
 }
 
 void EnemyManager::SetShotTime(int shotTime)
