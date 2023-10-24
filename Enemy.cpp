@@ -160,6 +160,9 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 			player_->SetBehavior(Player::Behavior::kStun);
 		}
+		if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
+
+		}
 
 		if (player_->GetIsPulling()) {
  			isAlive_ = false;
@@ -268,6 +271,7 @@ void Enemy::SplitInitialize() {
 	worldTransform_type0_Head_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 	worldTransform_type1_Body_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 	worldTrasnform_type2_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+	splitFlag_ = false;
 }
 
 void Enemy::DamageInitialize() {
@@ -345,9 +349,10 @@ void Enemy::ShotUpdate() {
 void Enemy::SplitUpdate()
 {
 	bool check = false;
-	if (!EnemyCreateFlag) {
+	if (!splitFlag_) {
 		while (!check) {
 			EnemyCreateFlag = true;
+			splitFlag_ = true;
 			easeMax_[0] = initialRadius_ * 0.5f;
 			easeMin_[0] = 0;
 			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
@@ -363,6 +368,7 @@ void Enemy::SplitUpdate()
 				worldTransform_.translation_ = { splitPos_ + Center };
 				splitPos_ *= -1.0f;
 				splitPos_ += Center;
+
 				if (worldTransform_.translation_.y > height_ || worldTransform_.translation_.y < -height_) {
 					check = false;
 				}
@@ -388,13 +394,13 @@ void Enemy::SplitUpdate()
 			//}
 		}
 		
-		behaviorRequest_ = Behavior::kStandby;
+		//behaviorRequest_ = Behavior::kStandby;
 	}
 	else {
 		float easedT = 1 - std::cosf((easeTime_ * 3.14f) / 2);
 		float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
-		worldTransform_type0_Head_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
-		worldTransform_type1_Body_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
+		worldTransform_type0_Head_.scale_ = { radius ,radius ,radius };
+		worldTransform_type1_Body_.scale_ = { radius ,radius ,radius };
 		if (easeTime_ < 1.0f) {
 			easeTime_ += easeSecond_Split_;
 		}

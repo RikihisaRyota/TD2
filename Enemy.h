@@ -153,6 +153,7 @@ private:
 	
 	// 分裂用の変数
 	bool EnemyCreateFlag = false;
+	bool splitFlag_ = false;
 	Vector3 splitPos_;
 	float easeSecond_Split_ = 0.01f;
 	Vector3 easeMin_Vector3_;
