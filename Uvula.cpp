@@ -15,6 +15,8 @@ void Uvula::Initialize(Model* head, Model* body) {
 }
 
 void Uvula::Reset() {
+	float scale = radius_ * 0.5f;
+	headWorldTransform_.scale_ = { scale ,scale ,scale };
 	headWorldTransform_.translation_ = kInitialPosition_;
 	headWorldTransform_.UpdateMatrix();
 	bodyWorldTransforms_.scale_ = { 1.0f,2.0f,1.0f };
@@ -53,7 +55,9 @@ void Uvula::Update() {
 		// 引っ張られているとき
 		if (player_->GetIsPulling()) {
 			headWorldTransform_.translation_ = player_->GetTranslation();
-			headWorldTransform_.translation_.x -= 2.0f;
+			headWorldTransform_.translation_.x -= player_->GetSize() + radius_;
+			headWorldTransform_.translation_.x += rnd.NextFloatRange(-1.0f , 0.0f);
+			headWorldTransform_.translation_.y += rnd.NextFloatRange(-1.0f , 1.0f);
 			Vector3 distance = headWorldTransform_.translation_ - kInitialPosition_;
 			bodyWorldTransforms_.scale_.x = distance.x * 0.5f;
 			Vector3 rotate{};

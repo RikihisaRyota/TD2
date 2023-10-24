@@ -25,7 +25,7 @@ void Frame::Initialize(std::vector<Model*>model) {
 	const float kDispersionInterval = 2.0f;
 	const float kDispersionRotate = 5.0f;
 	// 床
-	for (size_t i = 0; i < width_ / 20.0f; i++) {
+	for (int i = 0; i < width_ / 24.0f; i++) {
 		Wall* topWall = new Wall();
 		if (rnd.NextIntLimit() % 4 == 0) {
 			topWall->model_ = model.at(0);
@@ -34,7 +34,7 @@ void Frame::Initialize(std::vector<Model*>model) {
 			topWall->model_ = model.at(1);
 		}
 		topWall->worldTransform_.Initialize();
-		topWall->worldTransform_.translation_ = { float(i) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,height_ + kRockFrameDistance_ ,0.0f };
+		topWall->worldTransform_.translation_ = { (float(i-5))* kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,height_ + kRockFrameDistance_ ,0.0f };
 		topWall->worldTransform_.rotation_.z = DegToRad(180.0f);
 		topWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
 		if (rnd.NextIntLimit() % 3 == 0) {
@@ -51,7 +51,7 @@ void Frame::Initialize(std::vector<Model*>model) {
 			bottomWall->model_ = model.at(0);
 		}
 		bottomWall->worldTransform_.Initialize();
-		bottomWall->worldTransform_.translation_ = { float(i) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,-height_ - kRockFrameDistance_ ,0.0f };
+		bottomWall->worldTransform_.translation_ = { (float(i-5)) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,-height_ - kRockFrameDistance_ ,0.0f };
 		bottomWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
 		if (rnd.NextIntLimit() % 3 == 0) {
 			bottomWall->worldTransform_.rotation_.y = DegToRad(180.0f);
@@ -99,11 +99,11 @@ void Frame::Debug() {
 }
 
 void Frame::UpdateMatrix() {
-	for (size_t i = 0; i < topWalls_.size(); i++) {
-		topWalls_.at(i)->worldTransform_.translation_= { float(i) * kRockInterval_ ,height_ + kRockFrameDistance_ ,0.0f };
+	for (int i = 0; i < topWalls_.size(); i++) {
+		topWalls_.at(i)->worldTransform_.translation_= { float(i-5) * kRockInterval_ ,height_ + kRockFrameDistance_ ,0.0f };
 		topWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
 		topWalls_.at(i)->worldTransform_.UpdateMatrix();
-		bottomWalls_.at(i)->worldTransform_.translation_ = { float(i) * kRockInterval_ ,-height_ - kRockFrameDistance_ ,0.0f };
+		bottomWalls_.at(i)->worldTransform_.translation_ = { float(i-5) * kRockInterval_ ,-height_ - kRockFrameDistance_ ,0.0f };
 		bottomWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
 		bottomWalls_.at(i)->worldTransform_.UpdateMatrix();
 	}

@@ -137,9 +137,9 @@ private:
 	void MoveLimit();
 	void InvincibleUpdate();
 
-	uint32_t kWeightMax_ = 20;
+	uint32_t kWeightMax_ = 10;
 	Vector3 kInitialPosition_ = { 80.0f,-10.0f,0.0f };
-	float kRadiusMax_ = 10.0f;
+	float kRadiusMax_ = 15.0f;
 	float kRadiusMin_ = 5.0f;
 	float radius_ = kRadiusMin_;
 	PlayerBulletManager* playerBulletManager_;
