@@ -21,40 +21,52 @@ void PlayerPullingMove::Initialize() {
 		player_->SetPartsRotation(Vector3(0.0f, 0.0f, 0.0f), i);
 	}
 	player_->SetIsPulling(true);
+	direction_ = false;
+	playerNextRotate_ = 0.0f;
+	playerCurrentRotate_ = 0.0f;
+	velocity_ = { 0.0f,0.0f,0.0f };
+	acceleration_ = { 0.0f,0.0f,0.0f };
 }
 
 void PlayerPullingMove::Update() {
 	worldTransform_ = player_->GetWorldTransform();
-	velocity_ = { 0.0f,0.0f,0.0f };
 	Vector3 move{};
-	if (input_->PushKey(DIK_A)) {
-		move += { 0.0f, 1.0f, 0.0f };
-	}
-	if (input_->PushKey(DIK_D)) {
-		move += { 0.0f, -1.0f, 0.0f };
-	}
+	float angle = 0.0f;
 	if (input_->TriggerKey(DIK_SPACE)) {
-		player_->SetBehavior(Player::Behavior::kString);
+		direction_ ^= true;
+		if (direction_) {
+			angle = DegToRad(kAngle_);
+		}
+		else {
+			angle = DegToRad(-kAngle_);
+		}
+		float power = Lerp(kPowerMax_, kPowerMin_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
+		move = { std::cosf(angle),std::sinf(angle),0.0f };
+		velocity_ = move * power;
+		acceleration_ = move * power;
+		playerNextRotate_ = angle;
 	}
+
 	if (move.Length() > 0) {
 		move.Normalize();
 	}
-	// 左右移動
-	velocity_ = move * kSpeed_;
 	// 重力
 	if (worldTransform_.translation_.x > 0.0f) {
 		float gravity = Lerp(kGravityMin_, kGravityMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
-		float gravityLimit= Lerp(kGravityLimitMin_, kGravityLimitMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
-		Vector3 vector =Vector3(-20.0f,-10.0f,0.0f) - worldTransform_.translation_;
+		float gravityLimit = Lerp(kGravityLimitMin_, kGravityLimitMax_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
+		Vector3 vector = Vector3(-20.0f, -10.0f, 0.0f) - worldTransform_.translation_;
 		vector.Normalize();
 		acceleration_ += vector * gravity;
-		acceleration_.x = std::clamp(acceleration_.x,-gravityLimit, 10.0f);
+		acceleration_.x = std::clamp(acceleration_.x, -gravityLimit, 10.0f);
 	}
 	velocity_ += acceleration_;
+	velocity_ *= 0.98f;
+	acceleration_.y *= 0.5f;
 	worldTransform_.translation_ += velocity_;
-	acceleration_.y *= 0.9f;
-	
 	MoveLimit();
+
+	playerCurrentRotate_ = LenpShortAngle(playerCurrentRotate_, playerNextRotate_, 0.1f);
+	player_->SetMotionRotation(Vector3(playerCurrentRotate_, 0.0f, 0.0f));
 }
 
 void PlayerPullingMove::Debug() {
@@ -62,13 +74,18 @@ void PlayerPullingMove::Debug() {
 	if (ImGui::TreeNode("kPullingMove")) {
 		ImGui::Text("velocity\nx:%.4f,y:%.4f,z:%.4f", velocity_.x, velocity_.y, velocity_.z);
 		ImGui::Text("acceleration\nx:%.4f,y:%.4f,z:%.4f", acceleration_.x, acceleration_.y, acceleration_.z);
-		ImGui::SliderFloat("Speed", &kSpeed_, 0.0f, 1.0f);
-		ImGui::SliderFloat("Gravity", &kGravity_, 0.0f, 1.0f);
-		ImGui::SliderFloat("GravityMax_", &kGravityMax_, kGravityMin_,5.0f);
-		ImGui::SliderFloat("GravityMin_", &kGravityMin_, 0.0f, kGravityMax_);
-		ImGui::SliderFloat("GravityLimitMax", &kGravityLimitMax_, kGravityLimitMin_, 5.0f);
-		ImGui::SliderFloat("GravityLimitMin", &kGravityLimitMin_, 0.0f, kGravityLimitMax_);
-
+		if (ImGui::TreeNode("プレイヤーが軽いとき")) {
+			ImGui::SliderFloat("SpeedMax", &kPowerMax_, kPowerMin_, 1.0f);
+			ImGui::SliderFloat("GravityMin_", &kGravityMin_, 0.0f, kGravityMax_);
+			ImGui::SliderFloat("GravityLimitMin", &kGravityLimitMin_, 0.0f, kGravityLimitMax_);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("プレイヤーが重いとき")) {
+			ImGui::SliderFloat("SpeedMin", &kPowerMin_, 0.0f, kPowerMax_);
+			ImGui::SliderFloat("GravityMax_", &kGravityMax_, kGravityMin_, 0.1f);
+			ImGui::SliderFloat("GravityLimitMax", &kGravityLimitMax_, kGravityLimitMin_, 0.1f);
+			ImGui::TreePop();
+		}
 		ImGui::TreePop();
 	}
 	ImGui::End();
