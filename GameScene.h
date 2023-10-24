@@ -71,6 +71,7 @@ public: // メンバ関数
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
+	Audio* audio_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 	ViewProjection viewProjection_;
 
@@ -79,11 +80,13 @@ private: // メンバ変数
 	/// ゲーム用
 	/// </summary>
 	std::unique_ptr<BackGround> backGround_;
+	std::vector<uint32_t> backGroundTextureHandles_;
 	std::unique_ptr<Boss> boss_;
 	std::vector<Model*> bossModel_;
 	std::unique_ptr<CollisionManager> collisionManager_;
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<Frame> frame_;
+	std::vector<Model*>frameModel_;
 	std::unique_ptr<Player> player_;
 	std::unique_ptr<PlayerBulletManager> playerBulletManager_;
 	std::vector<Model*> playerModel_;

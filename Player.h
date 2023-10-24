@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 
+#include "Audio.h"
 #include "Collider.h"
 #include "Model.h"
 #include "OBB.h"
@@ -71,6 +72,7 @@ public:
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 #pragma region getter,setter
+	void SetEnemyEatSoundHandle(size_t handle) { enemyEatSoundHandle_ = handle; }
 	float GetSize() { return radius_; }
 	Vector3 GetInitialPosition() { return kInitialPosition_; }
 	uint32_t GetWeightNum() { return weightCount_; }
@@ -139,6 +141,7 @@ private:
 	float radius_ = kRadiusMin_;
 	PlayerBulletManager* playerBulletManager_;
 	Input* input_;
+	Audio* audio_;
 	ViewProjection* viewProjection_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -171,4 +174,6 @@ private:
 	uint32_t kInvincibleMax_ = 60;
 	// ヒットストップ
 	bool isHitStop_;
+	// 音
+	size_t enemyEatSoundHandle_;
 };

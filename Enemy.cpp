@@ -99,7 +99,7 @@ void Enemy::Update() {
 			isDrawing_ = true;
 		}
 	}
-	
+
 	worldTransform_.UpdateMatrix();
 	HitBoxUpdate();
 
@@ -223,8 +223,7 @@ void Enemy::HitBoxDraw(const ViewProjection& viewProjection) {
 	DrawSphere(sphere_, viewProjection, Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 }
 
-void Enemy::BehaviorRequestCheck()
-{
+void Enemy::BehaviorRequestCheck() {
 	if (behaviorRequest_) {
 		// ふるまいを変更
 		behavior_ = behaviorRequest_.value();
@@ -254,19 +253,16 @@ void Enemy::BehaviorRequestCheck()
 	}
 }
 
-void Enemy::StandbyInitialize()
-{
+void Enemy::StandbyInitialize() {
 	times_[Behavior::kStandby] = 0;
 }
 
-void Enemy::ShotInitialize()
-{
+void Enemy::ShotInitialize() {
 	times_[Behavior::kShot] = 0;
 	easeTime_ = 0;
 }
 
-void Enemy::SplitInitialize()
-{
+void Enemy::SplitInitialize() {
 	times_[Behavior::kSplit] = 0;
 	radius_ = initialRadius_;
 	worldTransform_type0_[kHead].scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
@@ -274,26 +270,22 @@ void Enemy::SplitInitialize()
 	worldTrasnform_type2_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 }
 
-void Enemy::DamageInitialize()
-{
+void Enemy::DamageInitialize() {
 	times_[Behavior::kDamage] = 0;
 }
 
-void Enemy::ClingInitialize()
-{
+void Enemy::ClingInitialize() {
 	times_[Behavior::kCling] = 0;
 }
 
-void Enemy::GrowInitialize()
-{
+void Enemy::GrowInitialize() {
 	times_[Behavior::kGrow] = 0;
 	easeMin_[0] = radius_;
 	easeMax_[0] = radius_ + onceUpSize_;
 	easeTime_ = 0;
 }
 
-void Enemy::StandbyUpdate()
-{
+void Enemy::StandbyUpdate() {
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		if (isDrawing_) {
 			times_[Behavior::kStandby]++;
@@ -308,8 +300,7 @@ void Enemy::StandbyUpdate()
 	}
 }
 
-void Enemy::ShotUpdate()
-{
+void Enemy::ShotUpdate() {
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
 		if (!player_->GetIsPulling()) {
 			times_[Behavior::kShot]++;
@@ -416,8 +407,7 @@ void Enemy::DamageUpdate()
 	times_[Behavior::kDamage]++;
 }
 
-void Enemy::ClingUpdate()
-{
+void Enemy::ClingUpdate() {
 
 
 }

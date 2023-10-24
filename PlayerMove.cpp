@@ -4,9 +4,11 @@
 #include "ImGuiManager.h"
 #include "MyMath.h"
 #include "Player.h"
+#include "Audio.h"
 
 PlayerMove::PlayerMove() {
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 	worldTransform_.Initialize();
 }
 
@@ -38,6 +40,8 @@ void PlayerMove::Update() {
 		if (isEating_) {
 			isEating_ = false;
 		}
+		// 音
+		audio_->SoundPlayWave(moveSoundHandle_);
 		float angle = 0.0f;
 		Vector3 move{};
 		// direction_がtrueで左
@@ -47,10 +51,10 @@ void PlayerMove::Update() {
 		else {
 			angle = DegToRad(-kAngle_);
 		}
+		float power = Lerp(kPowerMax_, kPowerMin_, static_cast<float>(player_->GetWeightNum()) / static_cast<float>(player_->GetWeightMax()));
 		move = { std::cosf(angle),std::sinf(angle),0.0f };
-		acceleration_ = { std::cosf(angle),std::sinf(angle),0.0f };
-		velocity_ = move;
-		acceleration_ *= kPower_;
+		velocity_ = move * power;
+		acceleration_ = move * power;
 		// 弾生成
 		player_->GetPlayerBulletManager()->CreateBullet(worldTransform_.translation_);
 		direction_ ^= true;
@@ -110,7 +114,8 @@ void PlayerMove::Debug() {
 	if (ImGui::TreeNode("kMove")) {
 		ImGui::Text("velocity\nx:%.4f,y:%.4f,z:%.4f", velocity_.x, velocity_.y, velocity_.z);
 		ImGui::Text("acceleration\nx:%.4f,y:%.4f,z:%.4f", acceleration_.x, acceleration_.y, acceleration_.z);
-		ImGui::SliderFloat("Power", &kPower_, 0.0f, 0.1f);
+		ImGui::SliderFloat("PowerMin", &kPowerMin_, 0.0f, kPowerMax_);
+		ImGui::SliderFloat("PowerMax", &kPowerMax_, kPowerMin_, 1.0f);
 		ImGui::SliderFloat("Inertia", &kInertia_, 0.0f, 1.0f);
 		ImGui::SliderFloat("Angle", &kAngle_, 0.0f, 90.0f);
 		ImGui::TreePop();

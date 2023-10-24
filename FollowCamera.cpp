@@ -7,9 +7,9 @@
 
 void FollowCamera::Initialize() {
 	viewProjection_.Initialize();
-	debugOffset_ = { 40.0f, 0.0f, -150.0f };
-	dropOffset_ = { -40.0f, 0.0f, -150.0f };
-	bossAttackOffset_ = { -15.0f,0.0f,-150.0f };
+	debugOffset_ = { 40.0f, 0.0f, -250.0f };
+	dropOffset_ = { -40.0f, 0.0f, -250.0f };
+	bossAttackOffset_ = { -15.0f,0.0f,-300.0f };
 	delayInterpolationLate_ = 0.5f;
 	dropDelayInterpolationLate_ = 0.8f;
 }
@@ -38,7 +38,7 @@ void FollowCamera::Update() {
 		}
 		kInterpolationLate = dropDelayInterpolationLate_;
 		// 追従座標の補間
-		interTarget_ = Lerp(interTarget_, target_->translation_, kInterpolationLate);
+		interTarget_.x = Lerp(interTarget_.x, target_->translation_.x, kInterpolationLate);
 		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(viewProjection_.rotation_);
 
 		nowOffset_ = TransformNormal(nowOffset_, rotateMatrix);

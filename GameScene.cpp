@@ -19,6 +19,15 @@ GameScene::~GameScene() {
 	for (auto& model : enemyModels_Type2_) {
 		delete model;
 	}
+	for (auto& model : bossModel_) {
+		delete model;
+	}
+	for (auto& model : frameModel_) {
+		delete model;
+	}
+	for (auto& model : playerModel_) {
+		delete model;
+	}
 }
 
 void GameScene::Initialize() {
@@ -29,6 +38,7 @@ void GameScene::Initialize() {
 	IsDebugCamera_ = false;
 	// 入力
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
 #pragma region 生成
@@ -49,11 +59,17 @@ void GameScene::Initialize() {
 #pragma endregion
 #pragma region 初期化
 	hitStopCount_ = 0;
-	auto textureHandle = TextureManager::Load("Resources/Images/back.png");
-	backGround_->Initialize(textureHandle);
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
+	backGround_->SetPlayer(player_.get());
+	backGround_->Initialize(backGroundTextureHandles_);
 	// 枠組み
+	frameModel_.emplace_back(Model::Create("rockBlock2",true));
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
+	frame_->SetViewProjection(&viewProjection_);
+	frame_->Initialize(frameModel_);
 	frame_->SetEnemyManager(enemyManager_.get());
 	frame_->Initialize();
 	// カメラ
@@ -61,13 +77,16 @@ void GameScene::Initialize() {
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
 	// プレイヤー
-	playerModel_.emplace_back(Model::Create("playerBody"));
-	playerModel_.emplace_back(Model::Create("playerLegLeft"));
-	playerModel_.emplace_back(Model::Create("playerLegRight"));
-	playerBulletModel_.reset(Model::Create("playerBullet"));
+	playerModel_.emplace_back(Model::Create("playerBody",true));
+	playerModel_.emplace_back(Model::Create("playerLegLeft", true));
+	playerModel_.emplace_back(Model::Create("playerLegRight", true));
+	playerBulletModel_.reset(Model::Create("playerBullet", true));
 	player_->SetViewProjection(&viewProjection_);
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_);
+	// 音
+	player_->GetPlayerMove()->SetMoveSoundHandle(audio_->SoundLoadWave("Resources/Audios/playerMove.wav"));
+	player_->SetEnemyEatSoundHandle(audio_->SoundLoadWave("Resources/Audios/enemyEat.wav"));
 	playerBulletManager_->SetViewProjection(&viewProjection_);
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 
@@ -75,10 +94,10 @@ void GameScene::Initialize() {
 	enemyModel_.reset(Model::Create("octopusBullet"));
 	//enemyModels_.clear();
 	enemyModels_Type0_ = {
-		Model::Create("octopusHead"), Model::Create("octopusLeg")
+		Model::Create("octopusHead",true), Model::Create("octopusLeg",true)
 	};
 	enemyModels_Type1_ = {
-		Model::Create("spikeBody"), Model::Create("spikePrick")
+		Model::Create("spikeBody",true), Model::Create("spikePrick",true)
 	};
 	enemyModels_Type2_ = {
 		Model::Create("feed")
@@ -88,7 +107,6 @@ void GameScene::Initialize() {
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->SetPlayer(player_.get());
-	//enemyManager_->Initialize(enemyModel_.get());
 	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_, enemyModels_Type2_);
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	// CSVからデータの読み込み
@@ -100,13 +118,15 @@ void GameScene::Initialize() {
 		SpawnEnemy(data.position, data.type);
 	}
 	// ベロ
-	uvulaHead_.reset(Model::Create("uvulaHead"));
-	uvulaBody_.reset(Model::Create("uvulaBody"));
+	uvulaHead_.reset(Model::Create("uvulaHead", true));
+	uvulaBody_.reset(Model::Create("uvulaBody", true));
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 	// ボス
-	bossModel_.emplace_back(Model::Create("bossOnJaw"));
-	bossModel_.emplace_back(Model::Create("bossLowerJaw"));
+	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
+	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
+	bossModel_.emplace_back(Model::Create("shellfishDown", true));
+	bossModel_.emplace_back(Model::Create("shellfishUp",true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 #pragma endregion
@@ -115,6 +135,7 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	if (!IsDebugCamera_) {
 		if (!player_->GetIsHitStop()) {
+			backGround_->Update();
 			frame_->Update();
 			player_->Update();
 			// デバック
@@ -168,7 +189,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-
+	backGround_->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
@@ -185,7 +206,6 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	player_->Draw(viewProjection_);
-	backGround_->Draw(viewProjection_);
 	frame_->Draw(viewProjection_);
 	uvula_->Draw(viewProjection_);
 	enemyManager_->Draw(viewProjection_);
