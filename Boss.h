@@ -57,6 +57,8 @@ public:
 	void HitBoxInitialize() override;
 	void HitBoxUpdate() override;
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
+
+	uint32_t GetBossHP() {return HP_;}
 private:
 	void UpdateMatrix();
 	void DeathAnimation();

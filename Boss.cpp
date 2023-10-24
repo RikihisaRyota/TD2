@@ -19,6 +19,7 @@ void Boss::Initialize(std::vector<Model*> models) {
 	for (size_t i = 0; i < static_cast<size_t>(Parts::kCount); i++) {
 		models_.emplace_back(models.at(i));
 	}
+	isClear_ = false;
 	isAnimation_ = false;
 	isRespawn_ = false;
 	animationCount_ = 0;
@@ -37,6 +38,7 @@ void Boss::Initialize(std::vector<Model*> models) {
 		part.UpdateMatrix();
 		parts_.emplace_back(part);
 	}
+	Reset();
 	HitBoxInitialize();
 }
 
@@ -55,6 +57,7 @@ void Boss::Update() {
 			if (player_->GetWeightNum() >= HP_) {
 				player_->SetTranslation(player_->GetInitialPosition());
 				player_->SetBehavior(Player::Behavior::kMove);
+				HP_ -= player_->GetWeightNum();
 			}
 			else {
 				player_->SetTranslation(Vector3(0.0f, -15.0f, 0.0f));
@@ -72,12 +75,12 @@ void Boss::Update() {
 void Boss::Draw(const ViewProjection& viewProjection) {
 	switch (bossType_) {
 	case Boss::Type::kFirstBoss:
-		models_.at(static_cast<size_t>(Parts::kOnJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kOnJaw)), viewProjection);
-		models_.at(static_cast<size_t>(Parts::kLowerJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kLowerJaw)), viewProjection);
-		break;
-	case Boss::Type::kMiddleBoss:
 		models_.at(static_cast<size_t>(Parts::kShellfishUp))->Draw(parts_.at(static_cast<size_t>(Parts::kShellfishUp)), viewProjection);
 		models_.at(static_cast<size_t>(Parts::kShellfishDown))->Draw(parts_.at(static_cast<size_t>(Parts::kShellfishDown)), viewProjection);
+		break;
+	case Boss::Type::kMiddleBoss:
+		models_.at(static_cast<size_t>(Parts::kOnJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kOnJaw)), viewProjection);
+		models_.at(static_cast<size_t>(Parts::kLowerJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kLowerJaw)), viewProjection);
 		break;
 	case Boss::Type::kLastBoss:
 		break;
@@ -225,7 +228,21 @@ void Boss::DeathAnimation() {
 			default:
 				break;
 			}
-			Reset();
+			worldTransform_.scale_ = { 20.0f,20.0f,20.0f };
+			worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
+			worldTransform_.translation_ = { -20.0f,-15.0f,0.0f };
+
+			motion_.scale_ = { 1.0f,1.0f,1.0f };
+			motion_.rotation_ = { 0.0f,0.0f,0.0f };
+			motion_.translation_ = { 0.0f,0.0f,0.0f };
+			for (auto& parts : parts_) {
+				parts.scale_ = { 1.0f,1.0f,1.0f };
+				parts.rotation_ = { 0.0f,0.0f,0.0f };
+				parts.translation_ = { 0.0f,0.0f,0.0f };
+			}
+			UpdateMatrix();
+			HitBoxUpdate();
+			animationCount_ = 0;
 			isRespawn_ = true;
 		}
 	}
@@ -245,12 +262,12 @@ void Boss::AttackAnimation() {
 	float t = std::clamp(static_cast<float>(animationCount_) / static_cast<float>(kAnimationMax_), 0.0f, 1.0f);
 	switch (bossType_) {
 	case Boss::Type::kFirstBoss:
-		parts_.at(static_cast<size_t>(Parts::kShellfishUp)).rotation_.z = Lerp(0.0f, -DegToRad(20.0f), t);
-		parts_.at(static_cast<size_t>(Parts::kShellfishDown)).rotation_.z = Lerp(0.0f, DegToRad(20.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kShellfishUp)).rotation_.z = Lerp(0.0f, DegToRad(20.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kShellfishDown)).rotation_.z = Lerp(0.0f, -DegToRad(20.0f), t);
 		break;
 	case Boss::Type::kMiddleBoss:
-		parts_.at(static_cast<size_t>(Parts::kOnJaw)).rotation_.z = Lerp(0.0f, DegToRad(30.0f), t);
-		parts_.at(static_cast<size_t>(Parts::kLowerJaw)).rotation_.z = Lerp(0.0f, -DegToRad(30.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kOnJaw)).rotation_.z = Lerp(0.0f, -DegToRad(30.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kLowerJaw)).rotation_.z = Lerp(0.0f, DegToRad(30.0f), t);
 		break;
 	case Boss::Type::kLastBoss:
 		break;

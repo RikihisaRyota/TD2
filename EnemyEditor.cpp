@@ -30,20 +30,41 @@ void EnemyEditor::Update(EnemyManager* enemyManager) {
             bool type1 = false;
             bool type2 = false;
 
+            bool type0Now = false;
+            bool type1Now = false;
+            bool type2Now = false;
+
             if (enemy->GetType() == static_cast<uint32_t>(Enemy::EnemyType::kOctopus)) {
                 type0 = true;
+                type0Now = true;
             }
             else if (enemy->GetType() == static_cast<uint32_t>(Enemy::EnemyType::kSpike)) {
                 type1 = true;
+                type1Now = true;
             }
             else if (enemy->GetType() == static_cast<uint32_t>(Enemy::EnemyType::kfeed)) {
                 type2 = true;
+                type2Now = true;
             }
             ImGui::DragFloat3("position", &translation.x, 0.1f);
             ImGui::DragFloat3("rotation", &rotation.x, 0.01f);
             ImGui::Checkbox("Type0", &type0);
             ImGui::Checkbox("Type1", &type1);
             ImGui::Checkbox("Type2", &type2);
+
+            if (type0 == true && type0Now == false) {
+                type1 = false;
+                type2 = false;
+            }
+            if (type1 == true && type1Now == false) {
+                type0 = false;
+                type2 = false;
+            }
+            if (type2 == true && type2Now == false) {
+                type0 = false;
+                type1 = false;
+            }
+
             if (type0) {
                 enemy->SetType(static_cast<uint32_t>(Enemy::EnemyType::kOctopus));
             }

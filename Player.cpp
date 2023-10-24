@@ -49,7 +49,7 @@ void Player::Initialize(std::vector<Model*> models) {
 
 	playerLanding_ = std::make_unique<PlayerLanding>();
 	playerLanding_->SetPlayer(this);
-
+	Hp_ = 3;
 	Reset();
 	HitBoxInitialize();
 
@@ -86,7 +86,7 @@ void Player::Reset() {
 
 	isHitStop_ = false;
 
-	Hp_ = 3;
+	
 
 	HitBoxUpdate();
 }
@@ -168,6 +168,7 @@ void Player::Debug() {
 	ImGui::Text("Behavior:%f", behavior);
 	ImGui::Text("isPulling:%d", isPulling_);
 	ImGui::Text("isLanding:%d", isLanding_);
+	ImGui::Text("HP:%d", Hp_);
 	ImGui::End();
 }
 
