@@ -20,8 +20,12 @@ private:
 	Input* input_ = nullptr;
 
 	Audio* audio_ = nullptr;
+	
 	size_t soundHandle_;
+	size_t playHandle_;
+
 	size_t selectSoundHandle_;
+	size_t selectPlayHandle_;
 
 	bool isStart_ = true;
 };

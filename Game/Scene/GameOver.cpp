@@ -17,8 +17,8 @@ void GameOver::Initialize() {
 
 	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/over.wav");
 	selectSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/selectSound.wav");
-	audio_->SoundPlayLoopStart(soundHandle_);
-	
+	//audio_->SoundPlayLoopStart(soundHandle_);
+
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
 

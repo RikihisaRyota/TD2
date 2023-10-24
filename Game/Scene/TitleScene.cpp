@@ -22,8 +22,7 @@ void TitleScene::Initialize() {
 	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
 	selectSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/selectSound.wav");
 	audio_->SoundPlayLoopStart(soundHandle_);
-	audio_->SetValume(soundHandle_, 0.05f);
-	
+
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
 }
@@ -108,5 +107,5 @@ void TitleScene::Draw() {
 }
 
 void TitleScene::Finalize() {
-
+	
 }

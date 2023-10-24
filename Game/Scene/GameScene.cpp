@@ -40,11 +40,6 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	viewProjection_.Initialize();
 
-	// ゲームBGM
-	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
-	audio_->SoundPlayLoopStart(inGameSoundHandle_);
-	audio_->SetValume(inGameSoundHandle_, 0.05f);
-
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
 	boss_ = std::make_unique<Boss>();
@@ -80,6 +75,10 @@ void GameScene::Initialize() {
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
+
+	// ゲームBGM
+	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/over.wav");
+	audio_->SoundPlayLoopStart(inGameSoundHandle_);
 
 	// プレイヤー
 	playerModel_.emplace_back(Model::Create("playerBody",true));
@@ -213,7 +212,7 @@ void GameScene::Update() {
 		sceneNumber_ = CLEAR_SCENE;
 		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
-	if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
+	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
 		sceneNumber_ = OVER_SCENE;
 		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
