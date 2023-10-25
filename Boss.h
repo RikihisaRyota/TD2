@@ -102,5 +102,7 @@ private:
 	bool isAnimation_;
 	// クリア
 	bool isClear_;
+	// プレイヤーが地面に着いた瞬間
+	bool isLanding_;
 };
 
