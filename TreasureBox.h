@@ -24,6 +24,7 @@ public:
 	void Initialize(std::vector<Model*> models);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
+	State GetState() { return state_; }
 private:
 	std::vector<Model*> models_;
 	WorldTransform worldTransfrom_;

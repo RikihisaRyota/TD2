@@ -6,6 +6,7 @@
 #include "Fade.h"
 
 #include "BackGround.h"
+#include "ClearSprite.h"
 #include "Frame.h"
 #include "FollowCamera.h"
 #include "TreasureBox.h"
@@ -34,6 +35,7 @@ private:
 
 	std::unique_ptr<BackGround> backGround_;
 	std::vector<uint32_t> backGroundTextureHandles_;
+	std::unique_ptr<ClearSprite> clearSprite_;
 	std::unique_ptr<Frame> frame_;
 	std::vector<Model*>frameModel_;
 	std::unique_ptr<FollowCamera> followCamera_;

@@ -155,6 +155,9 @@
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="WorldTransform.cpp" />
     <ClCompile Include="TreasureBox.cpp" />
+    <ClCompile Include="ClearSprite.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WinApp.h">
@@ -204,9 +207,6 @@
     </ClInclude>
     <ClInclude Include="WorldTransform.h">
       <Filter>ヘッダー ファイル\Base\3d</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>ヘッダー ファイル\Scene</Filter>
     </ClInclude>
     <ClInclude Include="cVertexPos.h">
       <Filter>ヘッダー ファイル\Base\ConstantBuffer</Filter>
@@ -346,9 +346,6 @@
     <ClInclude Include="Collider.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -384,6 +381,9 @@
     </ClInclude>
     <ClInclude Include="PlayerLanding.h">
       <Filter>ヘッダー ファイル\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearSprite.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

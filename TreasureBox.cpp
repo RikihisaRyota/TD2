@@ -34,26 +34,25 @@ void TreasureBox::Initialize(std::vector<Model*> models) {
 void TreasureBox::Update() {
 	animationTime_ += 1.0f;
 	float t = animationTime_ / animationMax_;
+
 	switch (state_) {
 	case TreasureBox::State::kCome:
 	{
 		worldTransfrom_.translation_ = Lerp(boxWorldTranslateStart_, boxWorldTranslateEnd_, std::clamp(t, 0.0f, 1.0f));
-		motion_.translation_.y += std::sinf(t*10.0f) * 0.05f;
 		if (t >= 1.0f) {
 			state_ = State::kOpen;
-			motion_.translation_ = { 0.0f,0.0f,0.0f };
 			animationTime_ = 0.0f;
 		}
 	}
-		break;
+	break;
 	case TreasureBox::State::kOpen:
 	{
 		parts_.at(static_cast<size_t>(Parts::kHuta)).rotation_ = Lerp(upperRotateStart_, upperRotateEnd_, std::clamp(t, 0.0f, 1.0f));
-	
+
 	}
-		break;
+	break;
 	}
-	
+
 	worldTransfrom_.UpdateMatrix();
 	motion_.UpdateMatrix();
 	for (auto& parts : parts_) {
@@ -63,6 +62,6 @@ void TreasureBox::Update() {
 
 void TreasureBox::Draw(const ViewProjection& viewProjection) {
 	for (size_t i = 0; i < static_cast<size_t>(Parts::kCount); i++) {
-		models_.at(i)->Draw(parts_.at(i),viewProjection);
+		models_.at(i)->Draw(parts_.at(i), viewProjection);
 	}
 }

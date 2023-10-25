@@ -36,6 +36,7 @@ void GameClear::Initialize() {
 	frame_ = std::make_unique<Frame>();
 	followCamera_ = std::make_unique<FollowCamera>();
 	treasureBox_ = std::make_unique<TreasureBox>();
+	clearSprite_ = std::make_unique<ClearSprite>();
 #pragma endregion
 
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
@@ -55,6 +56,10 @@ void GameClear::Initialize() {
 	modelTreasureBox_.emplace_back(Model::Create("treasureBoxhuta",true));
 	modelTreasureBox_.emplace_back(Model::Create("treasureboxUnder",true));
 	treasureBox_->Initialize(modelTreasureBox_);
+	// テクスチャ
+	auto texture = TextureManager::Load("Resources/Images/gameclear.png");
+	clearSprite_->SetTreasureBox(treasureBox_.get());
+	clearSprite_->Initialize(texture);
 }
 
 void GameClear::Update() {
@@ -66,6 +71,8 @@ void GameClear::Update() {
 	frame_->Update();
 	fade_->FadeOutUpdate();
 	treasureBox_->Update();
+	clearSprite_->Update();
+
 	viewProjection_ = followCamera_->GetViewProjection();
 	viewProjection_.UpdateMatrix();
 
@@ -115,6 +122,7 @@ void GameClear::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	frame_->Draw(viewProjection_);
+	clearSprite_->Draw(viewProjection_);
 	treasureBox_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
