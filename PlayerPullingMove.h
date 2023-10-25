@@ -16,18 +16,23 @@ public:
 	void Debug();
 private:
 	void MoveLimit();
-	float kSpeed_ = 0.4f;
-	float kGravity_ = 0.1f;
-	float kGravityMax_ = 0.2f;
-	float kGravityMin_ = 0.1f;
-	float kGravityLimitMin_ = 2.0f;
-	float kGravityLimitMax_ = 3.5f;
-	
+	float kPowerMin_ = 0.33f;
+	float kPowerMax_ = 0.3f;
+	float kGravityMax_ = 0.067f;
+	float kGravityMin_ = 0.060f;
+	float kGravityLimitMin_ = 0.09f;
+	float kGravityLimitMax_ = 0.084f;
+	float kAngle_ = 60.0f;
+
 	Player* player_;
 	Input* input_;
 
 	WorldTransform worldTransform_;
 	Vector3 velocity_;
 	Vector3 acceleration_;
+	bool direction_;
+	// プレイヤーの向き
+	float playerCurrentRotate_;
+	float playerNextRotate_;
 };
 

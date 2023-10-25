@@ -4,9 +4,11 @@
 #include "ImGuiManager.h"
 #include "MyMath.h"
 #include "Player.h"
+#include "Audio.h"
 
 PlayerMove::PlayerMove() {
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 	worldTransform_.Initialize();
 }
 
@@ -38,6 +40,8 @@ void PlayerMove::Update() {
 		if (isEating_) {
 			isEating_ = false;
 		}
+		// 音
+		audio_->SoundPlayWave(moveSoundHandle_);
 		float angle = 0.0f;
 		Vector3 move{};
 		// direction_がtrueで左

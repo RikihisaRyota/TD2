@@ -10,7 +10,7 @@
 
 
 Player::~Player() {
-	
+
 }
 
 void Player::Initialize(std::vector<Model*> models) {
@@ -29,6 +29,7 @@ void Player::Initialize(std::vector<Model*> models) {
 	}
 
 	input_ = Input::GetInstance();
+	audio_ = Audio::GetInstance();
 
 	playerJump_ = std::make_unique<PlayerJump>();
 	playerJump_->SetPlayer(this);
@@ -48,7 +49,7 @@ void Player::Initialize(std::vector<Model*> models) {
 
 	playerLanding_ = std::make_unique<PlayerLanding>();
 	playerLanding_->SetPlayer(this);
-
+	Hp_ = 3;
 	Reset();
 	HitBoxInitialize();
 
@@ -63,6 +64,7 @@ void Player::UpdateMatrix() {
 }
 
 void Player::Reset() {
+	isGameOver_ = false;
 	radius_ = kRadiusMin_;
 
 	float scale = radius_ * 0.5f;
@@ -83,6 +85,8 @@ void Player::Reset() {
 	invincibleCount_ = 0;
 
 	isHitStop_ = false;
+
+	
 
 	HitBoxUpdate();
 }
@@ -113,11 +117,6 @@ void Player::Update() {
 	InvincibleUpdate();
 	MoveLimit();
 	HitBoxUpdate();
-	playerMove_->Debug();
-	playerPullingMove_->Debug();
-	playerString_->Debug();
-	playerJump_->Debug();
-	playerStun_->Debug();
 	Debug();
 }
 
@@ -145,9 +144,19 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Debug() {
+	playerMove_->Debug();
+	playerPullingMove_->Debug();
+	playerString_->Debug();
+	playerJump_->Debug();
+	playerStun_->Debug();
 	ImGui::Begin("Player");
 	ImGui::Text("translation\n");
 	ImGui::Text("x:%.4f,y:%.4f,z:%.4f", worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z);
+	float behavior = static_cast<float>(behavior_);
+	ImGui::Text("Behavior:%f", behavior);
+	ImGui::Text("isPulling:%d", isPulling_);
+	ImGui::Text("isLanding:%d", isLanding_);
+	ImGui::Text("HP:%d", Hp_);
 	float weightCount = static_cast<float>(weightCount_);
 	float weightMax = static_cast<float>(kWeightMax_);
 	ImGui::SliderFloat("weightCount", &weightCount, 0.0f, weightMax);
@@ -160,10 +169,6 @@ void Player::Debug() {
 	ImGui::SliderFloat("invincibleMax", &invincibleMax, 0.0f, 60.0f);
 	invincibleCount_ = static_cast<uint32_t>(invincibleCount);
 	kInvincibleMax_ = static_cast<uint32_t>(invincibleMax);
-	float behavior = static_cast<float>(behavior_);
-	ImGui::Text("Behavior:%f", behavior);
-	ImGui::Text("isPulling:%d", isPulling_);
-	ImGui::Text("isLanding:%d", isLanding_);
 	ImGui::End();
 }
 
@@ -171,12 +176,16 @@ void Player::OnCollision(uint32_t type, Sphere* sphere) {
 	switch (type) {
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
 	{
-		isHitStop_ = true;
-		weightCount_++;
-		radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
-		float scale = radius_ * 0.5f;
-		worldTransform_.scale_ = { scale ,scale ,scale };
-		UpdateMatrix();
+		if (behavior_ != Player::Behavior::kStun &&
+			!isInvincible_) {
+			isHitStop_ = true;
+			audio_->SoundPlayWave(enemyEatSoundHandle_);
+			weightCount_++;
+			radius_ = Lerp(kRadiusMin_, kRadiusMax_, static_cast<float>(weightCount_) / static_cast<float>(kWeightMax_));
+			float scale = radius_ * 0.5f;
+			worldTransform_.scale_ = { scale ,scale ,scale };
+			UpdateMatrix();
+		}
 	}
 	break;
 	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
@@ -236,14 +245,29 @@ void Player::HitBoxInitialize() {
 
 void Player::HitBoxUpdate() {
 	// Sphere
+	if (!isPulling_) {
 	sphere_ = {
 		.center_{worldTransform_.translation_},
-		.radius_{radius_ },
+		.radius_{radius_ * 0.5f},
 	};
+	}
+	else {
+		sphere_ = {
+		.center_{worldTransform_.translation_},
+		.radius_{radius_},
+		};
+	}
 }
 
 void Player::HitBoxDraw(const ViewProjection& viewProjection) {
 	DrawSphere(sphere_, viewProjection, Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+}
+
+void Player::SubtractionPlayerHP() {
+	Hp_--;
+	if (Hp_ <= 0) {
+		isGameOver_ = true;
+	}
 }
 
 void Player::BehaviorInitialize() {

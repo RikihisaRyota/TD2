@@ -16,6 +16,9 @@ GameScene::~GameScene() {
 	for (auto& model : enemyModels_Type1_) {
 		delete model;
 	}
+	for (auto& model : enemyModels_Type2_) {
+		delete model;
+	}
 	for (auto& model : bossModel_) {
 		delete model;
 	}
@@ -35,6 +38,8 @@ void GameScene::Initialize() {
 	IsDebugCamera_ = false;
 	// 入力
 	input_ = Input::GetInstance();
+	// 音楽
+	audio_ = Audio::GetInstance();
 	// カメラの初期化
 	viewProjection_.Initialize();
 
@@ -64,16 +69,22 @@ void GameScene::Initialize() {
 	backGround_->SetPlayer(player_.get());
 	backGround_->Initialize(backGroundTextureHandles_,true);
 	// 枠組み
+	frameModel_.emplace_back(Model::Create("rockBlock",true));
 	frameModel_.emplace_back(Model::Create("rockBlock2",true));
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
 	frame_->SetViewProjection(&viewProjection_);
-	frame_->Initialize(frameModel_,true);
+	frame_->SetEnemyManager(enemyManager_.get());
+	frame_->Initialize(frameModel_, true);
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
 	followCamera_->Initialize();
-	
+
+	// ゲームBGM
+	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/over.wav");
+	audio_->SoundPlayLoopStart(inGameSoundHandle_);
+
 	// プレイヤー
 	playerModel_.emplace_back(Model::Create("playerBody",true));
 	playerModel_.emplace_back(Model::Create("playerLegLeft", true));
@@ -82,11 +93,14 @@ void GameScene::Initialize() {
 	player_->SetViewProjection(&viewProjection_);
 	player_->SetPlayerBulletManager(playerBulletManager_.get());
 	player_->Initialize(playerModel_);
+	// 音
+	player_->GetPlayerMove()->SetMoveSoundHandle(audio_->SoundLoadWave("Resources/Audios/playerMove.wav"));
+	player_->SetEnemyEatSoundHandle(audio_->SoundLoadWave("Resources/Audios/enemyEat.wav"));
 	playerBulletManager_->SetViewProjection(&viewProjection_);
 	playerBulletManager_->Initialize(playerBulletModel_.get());
 
 	// 敵
-	enemyModel_.reset(Model::Create("Enemy", true));
+	enemyModel_.reset(Model::Create("octopusBullet"));
 	//enemyModels_.clear();
 	enemyModels_Type0_ = {
 		Model::Create("octopusHead",true), Model::Create("octopusLeg",true)
@@ -94,18 +108,20 @@ void GameScene::Initialize() {
 	enemyModels_Type1_ = {
 		Model::Create("spikeBody",true), Model::Create("spikePrick",true)
 	};
+	enemyModels_Type2_ = {
+		Model::Create("feed")
+	};
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyBulletManager_->SetPlayer(player_.get());
 	enemyBulletManager_->Initialize(enemyModel_.get());
 	enemyManager_->SetViewProjection(&viewProjection_);
 	enemyManager_->SetPlayer(player_.get());
-	//enemyManager_->Initialize(enemyModel_.get());
-	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_);
+	enemyManager_->Initialize(enemyModels_Type0_, enemyModels_Type1_, enemyModels_Type2_);
 	enemyManager_->SetEnemyBulletManager(enemyBulletManager_.get());
 	
 	// CSVからデータの読み込み
 	std::unique_ptr<CSV> csv = std::make_unique<CSV>();
-	csv->LoadCSV("Spaw");
+	csv->LoadCSV("Spaw0");
 	std::vector<CSV::Data> datas = csv->UpdateDataCommands();
 	// 読み込んだデータから生成
 	for (CSV::Data data : datas) {
@@ -119,22 +135,31 @@ void GameScene::Initialize() {
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 	
 	// ボス
-	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
-	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
 	bossModel_.emplace_back(Model::Create("shellfishDown", true));
 	bossModel_.emplace_back(Model::Create("shellfishUp",true));
+	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
+	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
+	bossModel_.emplace_back(Model::Create("bossNeck", true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 
 	fade_->Initialize();
 
 	isGameStart_ = false;
-	isGameEnd_ = false;
+	isClear_ = false;
 	isGameOver_ = false;
+
 #pragma endregion
 }
 
 void GameScene::Update() {
+	isClear_= boss_->GetIsClear();
+	isGameOver_ = player_->GetIsGameOver();
+	ImGui::Begin("Flag");
+	ImGui::Text("clear:%d",isClear_);
+	ImGui::Text("over:%d", isGameOver_);
+	ImGui::End();
+	
 	fade_->FadeOutUpdate();
 	if (fade_->GetColor(1) < 0.0f) {
 		isGameStart_ = true;
@@ -192,26 +217,27 @@ void GameScene::Update() {
 	ImGui::End();
 
 
-	if (input_->PushKey(DIK_8)) {
-		isGameEnd_ = true;
+	if (input_->PushKey(DIK_1)) {
+		isClear_ = true;
 		isGameStart_ = false;
 	}
 
-	if (input_->PushKey(DIK_9)) {
+	if (input_->PushKey(DIK_2)) {
 		isGameOver_ = true;
 		isGameStart_ = false;
 	}
 
-	if (fade_->GetColor(0) > 1.0f && isGameEnd_ == true) {
+	if (fade_->GetColor(0) > 1.0f && isClear_ == true) {
 		sceneNumber_ = CLEAR_SCENE;
+		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
 	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
 		sceneNumber_ = OVER_SCENE;
+		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
 }
 
 void GameScene::Draw() {
-	
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -271,7 +297,7 @@ void GameScene::Draw() {
 		fade_->FadeOutDraw();
 	}
 
-	if (isGameEnd_ == true || isGameOver_ == true) {
+	if (isClear_ == true || isGameOver_ == true) {
 		fade_->FadeInFlagSet(true);
 		fade_->FadeInDraw();
 	}

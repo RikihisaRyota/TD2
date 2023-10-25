@@ -78,6 +78,7 @@ public: // メンバ関数
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
+	Audio* audio_ = nullptr;
 	DebugCamera* debugCamera_ = nullptr;
 	ViewProjection viewProjection_;
 
@@ -108,8 +109,11 @@ private: // メンバ変数
 
 	std::vector<Model*> enemyModels_Type0_;
 	std::vector<Model*> enemyModels_Type1_;
+	std::vector<Model*> enemyModels_Type2_;
 
 	std::stringstream enemyPopCommands_;
+
+	size_t inGameSoundHandle_;
 
 	// ヒットストップ用
 	uint32_t hitStopCount_;
@@ -118,6 +122,6 @@ private: // メンバ変数
 
 	// フェード管理用
 	bool isGameStart_ = false;
-	bool isGameEnd_ = false;
+	bool isClear_ = false;
 	bool isGameOver_ = false;
 };

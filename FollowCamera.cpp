@@ -38,6 +38,7 @@ void FollowCamera::Update() {
 		}
 		kInterpolationLate = dropDelayInterpolationLate_;
 		// 追従座標の補間
+		target_->translation_.x = std::clamp(target_->translation_.x, -100.0f, kCameraLimit_);
 		interTarget_.x = Lerp(interTarget_.x, target_->translation_.x, kInterpolationLate);
 		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(viewProjection_.rotation_);
 
@@ -72,5 +73,6 @@ void FollowCamera::Debug() {
 		ImGui::SliderFloat("Delay", &dropDelayInterpolationLate_, 0.0f, 1.0f);
 		ImGui::TreePop();
 	}
+	ImGui::SliderFloat("limit",&kCameraLimit_,800.0f,1200.0f);
 	ImGui::End();
 }

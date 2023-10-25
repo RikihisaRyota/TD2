@@ -10,7 +10,7 @@ public:
 
 	void Update();
 
-	void SetTarget(const WorldTransform* target) { target_ = target; }
+	void SetTarget(WorldTransform* target) { target_ = target; }
 
 	void SetPlayer(Player* player) { player_ = player; }
 
@@ -20,7 +20,7 @@ public:
 private:
 	Player* player_;
 	ViewProjection viewProjection_;
-	const WorldTransform* target_ = nullptr;
+	WorldTransform* target_ = nullptr;
 	// 追従対象の残像
 	Vector3 interTarget_ = {};
 	// デバック用
@@ -31,4 +31,5 @@ private:
 	uint32_t bossCamaraCount_ = 0;
 	float dropDelayInterpolationLate_;
 	float delayInterpolationLate_;
+	float kCameraLimit_ = 885.0f;
 };
