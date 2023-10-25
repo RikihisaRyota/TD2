@@ -64,6 +64,7 @@ public:
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 
 	uint32_t GetBossHP() {return HP_;}
+	uint32_t GetBossHPMax();
 	Type GetBossType() { return bossType_; }
 	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 private:
