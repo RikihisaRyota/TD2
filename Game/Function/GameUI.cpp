@@ -91,7 +91,7 @@ void GameUI::Update() {
 		moveSheetAnimation_ = 0.0f;
 	}
 
-	bossHP_->SetSize({ ((float)640 * (640 / boss_->GetBossHP()) / 640),64 });
+	bossHP_->SetSize({ ((float)640 * (640 / boss_->GetBossHP())),64 });
 }
 
 void GameUI::Draw() {
