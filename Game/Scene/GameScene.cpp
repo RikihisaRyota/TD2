@@ -171,7 +171,9 @@ void GameScene::Update() {
 
 	if (isGameStart_ == true) {
 		if (!IsDebugCamera_) {
-			if (!player_->GetIsHitStop()|| !boss_->GetIsClear()) {
+			if (!player_->GetIsHitStop() &&
+				!isClear_&&
+				!isGameOver_) {
 				backGround_->Update();
 				frame_->Update();
 				player_->Update();
@@ -193,13 +195,16 @@ void GameScene::Update() {
 				followCamera_->Update();
 				viewProjection_ = followCamera_->GetViewProjection();
 			}
-			else {
+			else if(player_->GetIsHitStop()) {
 				const uint32_t kHitStopMax = 5;
 				hitStopCount_++;
 				if (hitStopCount_ >= kHitStopMax) {
 					hitStopCount_ = 0;
 					player_->SetIsHitStop(false);
 				}
+			}
+			else {
+				fade_->FadeInUpdate();
 			}
 		}
 		else {

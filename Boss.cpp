@@ -65,7 +65,6 @@ void Boss::Update() {
 				player_->GetPlayerMove()->SetAcceleration(Vector3(1.5f, 0.0f, 0.0f));
 				player_->GetPlayerMove()->SetIsEating(true);
 				player_->GetPlayerMove()->SetRotateVelocity(50.0f);
-				player_->SubtractionPlayerHP();
 			}
 			Reset();
 		}
@@ -284,6 +283,9 @@ void Boss::AttackAnimation() {
 	}
 	animationCount_++;
 	if (animationCount_ >= kAnimationMax_) {
-		isAnimation_ = true;
+		player_->SubtractionPlayerHP();
+		if (!player_->GetIsGameOver()) {
+			isAnimation_ = true;
+		}
 	}
 }
