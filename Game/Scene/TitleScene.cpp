@@ -33,7 +33,7 @@ void TitleScene::Update() {
 	ImGui::Text("GameTitle Scene");
 	ImGui::End();
 
-	if (input_->PushKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		fade_->FadeInFlagSet(true);
 		audio_->SoundPlayWave(selectSoundHandle_);
 	}
