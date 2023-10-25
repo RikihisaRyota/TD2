@@ -34,6 +34,8 @@ void GameClear::Initialize() {
 #pragma region 生成
 	backGround_ = std::make_unique<BackGround>();
 	frame_ = std::make_unique<Frame>();
+	followCamera_ = std::make_unique<FollowCamera>();
+	treasureBox_ = std::make_unique<TreasureBox>();
 #pragma endregion
 
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
@@ -41,9 +43,18 @@ void GameClear::Initialize() {
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
 	backGround_->Initialize(backGroundTextureHandles_,false);
 	// 枠組み
+	frameModel_.emplace_back(Model::Create("rockBlock", true));
 	frameModel_.emplace_back(Model::Create("rockBlock2", true));
 	frame_->SetViewProjection(&viewProjection_);
 	frame_->Initialize(frameModel_,false);
+	// カメラ
+	followCamera_->Initialize(false);
+	viewProjection_ = followCamera_->GetViewProjection();
+	viewProjection_.UpdateMatrix();
+	// 宝箱
+	modelTreasureBox_.emplace_back(Model::Create("treasureBoxhuta",true));
+	modelTreasureBox_.emplace_back(Model::Create("treasureboxUnder",true));
+	treasureBox_->Initialize(modelTreasureBox_);
 }
 
 void GameClear::Update() {
@@ -52,8 +63,11 @@ void GameClear::Update() {
 	ImGui::Text("GameClear Scene");
 	ImGui::End();
 
-	//frame_->Update();
+	frame_->Update();
 	fade_->FadeOutUpdate();
+	treasureBox_->Update();
+	viewProjection_ = followCamera_->GetViewProjection();
+	viewProjection_.UpdateMatrix();
 
 	if (fade_->GetColor(1) < 0.0f) {
 		isStart_ = false;
@@ -101,7 +115,7 @@ void GameClear::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	frame_->Draw(viewProjection_);
-
+	treasureBox_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();

@@ -79,8 +79,9 @@ void GameScene::Initialize() {
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
-	followCamera_->Initialize();
-
+	followCamera_->Initialize(true);
+	viewProjection_ = followCamera_->GetViewProjection();
+	viewProjection_.UpdateMatrix();
 	// ゲームBGM
 	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/over.wav");
 	audio_->SoundPlayLoopStart(inGameSoundHandle_);

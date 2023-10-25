@@ -8,8 +8,17 @@
 
 class TreasureBox {
 public:
+	enum class State {
+		kCome,
+		kOpen,
+
+		kCount,
+	};
 	enum class Parts {
-		kLid,
+		kHuta,
+		kUnder,
+		
+		kCount,
 	};
 public:
 	void Initialize(std::vector<Model*> models);
@@ -20,5 +29,16 @@ private:
 	WorldTransform worldTransfrom_;
 	WorldTransform motion_;
 	std::vector<WorldTransform> parts_;
+
+	Vector3 boxWorldTranslateStart_;
+	Vector3 boxWorldTranslateEnd_;
+
+	Vector3 upperRotateStart_;
+	Vector3 upperRotateEnd_;
+
+	float animationTime_;
+	float animationMax_;
+	
+	State state_ = State::kCome;
 };
 

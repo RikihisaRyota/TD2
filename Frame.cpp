@@ -38,6 +38,7 @@ void Frame::Initialize(std::vector<Model*>model, bool isInGame) {
 			topWall->model_ = model.at(1);
 		}
 		topWall->worldTransform_.Initialize();
+		topWall->worldTransform_.scale_ = { kRockScale_,kRockScale_ ,kRockScale_ };
 		topWall->worldTransform_.translation_ = { (float(i - 5)) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,height_ + kRockFrameDistance_ ,0.0f };
 		topWall->worldTransform_.rotation_.z = DegToRad(180.0f);
 		topWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
@@ -55,6 +56,7 @@ void Frame::Initialize(std::vector<Model*>model, bool isInGame) {
 			bottomWall->model_ = model.at(0);
 		}
 		bottomWall->worldTransform_.Initialize();
+		bottomWall->worldTransform_.scale_ = { kRockScale_,kRockScale_ ,kRockScale_ };
 		bottomWall->worldTransform_.translation_ = { (float(i - 5)) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,-height_ - kRockFrameDistance_ ,0.0f };
 		bottomWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
 		if (rnd.NextIntLimit() % 3 == 0) {
@@ -73,6 +75,7 @@ void Frame::Initialize(std::vector<Model*>model, bool isInGame) {
 			rightWall->model_ = model.at(0);
 		}
 		rightWall->worldTransform_.Initialize();
+		rightWall->worldTransform_.scale_ = { kRockScale_,kRockScale_ ,kRockScale_ };
 		rightWall->worldTransform_.translation_ = { width_ + kRock_X,float(i - 1) * kRock_Y  ,0.0f };
 		rightWall->worldTransform_.rotation_.z += DegToRad(90.0f);
 		rightWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));

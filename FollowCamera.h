@@ -6,7 +6,7 @@
 class Player;
 class FollowCamera {
 public:
-	void Initialize();
+	void Initialize(bool flg);
 
 	void Update();
 
@@ -32,4 +32,6 @@ private:
 	float dropDelayInterpolationLate_;
 	float delayInterpolationLate_;
 	float kCameraLimit_ = 885.0f;
+
+	bool isInGame_;
 };

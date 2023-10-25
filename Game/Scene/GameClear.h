@@ -7,6 +7,8 @@
 
 #include "BackGround.h"
 #include "Frame.h"
+#include "FollowCamera.h"
+#include "TreasureBox.h"
 
 class GameClear : public IScene {
 public:
@@ -34,4 +36,7 @@ private:
 	std::vector<uint32_t> backGroundTextureHandles_;
 	std::unique_ptr<Frame> frame_;
 	std::vector<Model*>frameModel_;
+	std::unique_ptr<FollowCamera> followCamera_;
+	std::unique_ptr<TreasureBox> treasureBox_;
+	std::vector<Model*> modelTreasureBox_;
 };

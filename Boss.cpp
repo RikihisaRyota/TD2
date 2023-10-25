@@ -247,15 +247,17 @@ void Boss::DeathAnimation() {
 			isRespawn_ = true;
 		}
 	}
-	float t = std::clamp(static_cast<float>(animationCount_) / static_cast<float>(kAnimationMax_), 0.0f, 1.0f);
-	if (!isRespawn_) {
-		motion_.translation_ = Lerp(Vector3(0.0f, 0.0f, 0.0f), Vector3(-20.0f, 0, 0.0f), t);
-		motion_.translation_ += Vector3(0.0f, rnd.NextFloatRange(-1.0f, 1.0f), 0.0f);
-		motion_.rotation_.z += 0.1f;
-	}
-	else {
-		motion_.translation_ = Lerp(Vector3(-20.0f, 0.0f, 0.0f), Vector3(0.0f, 0, 0.0f), t);
-		motion_.translation_ += Vector3(0.0f, rnd.NextFloatRange(-1.0f, 1.0f), 0.0f);
+	if (!isClear_) {
+		float t = std::clamp(static_cast<float>(animationCount_) / static_cast<float>(kAnimationMax_), 0.0f, 1.0f);
+		if (!isRespawn_) {
+			motion_.translation_ = Lerp(Vector3(0.0f, 0.0f, 0.0f), Vector3(-20.0f, 0, 0.0f), t);
+			motion_.translation_ += Vector3(0.0f, rnd.NextFloatRange(-1.0f, 1.0f), 0.0f);
+			motion_.rotation_.z += 0.1f;
+		}
+		else {
+			motion_.translation_ = Lerp(Vector3(-20.0f, 0.0f, 0.0f), Vector3(0.0f, 0, 0.0f), t);
+			motion_.translation_ += Vector3(0.0f, rnd.NextFloatRange(-1.0f, 1.0f), 0.0f);
+		}
 	}
 }
 
