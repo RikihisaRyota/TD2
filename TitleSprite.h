@@ -43,6 +43,7 @@ public:
 private:
 	TitleBoss* titleBoss_;
 	std::vector<Sprite*> sprite_;
+	Vector2 titlePos_;
 	Vector2 arrowPos_;
 	Vector2 arrowSize_;
 	Vector2 movePos_;

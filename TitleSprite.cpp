@@ -16,18 +16,25 @@ void TitleSprite::Initialize(std::vector<Sprite*> sprite) {
 	titleAngle_ = 0.0f;
 	moveAngle_ = 0.0f;
 	interval_ = 146.0f;
+	titlePos_ = { 640.0f,190.0f };
 	arrowPos_ = { 1170.0f,370.0f };
 	arrowSize_ = { 128.0f,128.0f };
 	movePos_ = {640.0f,520.0f};
 	moveSize_ = { 200.0f,200.0f };
+	sprite_.at(static_cast<size_t>(Type::kTitle))->SetPosition(titlePos_);
+	sprite_.at(static_cast<size_t>(Type::kTitle))->SetRotation(0.0f);
 	sprite_.at(static_cast<size_t>(Type::kArrow0))->SetSize(arrowSize_);
 	sprite_.at(static_cast<size_t>(Type::kArrow0))->SetPosition({ arrowPos_.x,arrowPos_.y + interval_ });
+	sprite_.at(static_cast<size_t>(Type::kArrow0))->SetRotation(0.0f);
 	sprite_.at(static_cast<size_t>(Type::kArrow1))->SetSize(arrowSize_);
 	sprite_.at(static_cast<size_t>(Type::kArrow1))->SetPosition({ arrowPos_.x,arrowPos_.y });
+	sprite_.at(static_cast<size_t>(Type::kArrow1))->SetRotation(0.0f);
 	sprite_.at(static_cast<size_t>(Type::kArrow2))->SetSize(arrowSize_);
 	sprite_.at(static_cast<size_t>(Type::kArrow2))->SetPosition({ arrowPos_.x,arrowPos_.y - interval_ });
+	sprite_.at(static_cast<size_t>(Type::kArrow2))->SetRotation(0.0f);
 	sprite_.at(static_cast<size_t>(Type::kMove))->SetSize(moveSize_);
 	sprite_.at(static_cast<size_t>(Type::kMove))->SetPosition(movePos_);
+	sprite_.at(static_cast<size_t>(Type::kMove))->SetRotation(0.0f);
 }
 
 void TitleSprite::Update(const ViewProjection& viewProjection) {
