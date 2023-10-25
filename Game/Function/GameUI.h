@@ -33,7 +33,7 @@ private:
 
 #pragma region スプライト
 	Sprite* shellIcon_;
-
+	Sprite* sharkIcon_;
 	Sprite* bossIcon_;
 	Sprite* bossHP_;
 	Sprite* bossHPUnder_;
@@ -49,7 +49,7 @@ private:
 
 #pragma region リソース
 	uint32_t shellIconHandle_;
-
+	uint32_t sharkIconHandle_;
 	uint32_t bossIconHandle_;
 	uint32_t bossHPHandle_;
 	uint32_t bossHPUnderHandle_;

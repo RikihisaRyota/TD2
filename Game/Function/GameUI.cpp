@@ -5,6 +5,8 @@
 GameUI::~GameUI() {
 	delete shellIcon_;
 	delete bossIcon_;
+	delete sharkIcon_;
+
 	delete bossHP_;
 	delete bossHPUnder_;
 
@@ -37,6 +39,7 @@ void GameUI::Initialize() {
 	eatSize_ = { 96.0f,96.0f };
 
 	shellIconHandle_ = TextureManager::Load("Resources/UI/shellIcon.png");
+	sharkIconHandle_ = TextureManager::Load("Resources/UI/sharkIcon.png");
 
 	bossIconHandle_ = TextureManager::Load("Resources/UI/bossIcon.png");
 	bossHPHandle_ = TextureManager::Load("Resources/UI/hpbar.png");
@@ -50,9 +53,9 @@ void GameUI::Initialize() {
 	numberSheetHandle_ = TextureManager::Load("Resources/UI/numberSheet.png");
 	routeHandle_ = TextureManager::Load("Resources/UI/ruto.png");
 
-	shellIcon_ = Sprite::Create(shellIconHandle_, { 570,670 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
-	
-	bossIcon_ = Sprite::Create(bossIconHandle_, { 750,670 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
+	shellIcon_ = Sprite::Create(shellIconHandle_, { 470,670 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
+	sharkIcon_ = Sprite::Create(sharkIconHandle_, { 810,670 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
+	bossIcon_ = Sprite::Create(bossIconHandle_, { 640,670 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 	bossHP_ = Sprite::Create(bossHPHandle_, { 640,50 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 	bossHPUnder_ = Sprite::Create(bossHPUnderHandle_, { 640,50 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 	
@@ -98,6 +101,7 @@ void GameUI::Draw() {
 	// アイコン
 	shellIcon_->Draw();
 	bossIcon_->Draw();
+	sharkIcon_->Draw();
 
 	// ボス体力
 	bossHPUnder_->Draw();
