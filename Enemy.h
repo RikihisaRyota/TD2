@@ -159,7 +159,7 @@ private:
 	bool splitFlag_ = false;
 	Vector3 splitPos_Max_;
 	Vector3 splitPos_Min_;
-	float easeSecond_Split_ = 0.01f;
+	float easeSecond_Split_ = 0.1f;
 	Vector3 easeMin_Vector3_;
 	Vector3 easeMax_Vector3_;
 	float distance_Split_;
@@ -167,7 +167,7 @@ private:
 	// 成長用の変数
 	float maxSize_;
 	float onceUpSize_ = 1.0f;
-	float easeSecond_Grow_ = 0.01f;
+	float easeSecond_Grow_ = 0.1f;
 
 	// 仮に動かすため
 	Input* input_;

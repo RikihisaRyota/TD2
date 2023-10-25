@@ -29,8 +29,12 @@ private:
 	void Debug();
 	void UpdateMatrix();
 
-	float kRockInterval_ = 18.0f;
-	float kRockFrameDistance_ = 4.0f;
+	float kRockInterval_ = 30.0f;
+	float kRockFrameDistance_ = 14.0f;
+	float kRockScale_ = 4.0f;
+
+	float kRock_X = 20.0f;
+	float kRock_Y = 30.0f;
 
 	float width_;
 	float height_;
@@ -40,6 +44,7 @@ private:
 	ViewProjection* viewProjection_;
 	std::vector<Wall*> topWalls_;
 	std::vector<Wall*> bottomWalls_;
+	std::vector<Wall*> rightWalls_;
 	Random::RandomNumberGenerator rnd;
 };
 

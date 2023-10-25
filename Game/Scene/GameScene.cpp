@@ -69,6 +69,7 @@ void GameScene::Initialize() {
 	backGround_->SetPlayer(player_.get());
 	backGround_->Initialize(backGroundTextureHandles_);
 	// 枠組み
+	frameModel_.emplace_back(Model::Create("rockBlock",true));
 	frameModel_.emplace_back(Model::Create("rockBlock2",true));
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
@@ -138,6 +139,7 @@ void GameScene::Initialize() {
 	bossModel_.emplace_back(Model::Create("shellfishUp",true));
 	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
 	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
+	bossModel_.emplace_back(Model::Create("bossNeck", true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 

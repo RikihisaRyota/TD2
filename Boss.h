@@ -21,6 +21,7 @@ public:
 		kShellfishDown,
 		kOnJaw,
 		kLowerJaw,
+		kNeck,
 
 		kCount,
 	};

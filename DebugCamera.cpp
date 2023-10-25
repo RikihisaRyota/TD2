@@ -30,4 +30,8 @@ void DebugCamera::Update(ViewProjection* viewProjection) {
 		viewProjection->translation_ += cameraZ;
 	}
 	viewProjection->UpdateMatrix();
+
+	ImGui::Begin("DebugCamera");
+	ImGui::DragFloat("x",&viewProjection->translation_.x,5.0f);
+	ImGui::End();
 }

@@ -81,6 +81,7 @@ void Boss::Draw(const ViewProjection& viewProjection) {
 	case Boss::Type::kMiddleBoss:
 		models_.at(static_cast<size_t>(Parts::kOnJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kOnJaw)), viewProjection);
 		models_.at(static_cast<size_t>(Parts::kLowerJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kLowerJaw)), viewProjection);
+		models_.at(static_cast<size_t>(Parts::kNeck))->Draw(parts_.at(static_cast<size_t>(Parts::kNeck)), viewProjection);
 		break;
 	case Boss::Type::kLastBoss:
 		break;
@@ -262,12 +263,12 @@ void Boss::AttackAnimation() {
 	float t = std::clamp(static_cast<float>(animationCount_) / static_cast<float>(kAnimationMax_), 0.0f, 1.0f);
 	switch (bossType_) {
 	case Boss::Type::kFirstBoss:
-		parts_.at(static_cast<size_t>(Parts::kShellfishUp)).rotation_.z = Lerp(0.0f, DegToRad(20.0f), t);
-		parts_.at(static_cast<size_t>(Parts::kShellfishDown)).rotation_.z = Lerp(0.0f, -DegToRad(20.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kShellfishUp)).rotation_.z = Lerp(0.0f, DegToRad(30.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kShellfishDown)).rotation_.z = Lerp(0.0f, -DegToRad(30.0f), t);
 		break;
 	case Boss::Type::kMiddleBoss:
-		parts_.at(static_cast<size_t>(Parts::kOnJaw)).rotation_.z = Lerp(0.0f, -DegToRad(30.0f), t);
-		parts_.at(static_cast<size_t>(Parts::kLowerJaw)).rotation_.z = Lerp(0.0f, DegToRad(30.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kOnJaw)).rotation_.z = Lerp(0.0f, -DegToRad(25.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kLowerJaw)).rotation_.z = Lerp(0.0f, DegToRad(25.0f), t);
 		break;
 	case Boss::Type::kLastBoss:
 		break;

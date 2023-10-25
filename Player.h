@@ -101,7 +101,7 @@ public:
 	void SetTranslation(const Vector3& translation);
 	const Vector3 GetTranslation() const { return worldTransform_.translation_; }
 	void SetWorldTransform(const WorldTransform& worldTransform);
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	void SetMotionScale(const Vector3& scale);
 	const Vector3 GetMotionScale() const { return motion_.scale_; }
@@ -137,9 +137,9 @@ private:
 	void MoveLimit();
 	void InvincibleUpdate();
 
-	uint32_t kWeightMax_ = 20;
+	uint32_t kWeightMax_ = 10;
 	Vector3 kInitialPosition_ = { 80.0f,-10.0f,0.0f };
-	float kRadiusMax_ = 10.0f;
+	float kRadiusMax_ = 15.0f;
 	float kRadiusMin_ = 5.0f;
 	float radius_ = kRadiusMin_;
 	PlayerBulletManager* playerBulletManager_;
