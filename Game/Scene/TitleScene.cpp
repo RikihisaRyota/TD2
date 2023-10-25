@@ -112,6 +112,10 @@ void TitleScene::Update() {
 	if (sceneNumber_ < 0) {
 		sceneNumber_ = 0;
 	}
+
+	if (input_->TriggerKey(DIK_1)) {
+		sceneNumber_ = CLEAR_SCENE;
+	}
 }
 
 void TitleScene::Draw() {

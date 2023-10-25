@@ -16,8 +16,6 @@ GameOver::~GameOver()
 	for (auto& model : frameModel_) {
 		delete model;
 	}
-
-	//audio_->SoundUnload(soundHandle_);
 }
 
 void GameOver::Initialize() {
@@ -136,7 +134,7 @@ void GameOver::Update() {
 	viewProjection_.UpdateMatrix();
 
 	if (fade_->GetColor(1) < 0.0f) {
-		audio_->SoundPlayLoopEnd(soundHandle_);
+		//audio_->SoundPlayLoopEnd(soundHandle_);
 		isStart_ = false;
 	}
 

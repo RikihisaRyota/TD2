@@ -19,6 +19,7 @@ GameUI::~GameUI() {
 
 	for (int i = 0; i < 2; i++) {
 		delete numberSheet_[i];
+		delete bossSheet_[i];
 	}
 
 	delete ikaMoveSheet_;
@@ -35,7 +36,7 @@ void GameUI::Initialize() {
 	animationTimer_ = 0;
 	bossDigit_ = 0;
 
-	bossLifeRect_ = { 0.0f,64.0f };
+	bossSize_ = { 0.0f,64.0f };
 
 	eatSize_ = { 96.0f,96.0f };
 
@@ -60,6 +61,11 @@ void GameUI::Initialize() {
 	bossHP_ = Sprite::Create(bossHPHandle_, { 640,50 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 	bossHPUnder_ = Sprite::Create(bossHPUnderHandle_, { 640,50 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 	
+	bossSheet_[0] = Sprite::Create(numberSheetHandle_, { 910,50 }, { 1.0f,1.0f,1.0f,0.8f }, { 0.5f,0.5f }, false, false);
+	bossSheet_[0]->SetSize(Vector2(60.0f, 60.0f));
+	bossSheet_[1] = Sprite::Create(numberSheetHandle_, { 870,50 }, { 1.0f,1.0f,1.0f,0.8f }, { 0.5f,0.5f }, false, false);
+	bossSheet_[1]->SetSize(Vector2(60.0f, 60.0f));
+
 	ikaHP_[0] = Sprite::Create(ikaHPHandle_, { 70,650 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 	ikaHP_[1] = Sprite::Create(ikaHPHandle_, { 140,650 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
 	ikaHP_[2] = Sprite::Create(ikaHPHandle_, { 210,650 }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }, false, false);
@@ -141,6 +147,14 @@ void GameUI::Draw() {
 	numberSheet_[0]->Draw();
 	numberSheet_[1]->SetTextureRect({ eatSize_.x * eatAnimation_[1],0.0f}, {eatSize_});
 	numberSheet_[1]->Draw();
+
+	bossDigit_ = boss_->GetBossHP();
+	bossAnimation_ = SeparateDigits(bossDigit_);
+
+	bossSheet_[0]->SetTextureRect({ eatSize_.x * bossAnimation_[0],0.0f }, { eatSize_ });
+	bossSheet_[0]->Draw();
+	bossSheet_[1]->SetTextureRect({ eatSize_.x * bossAnimation_[1],0.0f }, { eatSize_ });
+	bossSheet_[1]->Draw();
 }
 
 std::vector<int> GameUI::SeparateDigits(int number) {

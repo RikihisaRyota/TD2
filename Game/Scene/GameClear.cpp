@@ -23,7 +23,7 @@ void GameClear::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/clear.wav");
+	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
 	selectSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/selectSound.wav");
 	audio_->SoundPlayLoopStart(soundHandle_);
 	
@@ -82,7 +82,7 @@ void GameClear::Update() {
 
 	if (fade_->GetColor(1) < 0.0f) {
 		isStart_ = false;
-		audio_->SoundPlayLoopEnd(soundHandle_);
+		//audio_->SoundPlayLoopEnd(soundHandle_);
 	}
 
 	if (input_->TriggerKey(DIK_SPACE)) {

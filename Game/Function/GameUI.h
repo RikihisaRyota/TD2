@@ -36,6 +36,7 @@ private:
 	Sprite* sharkIcon_;
 	Sprite* bossIcon_;
 	Sprite* bossHP_;
+	Sprite* bossSheet_[2];
 	Sprite* bossHPUnder_;
 
 	Sprite* ikaHP_[3];
@@ -52,6 +53,7 @@ private:
 	uint32_t sharkIconHandle_;
 	uint32_t bossIconHandle_;
 	uint32_t bossHPHandle_;
+	uint32_t bossSheetHandle_;
 	uint32_t bossHPUnderHandle_;
 
 	uint32_t ikaHPHandle_;
@@ -77,7 +79,8 @@ private:
 	int eatDigit_;
 
 	// ボスの体力バー
-	Vector2 bossLifeRect_;
+	Vector2 bossSize_;
+	std::vector<int> bossAnimation_;
 	int bossDigit_;
 #pragma endregion
 };

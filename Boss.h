@@ -72,9 +72,9 @@ private:
 	void DeathAnimation();
 	void AttackAnimation();
 	FollowCamera* followCamera_;
-	uint32_t kFirstBossHP_ = 1;
-	uint32_t kMiddleBossHP_ = 1;
-	uint32_t kLastBossHP_ = 1;
+	uint32_t kFirstBossHP_ = 5;
+	uint32_t kMiddleBossHP_ = 10;
+	uint32_t kLastBossHP_ = 15;
 	uint32_t HP_;
 	uint32_t kAnimationMax_ = 120;
 
