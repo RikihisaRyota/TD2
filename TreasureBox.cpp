@@ -14,7 +14,6 @@ void TreasureBox::Initialize(std::vector<Model*> models) {
 	upperRotateEnd_ = { DegToRad(120.0f),0.0f,0.0f };
 
 	animationTime_ = 0.0f;
-	animationMax_ = 120.0f;
 
 	worldTransfrom_.Initialize();
 	worldTransfrom_.scale_ = { 3.0f,3.0f,3.0f };
@@ -33,11 +32,12 @@ void TreasureBox::Initialize(std::vector<Model*> models) {
 
 void TreasureBox::Update() {
 	animationTime_ += 1.0f;
-	float t = animationTime_ / animationMax_;
 
+	float t = 0.0f;
 	switch (state_) {
 	case TreasureBox::State::kCome:
 	{
+		t = animationTime_ / ComeAnimationMax_;
 		worldTransfrom_.translation_ = Lerp(boxWorldTranslateStart_, boxWorldTranslateEnd_, std::clamp(t, 0.0f, 1.0f));
 		if (t >= 1.0f) {
 			state_ = State::kOpen;
@@ -47,6 +47,7 @@ void TreasureBox::Update() {
 	break;
 	case TreasureBox::State::kOpen:
 	{
+		t = animationTime_ / OpenAnimationMax_;
 		parts_.at(static_cast<size_t>(Parts::kHuta)).rotation_ = Lerp(upperRotateStart_, upperRotateEnd_, std::clamp(t, 0.0f, 1.0f));
 
 	}

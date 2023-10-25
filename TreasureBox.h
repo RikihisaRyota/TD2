@@ -25,6 +25,8 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	State GetState() { return state_; }
+	void SetComeAnimationMax(float time) {ComeAnimationMax_ = time;}
+	void SetOpenAnimationMax(float time) { OpenAnimationMax_ = time;}
 private:
 	std::vector<Model*> models_;
 	WorldTransform worldTransfrom_;
@@ -38,7 +40,8 @@ private:
 	Vector3 upperRotateEnd_;
 
 	float animationTime_;
-	float animationMax_;
+	float ComeAnimationMax_;
+	float OpenAnimationMax_;
 	
 	State state_ = State::kCome;
 };

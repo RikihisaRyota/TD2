@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include "Player.h"
+#include "TreasureBox.h"
 
 void FollowCamera::Initialize(bool flg) {
 	viewProjection_.Initialize();
@@ -14,8 +15,9 @@ void FollowCamera::Initialize(bool flg) {
 	delayInterpolationLate_ = 0.5f;
 	dropDelayInterpolationLate_ = 0.8f;
 	viewProjection_.translation_ = Vector3(80.0f, 0.0f, 0.0f) + nowOffset_;
-	interTarget_ = Vector3(80.0f, 0.0f, 0.0f);
+	interTarget_ = Vector3(80.0f, 0.0f, -250.0);
 	isInGame_ = flg;
+	animationTime_ = 0.0f;
 }
 
 void FollowCamera::Update() {
@@ -57,8 +59,14 @@ void FollowCamera::Update() {
 			const float kRadian = 0.02f;
 			viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * kRadian;
 		}
-
-		viewProjection_.UpdateMatrix();
+	}
+	else {
+		if (treasureBox_->GetState() == TreasureBox::State::kOpen) {
+			float t = animationTime_ / animationMax_;
+			viewProjection_.translation_ = Lerp(Vector3(80.0f, 0.0f, 0.0f) + nowOffset_, pos, std::clamp(t, 0.0f, 1.0f));
+			viewProjection_.UpdateMatrix();
+			animationTime_ += 1.0f;
+		}
 	}
 
 	Debug();
@@ -77,6 +85,10 @@ void FollowCamera::Debug() {
 		ImGui::SliderFloat("Offset_y", &dropOffset_.y, 0.0f, -50.0f);
 		ImGui::SliderFloat("Offset_z", &dropOffset_.z, 0.0f, -200.0f);
 		ImGui::SliderFloat("Delay", &dropDelayInterpolationLate_, 0.0f, 1.0f);
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("pos")) {
+		ImGui::DragFloat3("pos", &viewProjection_.translation_.x, 1.0f);
 		ImGui::TreePop();
 	}
 	ImGui::SliderFloat("limit", &kCameraLimit_, 800.0f, 1200.0f);

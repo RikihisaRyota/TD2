@@ -15,6 +15,7 @@ public:
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void SetTreasureBox(TreasureBox* TreasureBox) { treasureBox_ = TreasureBox; }
+	void SetAnimationMax(float time) { animationMax_ = time; }
 private:
 	TreasureBox* treasureBox_;
 	std::vector<PlaneRenderer*> planes_;
