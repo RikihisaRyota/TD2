@@ -1,19 +1,30 @@
 ﻿#pragma once
 
 #include "Sprite.h"
+#include "ImGuiManager.h"
 #include "TextureManager.h"
 
 #include <memory>
 
+class Player;
+class Boss;
+
 class GameUI {
 public:
+	~GameUI();
+
 	void Initialize();
 	void Update();
 	void Draw();
 	
-	~GameUI();
-
+	void SetObject(Player* player, Boss* boss) { player_ = player; boss_ = boss; }
+	
 private:
+#pragma region インクルード
+	Player* player_;
+	Boss* boss_;
+#pragma endregion
+
 #pragma region スプライト
 	Sprite* shellIcon_;
 
@@ -53,6 +64,13 @@ private:
 
 	// アニメーション関連の変数
 	int animationTimer_;
-	bool isAnimation_;
+
+	// 食べた数のアニメーション
+	Vector2 eatSize_;
+	int eatAnimation_;
+	int eatDigit;
+
+	// 
+	int drawCount_;
 #pragma endregion
 };

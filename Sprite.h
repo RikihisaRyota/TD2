@@ -87,7 +87,7 @@ public: // 静的メンバ関数
 		uint32_t textureHandle, Vector2 position, Vector4 color = { 1, 1, 1, 1 },
 		Vector2 anchorpoint = { 0.0f, 0.0f }, bool isFlipX = false, bool isFlipY = false);
 
-	static void SetBlendState(const BlendState& blendState) {blendState_ = blendState;}
+	static void SetBlendState(const BlendState& blendState) { blendState_ = blendState; }
 	/// <summary>
 	/// リリース
 	/// </summary>
@@ -196,7 +196,7 @@ public: // メンバ関数
 	/// <param name="texBase">テクスチャ左上座標</param>
 	/// <param name="texSize">テクスチャサイズ</param>
 	void SetTextureRect(const Vector2& texBase, const Vector2& texSize);
-	
+
 	/// <summary>
 	/// 描画
 	/// </summary>

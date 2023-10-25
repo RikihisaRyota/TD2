@@ -146,6 +146,7 @@ void GameScene::Initialize() {
 
 	fade_->Initialize();
 	gameUI_->Initialize();
+	gameUI_->SetObject(player_.get(), boss_.get());
 
 	isGameStart_ = false;
 	isClear_ = false;
