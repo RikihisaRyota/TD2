@@ -8,7 +8,6 @@
 void FollowCamera::Initialize() {
 	viewProjection_.Initialize();
 	debugOffset_ = { 40.0f, 0.0f, -250.0f };
-	nowOffset_ = debugOffset_;
 	dropOffset_ = { -40.0f, 0.0f, -250.0f };
 	bossAttackOffset_ = { -15.0f,0.0f,-300.0f };
 	delayInterpolationLate_ = 0.5f;
