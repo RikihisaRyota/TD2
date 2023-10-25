@@ -32,6 +32,7 @@ void ClearSprite::Initialize(std::vector<uint32_t> textureHandle) {
 	spaceWorldTransfrom_.Initialize();
 	spaceWorldTransfrom_.scale_ = { 12.0f,2.0f,1.0f };
 	spaceWorldTransfrom_.translation_ = { 56.0f,-11.0f,-16.0f };
+	spaceWorldTransfrom_.UpdateMatrix();
 }
 
 void ClearSprite::Update() {
@@ -48,10 +49,6 @@ void ClearSprite::Update() {
 			animationFlag_ = true;
 		}
 	}
-	ImGui::Begin("sprite");
-	ImGui::DragFloat3("scale", &spaceWorldTransfrom_.scale_.x, 1.0f);
-	ImGui::DragFloat3("pos", &spaceWorldTransfrom_.translation_.x, 1.0f);
-	ImGui::End();
 	spaceWorldTransfrom_.UpdateMatrix();
 }
 
