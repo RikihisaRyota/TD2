@@ -100,7 +100,12 @@ void Enemy::Update() {
 	if (isAlive_) {
 		EnemyCreateFlag = false;
 		if (radius_ > initialRadius_ * maxSize_) {
-			behaviorRequest_ = Behavior::kSplit;
+			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) || type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+				behaviorRequest_ = Behavior::kSplit;
+			}
+			else {
+				behaviorRequest_ = Behavior::kStandby;
+			}
 		}
 
 		if (input_->PushKey(DIK_0)) {
@@ -257,7 +262,8 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
 	{
 		if (!splitFlag_) {
-			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) && type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+			behaviorRequest_ = Behavior::kGrow;
+			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) || type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
 				behaviorRequest_ = Behavior::kGrow;
 			}
 		}
@@ -413,11 +419,11 @@ void Enemy::SplitUpdate() {
 			splitFlag_ = true;
 			easeMax_[0] = initialRadius_ * 0.5f;
 			easeMin_[0] = 0;
-			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) || type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
 				float degree = float(rand() / 360);
 				splitPos_Max_ = {
-					.x{cosf(degree) * 10.0f},
-					.y{sinf(degree) * 10.0f},
+					.x{cosf(degree) * 15.0f},
+					.y{sinf(degree) * 15.0f},
 					.z{0}
 				};
 				Vector3 Center = worldTransform_.translation_;
@@ -498,11 +504,13 @@ void Enemy::GrowUpdate() {
 		else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
 			float easedT = easeTime_ * easeTime_;
 			float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
+			radius_ = radius;
 			worldTransform_type1_Body_.scale_ = { radius_ * 0.5f ,radius_ * 0.5f ,radius_ * 0.5f };
 		}
 		else if (type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
 			float easedT = easeTime_ * easeTime_;
 			float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
+			radius_ = radius;
 			worldTrasnform_type2_.scale_ = { radius_ * 0.5f, radius_ * 0.5f, radius_ * 0.5f };
 		}
 
@@ -514,7 +522,12 @@ void Enemy::GrowUpdate() {
 		}
 	}
 	else {
-		behaviorRequest_ = Behavior::kSplit;
+		if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) || type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+			behaviorRequest_ = Behavior::kSplit;
+		}
+		else {
+			behaviorRequest_ = Behavior::kStandby;
+		}
 	}
 }
 
