@@ -15,6 +15,8 @@ GameClear::~GameClear() {
 	for (auto& model : frameModel_) {
 		delete model;
 	}
+
+	//audio_->SoundUnload(soundHandle_);
 }
 
 void GameClear::Initialize() {
@@ -23,7 +25,7 @@ void GameClear::Initialize() {
 
 	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/clear.wav");
 	selectSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/selectSound.wav");
-	//audio_->SoundPlayLoopStart(soundHandle_);
+	audio_->SoundPlayLoopStart(soundHandle_);
 	
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -80,6 +82,7 @@ void GameClear::Update() {
 
 	if (fade_->GetColor(1) < 0.0f) {
 		isStart_ = false;
+		audio_->SoundPlayLoopEnd(soundHandle_);
 	}
 
 	if (input_->TriggerKey(DIK_SPACE)) {

@@ -16,15 +16,17 @@ GameOver::~GameOver()
 	for (auto& model : frameModel_) {
 		delete model;
 	}
+
+	//audio_->SoundUnload(soundHandle_);
 }
 
 void GameOver::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/clear.wav");
+	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
 	selectSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/selectSound.wav");
-	//audio_->SoundPlayLoopStart(soundHandle_);
+	audio_->SoundPlayLoopStart(soundHandle_);
 
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -134,6 +136,7 @@ void GameOver::Update() {
 	viewProjection_.UpdateMatrix();
 
 	if (fade_->GetColor(1) < 0.0f) {
+		audio_->SoundPlayLoopEnd(soundHandle_);
 		isStart_ = false;
 	}
 

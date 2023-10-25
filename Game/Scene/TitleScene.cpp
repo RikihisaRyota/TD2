@@ -95,7 +95,9 @@ void TitleScene::Update() {
 	if (titleBoss_->GetSceneChangeFlag()) {
 		fade_->FadeInFlagSet(true);
 		audio_->SoundPlayWave(selectSoundHandle_);
+		audio_->StopSound(selectSoundHandle_);
 	}
+
 	backGround_->Update();
 	fade_->FadeInUpdate();
 	frame_->Update();

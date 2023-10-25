@@ -84,7 +84,7 @@ void GameScene::Initialize() {
 	viewProjection_ = followCamera_->GetViewProjection();
 	viewProjection_.UpdateMatrix();
 	// ゲームBGM
-	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/over.wav");
+	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
 	audio_->SoundPlayLoopStart(inGameSoundHandle_);
 
 	// プレイヤー
@@ -228,13 +228,13 @@ void GameScene::Update() {
 		isGameStart_ = false;
 	}*/
 
-	if (fade_->GetColor(0) > 1.0f && isClear_ == true) {
+	if (fade_->GetColor(0) > 1.0f && boss_->GetIsClear() == true) {
+		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 		sceneNumber_ = CLEAR_SCENE;
-		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
-	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
-		sceneNumber_ = OVER_SCENE;
+	else if (fade_->GetColor(0) > 1.0f && player_->GetIsGameOver() == true) {
 		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
+		sceneNumber_ = OVER_SCENE;
 	}
 }
 

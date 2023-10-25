@@ -43,4 +43,6 @@ private:
 
 	int sceneNumber_;
 	int preSceneNumber_;
+
+	size_t soundHandle_[3];
  };
