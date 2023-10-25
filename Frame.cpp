@@ -140,10 +140,10 @@ void Frame::UpdateMatrix() {
 		bottomWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
 		bottomWalls_.at(i)->worldTransform_.UpdateMatrix();
 	}
-	for (int i = 0; i < rightWalls_.size(); i++) {
-		rightWalls_.at(i)->worldTransform_.translation_ = { width_ + kRock_X,float(i-1) * kRock_Y  ,0.0f };
-		rightWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
-		rightWalls_.at(i)->worldTransform_.UpdateMatrix();
+	for (int t = 0; t < rightWalls_.size(); t++) {
+		rightWalls_.at(t)->worldTransform_.translation_ = { width_ + kRock_X,float(t - 1) * kRock_Y  ,0.0f };
+		rightWalls_.at(t)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
+		rightWalls_.at(t)->worldTransform_.UpdateMatrix();
 	}
 	player_->SetHeight(height_);
 	player_->SetWidth(width_);
