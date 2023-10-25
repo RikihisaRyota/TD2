@@ -42,12 +42,12 @@ void GameClear::Initialize() {
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
-	backGround_->Initialize(backGroundTextureHandles_,false);
+	backGround_->Initialize(backGroundTextureHandles_,BackGround::kGameClear);
 	// 枠組み
 	frameModel_.emplace_back(Model::Create("rockBlock", true));
 	frameModel_.emplace_back(Model::Create("rockBlock2", true));
 	frame_->SetViewProjection(&viewProjection_);
-	frame_->Initialize(frameModel_,false);
+	frame_->Initialize(frameModel_,Frame::kGameClear);
 	// カメラ
 	followCamera_->SetAnimationMax(60.0f);
 	followCamera_->SetTreasureBox(treasureBox_.get());

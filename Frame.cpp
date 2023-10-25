@@ -22,12 +22,13 @@ Frame::~Frame() {
 	}
 }
 
-void Frame::Initialize(std::vector<Model*>model, bool isInGame) {
+void Frame::Initialize(std::vector<Model*>model, State state) {
+	titlePos_ = { 0.0f,0.0f,0.0f };
 	width_ = 1000.0f;
 	height_ = 50.0f;
 	const float kDispersionInterval = 2.0f;
 	const float kDispersionRotate = 5.0f;
-	isInGame_ = isInGame;
+	state_ = state;
 	// 床
 	for (int i = 0; i < width_ / 24.0f; i++) {
 		Wall* topWall = new Wall();
@@ -84,33 +85,74 @@ void Frame::Initialize(std::vector<Model*>model, bool isInGame) {
 		rightWalls_.emplace_back(rightWall);
 	}
 
-	if (isInGame_) {
+	if (state_ == kInGame) {
 		UpdateMatrix();
 	}
 }
 
 void Frame::Update() {
-	for (size_t i = 0; i < topWalls_.size(); i++) {
-		if (!IsInsideFrustum(Sphere(topWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
-			topWalls_.at(i)->isAlive_ = false;
-			bottomWalls_.at(i)->isAlive_ = false;
+	switch (state_) {
+	case Frame::kTitle:
+		for (size_t i = 0; i < topWalls_.size(); i++) {
+			topWalls_.at(i)->worldTransform_.translation_.x -= 0.6f;
+			bottomWalls_.at(i)->worldTransform_.translation_.x -= 0.6f;
+			if (!IsInsideFrustum(Sphere(topWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				topWalls_.at(i)->isAlive_ = false;
+				bottomWalls_.at(i)->isAlive_ = false;
+				if (topWalls_.at(i)->worldTransform_.translation_.x <= -3.0f) {
+					topWalls_.at(i)->worldTransform_.translation_.x += 1000.0f;
+					bottomWalls_.at(i)->worldTransform_.translation_.x += 1000.0f;
+				}
+			}
+			else {
+				topWalls_.at(i)->isAlive_ = true;
+				bottomWalls_.at(i)->isAlive_ = true;
+			}
+			topWalls_.at(i)->worldTransform_.UpdateMatrix();
+			bottomWalls_.at(i)->worldTransform_.UpdateMatrix();
 		}
-		else {
-			topWalls_.at(i)->isAlive_ = true;
-			bottomWalls_.at(i)->isAlive_ = true;
+		for (size_t i = 0; i < rightWalls_.size(); i++) {
+			if (!IsInsideFrustum(Sphere(rightWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				rightWalls_.at(i)->isAlive_ = false;
+			}
+			else {
+				rightWalls_.at(i)->isAlive_ = true;
+			}
+		}
+		break;
+	case Frame::kInGame:
+	{
+		for (size_t i = 0; i < topWalls_.size(); i++) {
+			if (!IsInsideFrustum(Sphere(topWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				topWalls_.at(i)->isAlive_ = false;
+				bottomWalls_.at(i)->isAlive_ = false;
+			}
+			else {
+				topWalls_.at(i)->isAlive_ = true;
+				bottomWalls_.at(i)->isAlive_ = true;
+			}
+		}
+		for (size_t i = 0; i < rightWalls_.size(); i++) {
+			if (!IsInsideFrustum(Sphere(rightWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				rightWalls_.at(i)->isAlive_ = false;
+			}
+			else {
+				rightWalls_.at(i)->isAlive_ = true;
+			}
+		}
+		if (state_ == kInGame) {
+			Debug();
 		}
 	}
-	for (size_t i = 0; i < rightWalls_.size(); i++) {
-	  	if (!IsInsideFrustum(Sphere(rightWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
-			rightWalls_.at(i)->isAlive_ = false;
-		}
-		else {
-			rightWalls_.at(i)->isAlive_ = true;
-		}
+	break;
+	case Frame::kGameClear:
+		break;
+	case Frame::kGameOver:
+		break;
+	default:
+		break;
 	}
-	if (isInGame_) {
-		Debug();
-	}
+
 }
 
 void Frame::Draw(const ViewProjection& viewProjection) {
