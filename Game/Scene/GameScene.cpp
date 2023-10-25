@@ -146,6 +146,7 @@ void GameScene::Initialize() {
 	bossModel_.emplace_back(Model::Create("SharkJaw", true));
 	bossModel_.emplace_back(Model::Create("SharkBody", true));
 	boss_->SetPlayer(player_.get());
+	boss_->SetFollowCamera(followCamera_.get());
 	boss_->Initialize(bossModel_);
 
 	fade_->Initialize();
