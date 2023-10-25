@@ -191,9 +191,9 @@ void GameScene::Update() {
 				// 敵生成
 				collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
 				// shiftを押すとカメラを切り替える
-				if (input_->TriggerKey(DIK_LSHIFT)) {
+				/*if (input_->TriggerKey(DIK_LSHIFT)) {
 					IsDebugCamera_ ^= true;
-				}
+				}*/
 				followCamera_->Update();
 				viewProjection_ = followCamera_->GetViewProjection();
 			}
