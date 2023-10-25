@@ -100,7 +100,12 @@ void Enemy::Update() {
 	if (isAlive_) {
 		EnemyCreateFlag = false;
 		if (radius_ > initialRadius_ * maxSize_) {
-			behaviorRequest_ = Behavior::kSplit;
+			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) || type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
+				behaviorRequest_ = Behavior::kSplit;
+			}
+			else {
+				behaviorRequest_ = Behavior::kStandby;
+			}
 		}
 
 		if (input_->PushKey(DIK_0)) {
@@ -417,8 +422,8 @@ void Enemy::SplitUpdate() {
 			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) || type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
 				float degree = float(rand() / 360);
 				splitPos_Max_ = {
-					.x{cosf(degree) * 10.0f},
-					.y{sinf(degree) * 10.0f},
+					.x{cosf(degree) * 15.0f},
+					.y{sinf(degree) * 15.0f},
 					.z{0}
 				};
 				Vector3 Center = worldTransform_.translation_;
