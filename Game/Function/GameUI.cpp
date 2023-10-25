@@ -93,7 +93,8 @@ void GameUI::Update() {
 	}
 
 	Vector2 size = bossHP_->GetSize();
-	bossHP_->SetSize( { Lerp(size.x,((float)640 * (boss_->GetBossHP() / boss_->GetBossHPMax())),0.1f),64 });
+	float s = 640.0f * (static_cast<float>(boss_->GetBossHP())/ static_cast<float>(boss_->GetBossHPMax()));
+	bossHP_->SetSize( { Lerp(size.x,s,0.1f),64 });
 }
 
 void GameUI::Draw() {

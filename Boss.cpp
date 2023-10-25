@@ -23,6 +23,7 @@ void Boss::Initialize(std::vector<Model*> models) {
 	isClear_ = false;
 	isAnimation_ = false;
 	isRespawn_ = false;
+
 	animationCount_ = 0;
 
 	worldTransform_.Initialize();
@@ -39,12 +40,32 @@ void Boss::Initialize(std::vector<Model*> models) {
 		part.UpdateMatrix();
 		parts_.emplace_back(part);
 	}
+	switch (bossType_) {
+	case Boss::kFirstBoss:
+		HP_ = kFirstBossHP_;
+		break;
+	case Boss::kMiddleBoss:
+		HP_ = kMiddleBossHP_;
+		break;
+	case Boss::kLastBoss:
+		HP_ = kLastBossHP_;
+		break;
+	}
 	Reset();
 	HitBoxInitialize();
 }
 
 void Boss::Update() {
 	if (player_->GetBehavior() == Player::Behavior::kLanding) {
+		if (!isLanding_) {
+			if (HP_ <= player_->GetWeightNum()) {
+				HP_ = 0;
+			}
+			else {
+				HP_ -= player_->GetWeightNum();
+			}
+			isLanding_ = true;
+		}
 		if (player_->GetWeightNum() >= HP_) {
 			DeathAnimation();
 		}
@@ -58,8 +79,18 @@ void Boss::Update() {
 			if (player_->GetWeightNum() >= HP_) {
 				player_->SetTranslation(player_->GetInitialPosition());
 				player_->SetBehavior(Player::Behavior::kMove);
-				HP_ -= player_->GetWeightNum();
 				followCamera_->SetIsFirst(true);
+				switch (bossType_) {
+				case Boss::kFirstBoss:
+					HP_ = kFirstBossHP_;
+					break;
+				case Boss::kMiddleBoss:
+					HP_ = kMiddleBossHP_;
+					break;
+				case Boss::kLastBoss:
+					HP_ = kLastBossHP_;
+					break;
+				}
 			}
 			else {
 				player_->SetTranslation(Vector3(0.0f, -15.0f, 0.0f));
@@ -95,20 +126,11 @@ void Boss::Draw(const ViewProjection& viewProjection) {
 }
 
 void Boss::Reset() {
+	isLanding_ = false;
 	isAnimation_ = false;
 	isRespawn_ = false;
 	animationCount_ = 0;
-	switch (bossType_) {
-	case Boss::kFirstBoss:
-		HP_ = kFirstBossHP_;
-		break;
-	case Boss::kMiddleBoss:
-		HP_ = kMiddleBossHP_;
-		break;
-	case Boss::kLastBoss:
-		HP_ = kLastBossHP_;
-		break;
-	}
+
 	worldTransform_.scale_ = { 20.0f,20.0f,20.0f };
 	worldTransform_.rotation_ = { 0.0f,0.0f,0.0f };
 	worldTransform_.translation_ = { -20.0f,-15.0f,0.0f };
