@@ -6,6 +6,7 @@ class ClearSprite {
 public:
 	enum class Parts {
 		kClearSprite,
+		kPressSpace,
 
 		kCount,
 	};

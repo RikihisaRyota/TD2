@@ -68,9 +68,9 @@ private:
 	void UpdateMatrix();
 	void DeathAnimation();
 	void AttackAnimation();
-	uint32_t kFirstBossHP_ = 4;
-	uint32_t kMiddleBossHP_ = 10;
-	uint32_t kLastBossHP_ = 15;
+	uint32_t kFirstBossHP_ = 10;
+	uint32_t kMiddleBossHP_ = 15;
+	uint32_t kLastBossHP_ = 20;
 	uint32_t HP_;
 	uint32_t kAnimationMax_ = 120;
 
