@@ -88,8 +88,7 @@ void GameUI::Update() {
 		moveSheetAnimation_ = 0.0f;
 	}
 
-	bossDigit_ = 640 / boss_->GetBossHP();
-	bossLifeRect_.x = (float)bossDigit_ * (float)boss_->GetBossHP();
+	bossLifeRect_.x = (float)128 * bossDigit_;
 }
 
 void GameUI::Draw() {
@@ -102,6 +101,7 @@ void GameUI::Draw() {
 
 	// ボス体力
 	bossHPUnder_->Draw();
+	bossDigit_ = boss_->GetBossHP();
 
 	bossHP_->SetSize(bossLifeRect_);
 	bossHP_->Draw();
