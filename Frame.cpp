@@ -22,11 +22,13 @@ Frame::~Frame() {
 	}
 }
 
-void Frame::Initialize(std::vector<Model*>model) {
+void Frame::Initialize(std::vector<Model*>model, State state) {
+	titlePos_ = { 0.0f,0.0f,0.0f };
 	width_ = 1000.0f;
 	height_ = 50.0f;
 	const float kDispersionInterval = 2.0f;
 	const float kDispersionRotate = 5.0f;
+	state_ = state;
 	// 床
 	for (int i = 0; i < width_ / 24.0f; i++) {
 		Wall* topWall = new Wall();
@@ -37,7 +39,8 @@ void Frame::Initialize(std::vector<Model*>model) {
 			topWall->model_ = model.at(1);
 		}
 		topWall->worldTransform_.Initialize();
-		topWall->worldTransform_.translation_ = { (float(i-5))* kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,height_ + kRockFrameDistance_ ,0.0f };
+		topWall->worldTransform_.scale_ = { kRockScale_,kRockScale_ ,kRockScale_ };
+		topWall->worldTransform_.translation_ = { (float(i - 5)) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,height_ + kRockFrameDistance_ ,0.0f };
 		topWall->worldTransform_.rotation_.z = DegToRad(180.0f);
 		topWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
 		if (rnd.NextIntLimit() % 3 == 0) {
@@ -54,7 +57,8 @@ void Frame::Initialize(std::vector<Model*>model) {
 			bottomWall->model_ = model.at(0);
 		}
 		bottomWall->worldTransform_.Initialize();
-		bottomWall->worldTransform_.translation_ = { (float(i-5)) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,-height_ - kRockFrameDistance_ ,0.0f };
+		bottomWall->worldTransform_.scale_ = { kRockScale_,kRockScale_ ,kRockScale_ };
+		bottomWall->worldTransform_.translation_ = { (float(i - 5)) * kRockInterval_ + rnd.NextFloatRange(-kDispersionInterval,kDispersionInterval) ,-height_ - kRockFrameDistance_ ,0.0f };
 		bottomWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
 		if (rnd.NextIntLimit() % 3 == 0) {
 			bottomWall->worldTransform_.rotation_.y = DegToRad(180.0f);
@@ -72,36 +76,80 @@ void Frame::Initialize(std::vector<Model*>model) {
 			rightWall->model_ = model.at(0);
 		}
 		rightWall->worldTransform_.Initialize();
-		rightWall->worldTransform_.translation_ = { width_ + kRock_X,float(i-1) * kRock_Y  ,0.0f };
+		rightWall->worldTransform_.scale_ = { kRockScale_,kRockScale_ ,kRockScale_ };
+		rightWall->worldTransform_.translation_ = { width_ + kRock_X,float(i - 1) * kRock_Y  ,0.0f };
 		rightWall->worldTransform_.rotation_.z += DegToRad(90.0f);
 		rightWall->worldTransform_.rotation_.z += DegToRad(rnd.NextFloatRange(-kDispersionRotate, kDispersionRotate));
 		rightWall->worldTransform_.UpdateMatrix();
 		rightWall->isAlive_ = true;
 		rightWalls_.emplace_back(rightWall);
 	}
-	UpdateMatrix();
+
+	if (state_ == kInGame) {
+		UpdateMatrix();
+	}
 }
 
 void Frame::Update() {
-	for (size_t i = 0; i < topWalls_.size(); i++) {
-		if (!IsInsideFrustum(Sphere(topWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
-			topWalls_.at(i)->isAlive_ = false;
-			bottomWalls_.at(i)->isAlive_ = false;
+	switch (state_) {
+	case Frame::kTitle:
+		for (size_t i = 0; i < topWalls_.size(); i++) {
+			topWalls_.at(i)->worldTransform_.translation_.x -= 0.6f;
+			bottomWalls_.at(i)->worldTransform_.translation_.x -= 0.6f;
+			if (!IsInsideFrustum(Sphere(topWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				topWalls_.at(i)->isAlive_ = false;
+				bottomWalls_.at(i)->isAlive_ = false;
+				if (topWalls_.at(i)->worldTransform_.translation_.x <= -3.0f) {
+					topWalls_.at(i)->worldTransform_.translation_.x += 1000.0f;
+					bottomWalls_.at(i)->worldTransform_.translation_.x += 1000.0f;
+				}
+			}
+			else {
+				topWalls_.at(i)->isAlive_ = true;
+				bottomWalls_.at(i)->isAlive_ = true;
+			}
+			topWalls_.at(i)->worldTransform_.UpdateMatrix();
+			bottomWalls_.at(i)->worldTransform_.UpdateMatrix();
 		}
-		else {
-			topWalls_.at(i)->isAlive_ = true;
-			bottomWalls_.at(i)->isAlive_ = true;
+		for (size_t i = 0; i < rightWalls_.size(); i++) {
+			if (!IsInsideFrustum(Sphere(rightWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				rightWalls_.at(i)->isAlive_ = false;
+			}
+			else {
+				rightWalls_.at(i)->isAlive_ = true;
+			}
+		}
+		break;
+	case Frame::kInGame:
+	{
+		for (size_t i = 0; i < topWalls_.size(); i++) {
+			if (!IsInsideFrustum(Sphere(topWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				topWalls_.at(i)->isAlive_ = false;
+				bottomWalls_.at(i)->isAlive_ = false;
+			}
+			else {
+				topWalls_.at(i)->isAlive_ = true;
+				bottomWalls_.at(i)->isAlive_ = true;
+			}
+		}
+		for (size_t i = 0; i < rightWalls_.size(); i++) {
+			if (!IsInsideFrustum(Sphere(rightWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
+				rightWalls_.at(i)->isAlive_ = false;
+			}
+			else {
+				rightWalls_.at(i)->isAlive_ = true;
+			}
 		}
 	}
-	for (size_t i = 0; i < rightWalls_.size(); i++) {
-	  	if (!IsInsideFrustum(Sphere(rightWalls_.at(i)->worldTransform_.translation_, 20.0f), *viewProjection_)) {
-			rightWalls_.at(i)->isAlive_ = false;
-		}
-		else {
-			rightWalls_.at(i)->isAlive_ = true;
-		}
+	break;
+	case Frame::kGameClear:
+		break;
+	case Frame::kGameOver:
+		break;
+	default:
+		break;
 	}
-	Debug();
+
 }
 
 void Frame::Draw(const ViewProjection& viewProjection) {
@@ -133,10 +181,10 @@ void Frame::Debug() {
 
 void Frame::UpdateMatrix() {
 	for (int i = 0; i < topWalls_.size(); i++) {
-		topWalls_.at(i)->worldTransform_.translation_= { float(i-5) * kRockInterval_ ,height_ + kRockFrameDistance_ ,0.0f };
+		topWalls_.at(i)->worldTransform_.translation_ = { float(i - 5) * kRockInterval_ ,height_ + kRockFrameDistance_ ,0.0f };
 		topWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
 		topWalls_.at(i)->worldTransform_.UpdateMatrix();
-		bottomWalls_.at(i)->worldTransform_.translation_ = { float(i-5) * kRockInterval_ ,-height_ - kRockFrameDistance_ ,0.0f };
+		bottomWalls_.at(i)->worldTransform_.translation_ = { float(i - 5) * kRockInterval_ ,-height_ - kRockFrameDistance_ ,0.0f };
 		bottomWalls_.at(i)->worldTransform_.scale_ = { kRockScale_ ,kRockScale_ ,kRockScale_ };
 		bottomWalls_.at(i)->worldTransform_.UpdateMatrix();
 	}

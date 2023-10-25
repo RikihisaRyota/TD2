@@ -256,7 +256,7 @@ void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
 	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
 	{
 		if (!splitFlag_) {
-			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
+			if (type_ == static_cast<uint32_t>(EnemyType::kOctopus) && type_ == static_cast<uint32_t>(EnemyType::kfeed)) {
 				behaviorRequest_ = Behavior::kGrow;
 			}
 		}
@@ -375,14 +375,6 @@ void Enemy::ShotUpdate() {
 		if (!player_->GetIsPulling()) {
 			times_[Behavior::kShot]++;
 
-			/*if (times_[Behavior::kShot] == 20) {
-				enemyBulletManager_->CreateBullet(
-					{ worldTransform_.translation_.x, worldTransform_.translation_.y - (2.0f * radius_), worldTransform_.translation_.z },
-					radius_);
-				worldTransform_type0_[kLeg].translation_.y = 0.0f;
-				easeMax_ = radius_ * 0.5f;
-				easeMin_ = worldTransform_type0_[kHead].scale_.x;
-			}*/
 			if (times_[Behavior::kShot] > bulletShotCount_) {
 				float easedT = 1.0f - std::powf(1.0f - easeTime_, 3.0f);
 				float scale = (1.0f - easedT) * easeMin_[0] + easedT * easeMax_[0];
@@ -430,7 +422,6 @@ void Enemy::SplitUpdate() {
 				Vector3 Center = worldTransform_.translation_;
 				easeMax_Vector3_ = { splitPos_Max_ + Center };
 				easeMin_Vector3_ = worldTransform_.translation_;
-				//worldTransform_.translation_ = { splitPos_ + Center };
 				splitPos_Max_ *= -1.0f;
 				splitPos_Max_ += Center;
 				splitPos_Min_ = Center;
@@ -444,31 +435,15 @@ void Enemy::SplitUpdate() {
 				else {
 					check = true;
 				}
-				//behaviorRequest_ = Behavior::kStandby;
+				
 			}
 			else {
 				check = true;
 			}
-			//else if (type_ == static_cast<uint32_t>(EnemyType::kSpike)) {
-			//	splitPos_ = worldTransform_.translation_;
-			//	worldTransform_.translation_.y += 5.0f;
-			//	easeMax_Vector3_ = worldTransform_.translation_;
-			//	easeMax_Vector3_.y += distance_Split_;
-			//	easeMin_Vector3_ = worldTransform_.translation_;
-			//	splitPos_.y -= distance_Split_;
-			//	//behaviorRequest_ = Behavior::kStandby;
-			//}
 		}
 
-		//behaviorRequest_ = Behavior::kStandby;
 	}
 	else {
-
-		/*float easedT = 1 - std::cosf((easeTime_ * 3.14f) / 2);
-		float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
-		worldTransform_type0_Head_.scale_ = { radius ,radius ,radius };
-		worldTransform_type1_Body_.scale_ = { radius ,radius ,radius };
-		worldTransform_.translation_ = Slerp(easeMin_Vector3_, easeMax_Vector3_, easeTime_);*/
 
 		float easedT = easeTime_ * easeTime_ * easeTime_;
 		float radius = (1.0f - easedT) * easeMin_[0] + easeMax_[0] * easedT;
@@ -479,24 +454,6 @@ void Enemy::SplitUpdate() {
 		pos.y = (1.0f - easedT) * easeMin_Vector3_.y + easeMax_Vector3_.y * easedT;
 		pos.z = (1.0f - easedT) * easeMin_Vector3_.z + easeMax_Vector3_.z * easedT;
 		worldTransform_.translation_ = pos;
-
-
-		/*if (easeTime_ < 0.5f) {
-			float easedT2 = (1 - sqrtf(1 - 2 * easeTime_)) * 0.5f;
-			Vector3 pos;
-			pos.x = (1.0f - easedT2) * easeMin_Vector3_.x + easeMax_Vector3_.x * easedT2;
-			pos.y = (1.0f - easedT2) * easeMin_Vector3_.y + easeMax_Vector3_.y * easedT2;
-			pos.z = (1.0f - easedT2) * easeMin_Vector3_.z + easeMax_Vector3_.z * easedT2;
-			worldTransform_.translation_ = pos;
-		}
-		else {
-			float easedT2 = (1 + sqrtf(2 * easeTime_ - 1)) * 0.5f;
-			Vector3 pos;
-			pos.x = (1.0f - easedT2) * easeMin_Vector3_.x + easeMax_Vector3_.x * easedT2;
-			pos.y = (1.0f - easedT2) * easeMin_Vector3_.y + easeMax_Vector3_.y * easedT2;
-			pos.z = (1.0f - easedT2) * easeMin_Vector3_.z + easeMax_Vector3_.z * easedT2;
-			worldTransform_.translation_ = pos;
-		}*/
 
 
 		if (easeTime_ < 1.0f) {
@@ -560,18 +517,3 @@ void Enemy::GrowUpdate() {
 	}
 }
 
-void Enemy::Debug() {
-	//ImGui::Begin("Enemy");
-
-	//ImGui::DragInt("ShotSpeed", &shotTime_, 1, 0, 1000);
-	//ImGui::DragFloat("MaxSize", &maxSize_);
-	//ImGui::DragFloat("onceUpSize", &onceUpSize_);
-	//ImGui::DragFloat("easeSecond_Shot", &easeSecond_Shot_);
-	//ImGui::DragFloat("easeSecond_Grow", &easeSecond_Grow_);
-	//ImGui::DragFloat("InitialRadius", &initialRadius_);
-
-	//ImGui::End();
-
-
-
-}

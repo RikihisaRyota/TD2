@@ -68,7 +68,7 @@ void GameScene::Initialize() {
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
 	backGround_->SetPlayer(player_.get());
-	backGround_->Initialize(backGroundTextureHandles_);
+	backGround_->Initialize(backGroundTextureHandles_,BackGround::kInGame);
 	// 枠組み
 	frameModel_.emplace_back(Model::Create("rockBlock",true));
 	frameModel_.emplace_back(Model::Create("rockBlock2",true));
@@ -76,12 +76,13 @@ void GameScene::Initialize() {
 	frame_->SetUvula(uvula_.get());
 	frame_->SetViewProjection(&viewProjection_);
 	frame_->SetEnemyManager(enemyManager_.get());
-	frame_->Initialize(frameModel_);
+	frame_->Initialize(frameModel_, Frame::kInGame);
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
-	followCamera_->Initialize();
-
+	followCamera_->Initialize(true);
+	viewProjection_ = followCamera_->GetViewProjection();
+	viewProjection_.UpdateMatrix();
 	// ゲームBGM
 	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/over.wav");
 	audio_->SoundPlayLoopStart(inGameSoundHandle_);
@@ -141,6 +142,9 @@ void GameScene::Initialize() {
 	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
 	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
 	bossModel_.emplace_back(Model::Create("bossNeck", true));
+	bossModel_.emplace_back(Model::Create("SharkHead", true));
+	bossModel_.emplace_back(Model::Create("SharkJaw", true));
+	bossModel_.emplace_back(Model::Create("SharkBody", true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 
@@ -158,10 +162,7 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	isClear_= boss_->GetIsClear();
 	isGameOver_ = player_->GetIsGameOver();
-	ImGui::Begin("Flag");
-	ImGui::Text("clear:%d",isClear_);
-	ImGui::Text("over:%d", isGameOver_);
-	ImGui::End();
+	
 	
 	fade_->FadeOutUpdate();
 	if (fade_->GetColor(1) < 0.0f) {
@@ -170,7 +171,9 @@ void GameScene::Update() {
 
 	if (isGameStart_ == true) {
 		if (!IsDebugCamera_) {
-			if (!player_->GetIsHitStop()) {
+			if (!player_->GetIsHitStop() &&
+				!isClear_&&
+				!isGameOver_) {
 				backGround_->Update();
 				frame_->Update();
 				player_->Update();
@@ -193,7 +196,7 @@ void GameScene::Update() {
 				followCamera_->Update();
 				viewProjection_ = followCamera_->GetViewProjection();
 			}
-			else {
+			else if(player_->GetIsHitStop()) {
 				const uint32_t kHitStopMax = 5;
 				hitStopCount_++;
 				if (hitStopCount_ >= kHitStopMax) {
@@ -201,13 +204,11 @@ void GameScene::Update() {
 					player_->SetIsHitStop(false);
 				}
 			}
+			else {
+				fade_->FadeInUpdate();
+			}
 		}
 		else {
-			// shiftを押すとカメラを切り替える
-			if (input_->TriggerKey(DIK_LSHIFT)) {
-				IsDebugCamera_ ^= true;
-			}
-			enemyEditor_->Update(enemyManager_.get());
 			// デバックカメラ
 			debugCamera_->Update(&viewProjection_);
 			enemyManager_->SetIsDebug(IsDebugCamera_);
@@ -215,13 +216,8 @@ void GameScene::Update() {
 
 	}
 
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("Game Scene");
-	ImGui::End();
 
-
-	if (input_->PushKey(DIK_1)) {
+	/*if (input_->PushKey(DIK_1)) {
 		isClear_ = true;
 		isGameStart_ = false;
 	}
@@ -229,7 +225,7 @@ void GameScene::Update() {
 	if (input_->PushKey(DIK_2)) {
 		isGameOver_ = true;
 		isGameStart_ = false;
-	}
+	}*/
 
 	if (fade_->GetColor(0) > 1.0f && isClear_ == true) {
 		sceneNumber_ = CLEAR_SCENE;

@@ -22,6 +22,9 @@ public:
 		kOnJaw,
 		kLowerJaw,
 		kNeck,
+		kSharkHead,
+		kSharkJaw,
+		kSharkBody,
 
 		kCount,
 	};
@@ -60,6 +63,7 @@ public:
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 
 	uint32_t GetBossHP() {return HP_;}
+	Type GetBossType() { return bossType_; }
 private:
 	void UpdateMatrix();
 	void DeathAnimation();

@@ -95,6 +95,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="BasicGraphicsPipline.cpp" />
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="ClearSprite.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -153,7 +154,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteGraphicsPipline.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TitleBoss.cpp" />
+    <ClCompile Include="TitlePlayer.cpp" />
+    <ClCompile Include="TitleSprite.cpp" />
     <ClCompile Include="ToonGraphicsPipline.cpp" />
+    <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="Uvula.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
@@ -166,6 +171,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="BasicGraphicsPipline.h" />
     <ClInclude Include="BillParticle.h" />
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="ClearSprite.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="CollisionManager.h" />
@@ -224,6 +230,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="OBJ.h" />
     <ClInclude Include="PeraGraphicsPipeline.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SafeDelete.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sphere.h" />
@@ -232,7 +239,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteGraphicsPipline.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TitleBoss.h" />
+    <ClInclude Include="TitlePlayer.h" />
+    <ClInclude Include="TitleSprite.h" />
     <ClInclude Include="ToonGraphicsPipline.h" />
+    <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Uvula.h" />
     <ClInclude Include="Vector2.h" />
@@ -366,6 +377,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.0</ShaderModel>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXClass.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

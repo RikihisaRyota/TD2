@@ -154,6 +154,19 @@
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="WorldTransform.cpp" />
+    <ClCompile Include="TreasureBox.cpp" />
+    <ClCompile Include="ClearSprite.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleBoss.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="TitlePlayer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleSprite.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Game\Function\GameUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -381,6 +394,21 @@
     <ClInclude Include="PlayerLanding.h">
       <Filter>ヘッダー ファイル\Player</Filter>
     </ClInclude>
+    <ClInclude Include="ClearSprite.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleBoss.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TitlePlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleSprite.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Game\Function\GameUI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -470,6 +498,7 @@
     <ClInclude Include="WinApp.h" />
     <ClInclude Include="WorldTransform.h" />
     <ClInclude Include="cVertexPos.h" />
+    <ClInclude Include="TreasureBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Basic.hlsli" />
@@ -482,5 +511,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectXClass.rc" />
   </ItemGroup>
 </Project>
