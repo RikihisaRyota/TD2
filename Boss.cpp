@@ -199,7 +199,7 @@ void Boss::DeathAnimation() {
 				bossType_ = Boss::kMiddleBoss;
 				break;
 			case Boss::kMiddleBoss:
-				bossType_ = Boss::kFirstBoss;
+				bossType_ = Boss::kLastBoss;
 				break;
 			case Boss::kLastBoss:
 				isClear_ = true;
