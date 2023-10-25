@@ -113,7 +113,7 @@ private:
 	Model* model_ = nullptr;
 	Player* player_;
 	uint32_t type_;
-	float initialRadius_ = 5.0f;
+	float initialRadius_ = 7.0f;
 	float radius_;
 	bool isAlive_ = true;
 	bool isDrawing_ = true;

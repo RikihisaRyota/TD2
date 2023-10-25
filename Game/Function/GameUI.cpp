@@ -90,6 +90,8 @@ void GameUI::Update() {
 	if (moveSheetAnimation_ >= 5.0f) {
 		moveSheetAnimation_ = 0.0f;
 	}
+
+	bossHP_->SetSize({ ((float)640 * boss_->GetBossHP() / 5),64 });
 }
 
 void GameUI::Draw() {
@@ -104,7 +106,6 @@ void GameUI::Draw() {
 	// ボス体力
 	bossHPUnder_->Draw();
 
-	bossHP_->SetSize({ ((float)640 * boss_->GetBossHP() / 5),64 });
 	bossHP_->Draw();
 	
 	// プレイヤー体力
