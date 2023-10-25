@@ -205,6 +205,21 @@ void Boss::HitBoxDraw(const ViewProjection& viewProjection) {
 	DrawSphere(sphere_, viewProjection, Vector4(1.0f, 0.0f, 1.0f, 1.0f));
 }
 
+uint32_t Boss::GetBossHPMax() {
+	switch (bossType_) {
+	case Boss::kFirstBoss:
+		return kFirstBossHP_;
+		break;
+	case Boss::kMiddleBoss:
+		return kMiddleBossHP_;
+		break;
+	case Boss::kLastBoss:
+		return kLastBossHP_;
+		break;
+	}
+	return 0;
+}
+
 void Boss::UpdateMatrix() {
 	worldTransform_.UpdateMatrix();
 	motion_.UpdateMatrix();

@@ -1,6 +1,7 @@
 ﻿#include "GameUI.h"
 #include "Player.h"
 #include "Boss.h"
+#include "MyMath.h"
 
 GameUI::~GameUI() {
 	delete shellIcon_;
@@ -91,7 +92,8 @@ void GameUI::Update() {
 		moveSheetAnimation_ = 0.0f;
 	}
 
-	bossHP_->SetSize({ ((float)640 * (640 / boss_->GetBossHP())),64 });
+	Vector2 size = bossHP_->GetSize();
+	bossHP_->SetSize( { Lerp(size.x,((float)640 * (boss_->GetBossHP() / boss_->GetBossHPMax())),0.1f),64 });
 }
 
 void GameUI::Draw() {
