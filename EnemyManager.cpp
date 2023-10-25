@@ -4,6 +4,7 @@
 #include "ImGuiManager.h"
 #include "MyMath.h"
 
+
 EnemyManager::~EnemyManager() {
 	Reset();
 }
@@ -29,14 +30,15 @@ void EnemyManager::Update() {
 			Reset();
 			// CSVからデータの読み込み
 			std::unique_ptr<CSV> csv = std::make_unique<CSV>();
+			//random_.NextIntRange(0, 2);
 
-			if (spawn0_) {
+			if (random_.NextIntRange(0, 2) == 0) {
 				csv->LoadCSV("Spaw0");
 			}
-			else if (spawn1_) {
+			else if (random_.NextIntRange(0, 2) == 1) {
 				csv->LoadCSV("Spaw1");
 			}
-			else if (spawn2_) {
+			else if (random_.NextIntRange(0, 2) == 2) {
 				csv->LoadCSV("Spaw2");
 			}
 			std::vector<CSV::Data> datas = csv->UpdateDataCommands();

@@ -87,7 +87,7 @@ void GameClear::Update() {
 	}
 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		sceneNumber_ = OVER_SCENE;
+		sceneNumber_ = TITLE_SCENE;
 		audio_->SoundPlayLoopEnd(soundHandle_);
 		audio_->SoundPlayWave(selectSoundHandle_);
 	}
