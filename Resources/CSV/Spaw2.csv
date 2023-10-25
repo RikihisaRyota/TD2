@@ -1,6 +1,65 @@
 // width 1000.0f(10/18)
 // height 50.0f(10/18)
 // コマンド,x,y,z
-// コマンド,0:タコ,1:とげ
-Position,200,0,0
+// コマンド,0:タコ,1:とげ,2:エサ
+Position,184.7,2,0
 Type,1
+Position,235.992,32.7,0
+Type,0
+Position,235.992,-30.7,0
+Type,2
+Position,287.692,0,0
+Type,1
+Position,345.492,34.5,0
+Type,1
+Position,364.292,34.4,0
+Type,1
+Position,382.092,34,0
+Type,1
+Position,404.992,18.8,0
+Type,0
+Position,428.092,18.5,0
+Type,0
+Position,454.592,-7.2,0
+Type,1
+Position,412.792,-31.1,0
+Type,2
+Position,491.892,-34.4,0
+Type,2
+Position,528.292,-34.2,0
+Type,1
+Position,528.292,16,0
+Type,1
+Position,528.292,-8.8,0
+Type,2
+Position,574.492,-34.6,0
+Type,1
+Position,597.092,38.5,0
+Type,0
+Position,624.492,39,0
+Type,0
+Position,661.762,0,0
+Type,1
+Position,684.062,0,0
+Type,1
+Position,722.362,-33.9,0
+Type,2
+Position,705.862,0,0
+Type,1
+Position,722.942,39.2,0
+Type,0
+Position,829.142,34.4,0
+Type,0
+Position,848.442,34.2,0
+Type,0
+Position,868.042,33.9,0
+Type,0
+Position,887.742,34.4,0
+Type,0
+Position,777.342,0,0
+Type,1
+Position,777.342,14.7,0
+Type,1
+Position,777.342,-14.7,0
+Type,1
+

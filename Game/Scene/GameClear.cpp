@@ -15,15 +15,17 @@ GameClear::~GameClear() {
 	for (auto& model : frameModel_) {
 		delete model;
 	}
+
+	//audio_->SoundUnload(soundHandle_);
 }
 
 void GameClear::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/clear.wav");
+	soundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
 	selectSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/selectSound.wav");
-	//audio_->SoundPlayLoopStart(soundHandle_);
+	audio_->SoundPlayLoopStart(soundHandle_);
 	
 	fade_ = std::make_unique<Fade>();
 	fade_->Initialize();
@@ -42,12 +44,12 @@ void GameClear::Initialize() {
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
-	backGround_->Initialize(backGroundTextureHandles_,false);
+	backGround_->Initialize(backGroundTextureHandles_,BackGround::kGameClear);
 	// 枠組み
 	frameModel_.emplace_back(Model::Create("rockBlock", true));
 	frameModel_.emplace_back(Model::Create("rockBlock2", true));
 	frame_->SetViewProjection(&viewProjection_);
-	frame_->Initialize(frameModel_,false);
+	frame_->Initialize(frameModel_,Frame::kGameClear);
 	// カメラ
 	followCamera_->SetAnimationMax(60.0f);
 	followCamera_->SetTreasureBox(treasureBox_.get());
@@ -62,16 +64,15 @@ void GameClear::Initialize() {
 	treasureBox_->SetOpenAnimationMax(60.0f);
 	// テクスチャ
 	auto texture = TextureManager::Load("Resources/Images/gameclear.png");
+	clearSpriteTextureHandles_.emplace_back(texture);
+	texture = TextureManager::Load("Resources/Images/pressSpace.png");
+	clearSpriteTextureHandles_.emplace_back(texture);
 	clearSprite_->SetTreasureBox(treasureBox_.get());
-	clearSprite_->Initialize(texture);
+	clearSprite_->Initialize(clearSpriteTextureHandles_);
 	clearSprite_->SetAnimationMax(120.0f);
 }
 
 void GameClear::Update() {
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("GameClear Scene");
-	ImGui::End();
 
 	frame_->Update();
 	followCamera_->Update();
@@ -84,10 +85,11 @@ void GameClear::Update() {
 
 	if (fade_->GetColor(1) < 0.0f) {
 		isStart_ = false;
+		//audio_->SoundPlayLoopEnd(soundHandle_);
 	}
 
 	if (input_->TriggerKey(DIK_SPACE)) {
-		sceneNumber_ = OVER_SCENE;
+		sceneNumber_ = TITLE_SCENE;
 		audio_->SoundPlayLoopEnd(soundHandle_);
 		audio_->SoundPlayWave(selectSoundHandle_);
 	}
@@ -130,7 +132,7 @@ void GameClear::Draw() {
 	frame_->Draw(viewProjection_);
 	clearSprite_->Draw(viewProjection_);
 	treasureBox_->Draw(viewProjection_);
-
+	clearSprite_->FrontDraw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();
 	PrimitiveDrawer::PostDraw();

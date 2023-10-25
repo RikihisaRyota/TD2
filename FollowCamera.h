@@ -7,8 +7,8 @@ class TreasureBox;
 class Player;
 class FollowCamera {
 public:
-	void Initialize(bool flg);
 
+	void Initialize(bool flg);
 	void Update();
 
 	void SetTarget(WorldTransform* target) { target_ = target; }
@@ -22,6 +22,8 @@ public:
 	void SetTreasureBox(TreasureBox* TreasureBox) {treasureBox_ = TreasureBox;}
 
 	void SetAnimationMax(float time) { animationMax_ = time; }
+
+	void SetIsFirst(bool flag);
 private:
 	Player* player_;
 	ViewProjection viewProjection_;
@@ -45,4 +47,8 @@ private:
 	// クリアカメラ
 	float animationTime_;
 	float animationMax_;
+	// 最初だけカウント
+	float firstCount_;
+	float firstCountMax_;
+	bool isFirst_;
 };

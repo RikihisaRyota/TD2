@@ -7,6 +7,7 @@
 #include "EnemyEditor.h"
 #include "Player.h"
 #include "ViewProjection.h"
+#include "Random.h"
 
 class EnemyManager {
 public:
@@ -69,6 +70,8 @@ private:
 	std::vector<Model*> models_type1_;
 	std::vector<Model*> models_type2_;
 	std::vector<EnemyState> splits_;
+
+	Random::RandomNumberGenerator random_;
 
 	float height_;
 	float width_;

@@ -11,10 +11,13 @@ ClearSprite::~ClearSprite() {
 	}
 }
 
-void ClearSprite::Initialize(uint32_t textureHandle) {
-	PlaneRenderer* planeRenderer = PlaneRenderer::Create();
-	planes_.emplace_back(planeRenderer);
-	textureHandle_ = textureHandle;
+void ClearSprite::Initialize(std::vector<uint32_t> textureHandle) {
+	for (size_t i = 0; i < static_cast<size_t>(Parts::kCount); i++) {
+		PlaneRenderer* planeRenderer = PlaneRenderer::Create();
+		planes_.emplace_back(planeRenderer);
+		textureHandle_.emplace_back(textureHandle.at(i));
+	}
+	animationFlag_ = false;
 	spriteScaleStart_ = 1.0f;
 	spriteScaleEnd_ = 12.0f;
 	spriteTranslateStart_ = { 56.0f,-7.0f,0.0f };
@@ -25,19 +28,15 @@ void ClearSprite::Initialize(uint32_t textureHandle) {
 	worldTransfrom_.UpdateMatrix();
 	animationTime_ = 0.0f;
 	animationMax_ = 120.0f;
+
+	spaceWorldTransfrom_.Initialize();
+	spaceWorldTransfrom_.scale_ = { 12.0f,2.0f,1.0f };
+	spaceWorldTransfrom_.translation_ = { 56.0f,-11.0f,-16.0f };
 }
 
 void ClearSprite::Update() {
 	if (treasureBox_->GetState() == TreasureBox::State::kOpen) {
 		float t = animationTime_ / animationMax_;
-		ImGui::Begin("Sprite");
-		ImGui::DragFloat3("TranslateStart", &spriteTranslateStart_.x, 1.0f);
-		ImGui::DragFloat3("TranslateEnd", &spriteTranslateEnd_.x, 1.0f);
-		ImGui::DragFloat("scaleStart", &spriteScaleStart_, 1.0f);
-		ImGui::DragFloat("scaleEnd", &spriteScaleEnd_, 1.0f);
-		ImGui::DragFloat("animation", &animationTime_, 1.0f);
-		ImGui::DragFloat("animationMax", &animationMax_, 1.0f);
-		ImGui::End();
 		float scale = Lerp(spriteScaleStart_, spriteScaleEnd_, std::clamp(t, 0.0f, 1.0f));
 		worldTransfrom_.scale_ = { scale,scale * 0.3f ,scale };
 		Vector3 pos = Lerp(spriteTranslateStart_, spriteTranslateEnd_, std::clamp(t, 0.0f, 1.0f));
@@ -45,13 +44,26 @@ void ClearSprite::Update() {
 		worldTransfrom_.translation_.y += std::sinf(DegToRad(animationTime_));
 		worldTransfrom_.UpdateMatrix();
 		animationTime_++;
+		if (t >= 1.0f) {
+			animationFlag_ = true;
+		}
 	}
+	ImGui::Begin("sprite");
+	ImGui::DragFloat3("scale", &spaceWorldTransfrom_.scale_.x, 1.0f);
+	ImGui::DragFloat3("pos", &spaceWorldTransfrom_.translation_.x, 1.0f);
+	ImGui::End();
+	spaceWorldTransfrom_.UpdateMatrix();
 }
 
 void ClearSprite::Draw(const ViewProjection& viewProjection) {
 	if (treasureBox_->GetState() == TreasureBox::State::kOpen) {
-		for (size_t i = 0; i < static_cast<size_t>(Parts::kCount); i++) {
-			planes_.at(i)->Draw(worldTransfrom_, viewProjection, textureHandle_);
-		}
+		planes_.at(static_cast<size_t>(Parts::kClearSprite))->Draw(worldTransfrom_, viewProjection, textureHandle_.at(static_cast<size_t>(Parts::kClearSprite)));
+	
+	}
+}
+
+void ClearSprite::FrontDraw(const ViewProjection& viewProjection) {
+	if (animationFlag_) {
+		planes_.at(static_cast<size_t>(Parts::kPressSpace))->Draw(spaceWorldTransfrom_, viewProjection, textureHandle_.at(static_cast<size_t>(Parts::kPressSpace)));
 	}
 }

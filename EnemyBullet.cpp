@@ -1,5 +1,6 @@
 #include "EnemyBullet.h"
 
+#include "CollisionManager.h"
 #include "Draw.h"
 #include "MyMath.h"
 
@@ -36,7 +37,24 @@ void EnemyBullet::Reset() {
 }
 
 void EnemyBullet::OnCollision(uint32_t type, Sphere* sphere) {
-	isAlive_ = false;
+	switch (type) {
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemy):
+		break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSEnemyBullet):
+		isAlive_ = false;
+		break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerVSBoss):
+		break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemy):
+		break;
+	case static_cast<size_t>(CollisionManager::Type::kPlayerBulletVSEnemyBullet):
+		break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemy):
+		break;
+	case static_cast<size_t>(CollisionManager::Type::kEnemyVSEnemyBullet):
+		isAlive_ = false;
+		break;
+	}
 }
 
 void EnemyBullet::HitBoxInitialize() {

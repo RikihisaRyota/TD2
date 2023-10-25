@@ -6,6 +6,7 @@
 #include "ViewProjection.h"
 #include "Random.h"
 
+class FollowCamera;
 class Player;
 class Boss : public Collider {
 public:
@@ -63,7 +64,9 @@ public:
 	void HitBoxDraw(const ViewProjection& viewProjection) override;
 
 	uint32_t GetBossHP() {return HP_;}
+	uint32_t GetBossHPMax();
 	Type GetBossType() { return bossType_; }
+	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 private:
 	void UpdateMatrix();
 	void DeathAnimation();
@@ -75,7 +78,7 @@ private:
 	uint32_t kAnimationMax_ = 120;
 
 	uint32_t animationCount_;
-
+	FollowCamera* followCamera_;
 	// プレイヤー
 	Player* player_;
 	// モデル
@@ -98,5 +101,7 @@ private:
 	bool isAnimation_;
 	// クリア
 	bool isClear_;
+	// プレイヤーが地面に着いた瞬間
+	bool isLanding_;
 };
 

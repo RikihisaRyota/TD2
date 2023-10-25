@@ -59,6 +59,7 @@ void GameScene::Initialize() {
 	uvulaHead_ = std::make_unique<Model>();
 	uvulaBody_= std::make_unique<Model>();
 	fade_ = std::make_unique<Fade>();
+	gameUI_ = std::make_unique<GameUI>();
 #pragma endregion
 
 #pragma region 初期化
@@ -67,7 +68,7 @@ void GameScene::Initialize() {
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
 	backGround_->SetPlayer(player_.get());
-	backGround_->Initialize(backGroundTextureHandles_,true);
+	backGround_->Initialize(backGroundTextureHandles_,BackGround::kInGame);
 	// 枠組み
 	frameModel_.emplace_back(Model::Create("rockBlock",true));
 	frameModel_.emplace_back(Model::Create("rockBlock2",true));
@@ -75,7 +76,7 @@ void GameScene::Initialize() {
 	frame_->SetUvula(uvula_.get());
 	frame_->SetViewProjection(&viewProjection_);
 	frame_->SetEnemyManager(enemyManager_.get());
-	frame_->Initialize(frameModel_, true);
+	frame_->Initialize(frameModel_, Frame::kInGame);
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());
@@ -83,7 +84,7 @@ void GameScene::Initialize() {
 	viewProjection_ = followCamera_->GetViewProjection();
 	viewProjection_.UpdateMatrix();
 	// ゲームBGM
-	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/over.wav");
+	inGameSoundHandle_ = audio_->SoundLoadWave("Resources/Audios/title.wav");
 	audio_->SoundPlayLoopStart(inGameSoundHandle_);
 
 	// プレイヤー
@@ -145,9 +146,12 @@ void GameScene::Initialize() {
 	bossModel_.emplace_back(Model::Create("SharkJaw", true));
 	bossModel_.emplace_back(Model::Create("SharkBody", true));
 	boss_->SetPlayer(player_.get());
+	boss_->SetFollowCamera(followCamera_.get());
 	boss_->Initialize(bossModel_);
 
 	fade_->Initialize();
+	gameUI_->Initialize();
+	gameUI_->SetObject(player_.get(), boss_.get());
 
 	isGameStart_ = false;
 	isClear_ = false;
@@ -159,10 +163,7 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	isClear_= boss_->GetIsClear();
 	isGameOver_ = player_->GetIsGameOver();
-	ImGui::Begin("Flag");
-	ImGui::Text("clear:%d",isClear_);
-	ImGui::Text("over:%d", isGameOver_);
-	ImGui::End();
+	
 	
 	fade_->FadeOutUpdate();
 	if (fade_->GetColor(1) < 0.0f) {
@@ -171,11 +172,14 @@ void GameScene::Update() {
 
 	if (isGameStart_ == true) {
 		if (!IsDebugCamera_) {
-			if (!player_->GetIsHitStop()|| !boss_->GetIsClear()) {
+			if (!player_->GetIsHitStop() &&
+				!isClear_&&
+				!isGameOver_) {
 				backGround_->Update();
 				frame_->Update();
 				player_->Update();
 				fade_->FadeInUpdate();
+				gameUI_->Update();
 				// デバック
 				enemyManager_->SetIsDebug(IsDebugCamera_);
 				//
@@ -187,13 +191,13 @@ void GameScene::Update() {
 				// 敵生成
 				collisionManager_->Update(player_.get(), playerBulletManager_.get(), enemyManager_.get(), enemyBulletManager_.get(), uvula_.get());
 				// shiftを押すとカメラを切り替える
-				if (input_->TriggerKey(DIK_LSHIFT)) {
+				/*if (input_->TriggerKey(DIK_LSHIFT)) {
 					IsDebugCamera_ ^= true;
-				}
+				}*/
 				followCamera_->Update();
 				viewProjection_ = followCamera_->GetViewProjection();
 			}
-			else {
+			else if(player_->GetIsHitStop()) {
 				const uint32_t kHitStopMax = 5;
 				hitStopCount_++;
 				if (hitStopCount_ >= kHitStopMax) {
@@ -201,13 +205,11 @@ void GameScene::Update() {
 					player_->SetIsHitStop(false);
 				}
 			}
+			else {
+				fade_->FadeInUpdate();
+			}
 		}
 		else {
-			// shiftを押すとカメラを切り替える
-			if (input_->TriggerKey(DIK_LSHIFT)) {
-				IsDebugCamera_ ^= true;
-			}
-			enemyEditor_->Update(enemyManager_.get());
 			// デバックカメラ
 			debugCamera_->Update(&viewProjection_);
 			enemyManager_->SetIsDebug(IsDebugCamera_);
@@ -215,13 +217,8 @@ void GameScene::Update() {
 
 	}
 
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("Game Scene");
-	ImGui::End();
 
-
-	if (input_->PushKey(DIK_1)) {
+	/*if (input_->PushKey(DIK_1)) {
 		isClear_ = true;
 		isGameStart_ = false;
 	}
@@ -229,15 +226,15 @@ void GameScene::Update() {
 	if (input_->PushKey(DIK_2)) {
 		isGameOver_ = true;
 		isGameStart_ = false;
-	}
+	}*/
 
-	if (fade_->GetColor(0) > 1.0f && isClear_ == true) {
+	if (fade_->GetColor(0) > 1.0f && boss_->GetIsClear() == true) {
+		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 		sceneNumber_ = CLEAR_SCENE;
-		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
 	}
-	else if (fade_->GetColor(0) > 1.0f && isGameOver_ == true) {
-		sceneNumber_ = OVER_SCENE;
+	else if (fade_->GetColor(0) > 1.0f && player_->GetIsGameOver() == true) {
 		audio_->SoundPlayLoopEnd(inGameSoundHandle_);
+		sceneNumber_ = OVER_SCENE;
 	}
 }
 
@@ -253,6 +250,7 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 	backGround_->Draw();
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
@@ -295,6 +293,8 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
+
+	gameUI_->Draw();
 
 	if (isGameStart_ == false) {
 		fade_->FadeOutFlagSet(true);

@@ -10,6 +10,13 @@ class Player;
 class Uvula;
 class Frame {
 public:
+	enum State {
+		kTitle,
+		kInGame,
+		kGameClear,
+		kGameOver,
+	};
+
 	struct Wall {
 		Model* model_;
 		WorldTransform worldTransform_;
@@ -18,7 +25,7 @@ public:
 
 public:
 	~Frame();
-	void Initialize(std::vector<Model*>model,bool isInGame);
+	void Initialize(std::vector<Model*>model,State state);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void SetPlayer(Player* player) { player_ = player; }
@@ -47,6 +54,8 @@ private:
 	std::vector<Wall*> rightWalls_;
 	Random::RandomNumberGenerator rnd;
 
-	bool isInGame_;
+	Vector3 titlePos_;
+
+	State state_;
 };
 

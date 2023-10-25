@@ -9,15 +9,25 @@
 void FollowCamera::Initialize(bool flg) {
 	viewProjection_.Initialize();
 	debugOffset_ = { 40.0f, 0.0f, -250.0f };
-	nowOffset_ = debugOffset_;
 	dropOffset_ = { -40.0f, 0.0f, -250.0f };
 	bossAttackOffset_ = { -15.0f,0.0f,-300.0f };
 	delayInterpolationLate_ = 0.5f;
+	nowOffset_ = debugOffset_;
 	dropDelayInterpolationLate_ = 0.8f;
-	viewProjection_.translation_ = Vector3(80.0f, 0.0f, 0.0f) + nowOffset_;
-	interTarget_ = Vector3(80.0f, 0.0f, 0.0);
 	isInGame_ = flg;
 	animationTime_ = 0.0f;
+	if (isInGame_) {
+		firstCount_ = 0.0f;
+		firstCountMax_ = 6000.0f;
+		isFirst_ = true;
+		viewProjection_.translation_ = Vector3(0.0f, 0.0f, 0.0f) + nowOffset_;
+		interTarget_ = Vector3(0.0f, 0.0f, 0.0);
+	}
+	else {
+		interTarget_ = Vector3(80.0f, 0.0f, 0.0);
+		viewProjection_.translation_ = Vector3(80.0f, 0.0f, 0.0f) + nowOffset_;
+	}
+	viewProjection_.UpdateMatrix();
 }
 
 void FollowCamera::Update() {
@@ -27,11 +37,9 @@ void FollowCamera::Update() {
 			// プレイヤーが落下中か
 			if (player_->GetIsPulling() && !player_->GetIsLanding()) {
 				nowOffset_ = Lerp(nowOffset_, dropOffset_, 0.1f);
-				//kInterpolationLate = dropDelayInterpolationLate_;
 			}
 			if (!player_->GetIsPulling() && !player_->GetIsLanding()) {
 				nowOffset_ = Lerp(nowOffset_, debugOffset_, 0.1f);
-				//kInterpolationLate = delayInterpolationLate_;
 			}
 			if (player_->GetBehavior() == Player::Behavior::kDoNothing) {
 				const float BossCameraCountMax = 60.0f;
@@ -43,9 +51,21 @@ void FollowCamera::Update() {
 				}
 
 			}
-			kInterpolationLate = dropDelayInterpolationLate_;
+			if (isFirst_) {
+				float t = firstCount_ / firstCountMax_;
+				kInterpolationLate = Lerp(0.01f,dropDelayInterpolationLate_,t);
+				firstCount_ += 1.0f;
+				if (firstCount_ >= firstCountMax_) {
+					isFirst_ = false;
+					firstCount_ = 0.0f;
+				}
+			}
+			else {
+				kInterpolationLate = dropDelayInterpolationLate_;
+			}
 			// 追従座標の補間
 			target_->translation_.x = std::clamp(target_->translation_.x, -100.0f, kCameraLimit_);
+
 			interTarget_.x = Lerp(interTarget_.x, target_->translation_.x, kInterpolationLate);
 			Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(viewProjection_.rotation_);
 
@@ -69,8 +89,6 @@ void FollowCamera::Update() {
 			animationTime_ += 1.0f;
 		}
 	}
-
-	Debug();
 }
 
 void FollowCamera::Debug() {
@@ -94,4 +112,15 @@ void FollowCamera::Debug() {
 	}
 	ImGui::SliderFloat("limit", &kCameraLimit_, 800.0f, 1200.0f);
 	ImGui::End();
+}
+
+void FollowCamera::SetIsFirst(bool flag) {
+	isFirst_ = flag;
+	firstCount_ = 0.0f;
+	firstCount_ = 0.0f;
+	firstCountMax_ = 6000.0f;
+	isFirst_ = true;
+	viewProjection_.translation_ = Vector3(0.0f, 0.0f, 0.0f) + nowOffset_;
+	interTarget_ = Vector3(0.0f, 0.0f, 0.0);
+	viewProjection_.UpdateMatrix();
 }

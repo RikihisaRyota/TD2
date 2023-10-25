@@ -36,6 +36,7 @@ private:
 	std::unique_ptr<BackGround> backGround_;
 	std::vector<uint32_t> backGroundTextureHandles_;
 	std::unique_ptr<ClearSprite> clearSprite_;
+	std::vector<uint32_t> clearSpriteTextureHandles_;
 	std::unique_ptr<Frame> frame_;
 	std::vector<Model*>frameModel_;
 	std::unique_ptr<FollowCamera> followCamera_;
