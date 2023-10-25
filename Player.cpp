@@ -117,7 +117,6 @@ void Player::Update() {
 	InvincibleUpdate();
 	MoveLimit();
 	HitBoxUpdate();
-	Debug();
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
@@ -144,7 +143,7 @@ void Player::Draw(const ViewProjection& viewProjection) {
 }
 
 void Player::Debug() {
-	playerMove_->Debug();
+	/*playerMove_->Debug();
 	playerPullingMove_->Debug();
 	playerString_->Debug();
 	playerJump_->Debug();
@@ -169,7 +168,7 @@ void Player::Debug() {
 	ImGui::SliderFloat("invincibleMax", &invincibleMax, 0.0f, 60.0f);
 	invincibleCount_ = static_cast<uint32_t>(invincibleCount);
 	kInvincibleMax_ = static_cast<uint32_t>(invincibleMax);
-	ImGui::End();
+	ImGui::End();*/
 }
 
 void Player::OnCollision(uint32_t type, Sphere* sphere) {

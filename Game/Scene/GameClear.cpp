@@ -68,10 +68,6 @@ void GameClear::Initialize() {
 }
 
 void GameClear::Update() {
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("GameClear Scene");
-	ImGui::End();
 
 	frame_->Update();
 	followCamera_->Update();

@@ -30,14 +30,6 @@ void ClearSprite::Initialize(uint32_t textureHandle) {
 void ClearSprite::Update() {
 	if (treasureBox_->GetState() == TreasureBox::State::kOpen) {
 		float t = animationTime_ / animationMax_;
-		ImGui::Begin("Sprite");
-		ImGui::DragFloat3("TranslateStart", &spriteTranslateStart_.x, 1.0f);
-		ImGui::DragFloat3("TranslateEnd", &spriteTranslateEnd_.x, 1.0f);
-		ImGui::DragFloat("scaleStart", &spriteScaleStart_, 1.0f);
-		ImGui::DragFloat("scaleEnd", &spriteScaleEnd_, 1.0f);
-		ImGui::DragFloat("animation", &animationTime_, 1.0f);
-		ImGui::DragFloat("animationMax", &animationMax_, 1.0f);
-		ImGui::End();
 		float scale = Lerp(spriteScaleStart_, spriteScaleEnd_, std::clamp(t, 0.0f, 1.0f));
 		worldTransfrom_.scale_ = { scale,scale * 0.3f ,scale };
 		Vector3 pos = Lerp(spriteTranslateStart_, spriteTranslateEnd_, std::clamp(t, 0.0f, 1.0f));

@@ -140,9 +140,6 @@ void Frame::Update() {
 				rightWalls_.at(i)->isAlive_ = true;
 			}
 		}
-		if (state_ == kInGame) {
-			Debug();
-		}
 	}
 	break;
 	case Frame::kGameClear:

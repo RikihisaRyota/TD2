@@ -517,18 +517,3 @@ void Enemy::GrowUpdate() {
 	}
 }
 
-void Enemy::Debug() {
-	//ImGui::Begin("Enemy");
-
-	//ImGui::DragInt("ShotSpeed", &shotTime_, 1, 0, 1000);
-	//ImGui::DragFloat("MaxSize", &maxSize_);
-	//ImGui::DragFloat("onceUpSize", &onceUpSize_);
-	//ImGui::DragFloat("easeSecond_Shot", &easeSecond_Shot_);
-	//ImGui::DragFloat("easeSecond_Grow", &easeSecond_Grow_);
-	//ImGui::DragFloat("InitialRadius", &initialRadius_);
-
-	//ImGui::End();
-
-
-
-}

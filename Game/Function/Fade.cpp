@@ -23,10 +23,6 @@ void Fade::FadeInUpdate() {
 		isCount_[0] = false;
 		fadeColor_[0] = 0.0f;
 	}
-
-	ImGui::Begin("FadeIn");
-	ImGui::DragFloat("Color", &fadeColor_[0], 0.03f);
-	ImGui::End();
 }
 
 void Fade::FadeOutUpdate() {
@@ -38,10 +34,6 @@ void Fade::FadeOutUpdate() {
 		isCount_[1] = false;
 		fadeColor_[1] = 1.0f;
 	}
-
-	ImGui::Begin("FadeOut");
-	ImGui::DragFloat("Color", &fadeColor_[1], 0.03f);
-	ImGui::End();
 }
 
 void Fade::FadeInDraw() {

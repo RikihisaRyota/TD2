@@ -107,7 +107,6 @@ private:
 	void ClingUpdate();
 	void GrowUpdate();
 
-	void Debug();
 
 	WorldTransform worldTransform_;
 	ViewProjection* viewProjection_;

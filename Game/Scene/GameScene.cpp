@@ -159,10 +159,7 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	isClear_= boss_->GetIsClear();
 	isGameOver_ = player_->GetIsGameOver();
-	ImGui::Begin("Flag");
-	ImGui::Text("clear:%d",isClear_);
-	ImGui::Text("over:%d", isGameOver_);
-	ImGui::End();
+	
 	
 	fade_->FadeOutUpdate();
 	if (fade_->GetColor(1) < 0.0f) {
@@ -208,11 +205,6 @@ void GameScene::Update() {
 			}
 		}
 		else {
-			// shiftを押すとカメラを切り替える
-			if (input_->TriggerKey(DIK_LSHIFT)) {
-				IsDebugCamera_ ^= true;
-			}
-			enemyEditor_->Update(enemyManager_.get());
 			// デバックカメラ
 			debugCamera_->Update(&viewProjection_);
 			enemyManager_->SetIsDebug(IsDebugCamera_);
@@ -220,13 +212,8 @@ void GameScene::Update() {
 
 	}
 
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("Game Scene");
-	ImGui::End();
 
-
-	if (input_->PushKey(DIK_1)) {
+	/*if (input_->PushKey(DIK_1)) {
 		isClear_ = true;
 		isGameStart_ = false;
 	}
@@ -234,7 +221,7 @@ void GameScene::Update() {
 	if (input_->PushKey(DIK_2)) {
 		isGameOver_ = true;
 		isGameStart_ = false;
-	}
+	}*/
 
 	if (fade_->GetColor(0) > 1.0f && isClear_ == true) {
 		sceneNumber_ = CLEAR_SCENE;

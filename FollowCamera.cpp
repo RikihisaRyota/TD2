@@ -69,8 +69,6 @@ void FollowCamera::Update() {
 			animationTime_ += 1.0f;
 		}
 	}
-
-	Debug();
 }
 
 void FollowCamera::Debug() {

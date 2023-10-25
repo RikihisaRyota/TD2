@@ -65,18 +65,7 @@ void GameOver::Initialize() {
 }
 
 void GameOver::Update() {
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("GameOver Scene");
-	ImGui::End();
-
-	ImGui::Begin("GameOver");
-	ImGui::DragFloat2("position", &gameOverSpritePosition_.x);
-	ImGui::End();
-
-	ImGui::Begin("pressSpace");
-	ImGui::DragFloat2("position", &pressSpacePosition_.x);
-	ImGui::End();
+	
 
 	frame_->Update();
 	fade_->FadeOutUpdate();

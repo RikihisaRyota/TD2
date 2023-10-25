@@ -91,10 +91,6 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() {
-	ImGui::Begin("SceneManage");
-	ImGui::InputInt("SceneNumber", &sceneNumber_);
-	ImGui::Text("GameTitle Scene");
-	ImGui::End();
 
 	if (titleBoss_->GetSceneChangeFlag()) {
 		fade_->FadeInFlagSet(true);
