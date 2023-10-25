@@ -22,6 +22,9 @@ public:
 		kOnJaw,
 		kLowerJaw,
 		kNeck,
+		kSharkHead,
+		kSharkJaw,
+		kSharkBody,
 
 		kCount,
 	};

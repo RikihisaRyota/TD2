@@ -49,7 +49,7 @@ void GameClear::Initialize() {
 	frame_->SetViewProjection(&viewProjection_);
 	frame_->Initialize(frameModel_,false);
 	// カメラ
-	followCamera_->SetAnimationMax(120.0f);
+	followCamera_->SetAnimationMax(60.0f);
 	followCamera_->SetTreasureBox(treasureBox_.get());
 	followCamera_->Initialize(false);
 	viewProjection_ = followCamera_->GetViewProjection();
@@ -59,7 +59,7 @@ void GameClear::Initialize() {
 	modelTreasureBox_.emplace_back(Model::Create("treasureboxUnder",true));
 	treasureBox_->Initialize(modelTreasureBox_);
 	treasureBox_->SetComeAnimationMax(120.0f);
-	treasureBox_->SetOpenAnimationMax(120.0f);
+	treasureBox_->SetOpenAnimationMax(60.0f);
 	// テクスチャ
 	auto texture = TextureManager::Load("Resources/Images/gameclear.png");
 	clearSprite_->SetTreasureBox(treasureBox_.get());
@@ -86,7 +86,7 @@ void GameClear::Update() {
 		isStart_ = false;
 	}
 
-	if (input_->PushKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneNumber_ = OVER_SCENE;
 		audio_->SoundPlayLoopEnd(soundHandle_);
 		audio_->SoundPlayWave(selectSoundHandle_);

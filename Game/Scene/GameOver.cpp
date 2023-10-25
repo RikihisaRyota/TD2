@@ -37,7 +37,7 @@ void GameOver::Update() {
 		isStart_ = false;
 	}
 
-	if (input_->PushKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
 		sceneNumber_ = TITLE_SCENE;
 		audio_->SoundPlayLoopEnd(soundHandle_);
 		audio_->SoundPlayWave(selectSoundHandle_);

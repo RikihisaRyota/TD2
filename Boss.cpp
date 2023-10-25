@@ -73,18 +73,23 @@ void Boss::Update() {
 }
 
 void Boss::Draw(const ViewProjection& viewProjection) {
-	switch (bossType_) {
-	case Boss::Type::kFirstBoss:
-		models_.at(static_cast<size_t>(Parts::kShellfishUp))->Draw(parts_.at(static_cast<size_t>(Parts::kShellfishUp)), viewProjection);
-		models_.at(static_cast<size_t>(Parts::kShellfishDown))->Draw(parts_.at(static_cast<size_t>(Parts::kShellfishDown)), viewProjection);
-		break;
-	case Boss::Type::kMiddleBoss:
-		models_.at(static_cast<size_t>(Parts::kOnJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kOnJaw)), viewProjection);
-		models_.at(static_cast<size_t>(Parts::kLowerJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kLowerJaw)), viewProjection);
-		models_.at(static_cast<size_t>(Parts::kNeck))->Draw(parts_.at(static_cast<size_t>(Parts::kNeck)), viewProjection);
-		break;
-	case Boss::Type::kLastBoss:
-		break;
+	if (!isClear_) {
+		switch (bossType_) {
+		case Boss::Type::kFirstBoss:
+			models_.at(static_cast<size_t>(Parts::kShellfishUp))->Draw(parts_.at(static_cast<size_t>(Parts::kShellfishUp)), viewProjection);
+			models_.at(static_cast<size_t>(Parts::kShellfishDown))->Draw(parts_.at(static_cast<size_t>(Parts::kShellfishDown)), viewProjection);
+			break;
+		case Boss::Type::kMiddleBoss:
+			models_.at(static_cast<size_t>(Parts::kOnJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kOnJaw)), viewProjection);
+			models_.at(static_cast<size_t>(Parts::kLowerJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kLowerJaw)), viewProjection);
+			models_.at(static_cast<size_t>(Parts::kNeck))->Draw(parts_.at(static_cast<size_t>(Parts::kNeck)), viewProjection);
+			break;
+		case Boss::Type::kLastBoss:
+			models_.at(static_cast<size_t>(Parts::kSharkHead))->Draw(parts_.at(static_cast<size_t>(Parts::kSharkHead)), viewProjection);
+			models_.at(static_cast<size_t>(Parts::kSharkJaw))->Draw(parts_.at(static_cast<size_t>(Parts::kSharkJaw)), viewProjection);
+			models_.at(static_cast<size_t>(Parts::kSharkBody))->Draw(parts_.at(static_cast<size_t>(Parts::kSharkBody)), viewProjection);
+			break;
+		}
 	}
 }
 
@@ -273,6 +278,8 @@ void Boss::AttackAnimation() {
 		parts_.at(static_cast<size_t>(Parts::kLowerJaw)).rotation_.z = Lerp(0.0f, DegToRad(25.0f), t);
 		break;
 	case Boss::Type::kLastBoss:
+		parts_.at(static_cast<size_t>(Parts::kSharkHead)).rotation_.z = Lerp(0.0f, -DegToRad(20.0f), t);
+		parts_.at(static_cast<size_t>(Parts::kSharkJaw)).rotation_.z = Lerp(0.0f, DegToRad(10.0f), t);
 		break;
 	}
 	animationCount_++;

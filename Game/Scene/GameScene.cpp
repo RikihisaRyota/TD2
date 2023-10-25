@@ -141,6 +141,9 @@ void GameScene::Initialize() {
 	bossModel_.emplace_back(Model::Create("bossOnJaw", true));
 	bossModel_.emplace_back(Model::Create("bossLowerJaw", true));
 	bossModel_.emplace_back(Model::Create("bossNeck", true));
+	bossModel_.emplace_back(Model::Create("SharkHead", true));
+	bossModel_.emplace_back(Model::Create("SharkJaw", true));
+	bossModel_.emplace_back(Model::Create("SharkBody", true));
 	boss_->SetPlayer(player_.get());
 	boss_->Initialize(bossModel_);
 
@@ -168,7 +171,7 @@ void GameScene::Update() {
 
 	if (isGameStart_ == true) {
 		if (!IsDebugCamera_) {
-			if (!player_->GetIsHitStop()) {
+			if (!player_->GetIsHitStop()|| !boss_->GetIsClear()) {
 				backGround_->Update();
 				frame_->Update();
 				player_->Update();
