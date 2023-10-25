@@ -82,9 +82,6 @@ void BackGround::Update() {
 				break;
 			}
 		}
-		if (titlePosition_.x >= screenWidth) {
-			titlePosition_.x = 0.0f;
-		}
 		break;
 	case BackGround::kInGame:
 		Vector3 playerPos = player_->GetTranslation();

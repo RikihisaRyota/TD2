@@ -21,6 +21,9 @@ TitleScene::~TitleScene() {
 	for (auto& model : playerModel_) {
 		delete model;
 	}
+	for (auto& sprite : titleSpriteModel_) {
+		delete sprite;
+	}
 }
 
 void TitleScene::Initialize() {
@@ -42,6 +45,7 @@ void TitleScene::Initialize() {
 	followCamera_ = std::make_unique<FollowCamera>();
 	titleBoss_ = std::make_unique<TitleBoss>();
 	player_ = std::make_unique<TitlePlayer>();
+	titleSprite_ = std::make_unique<TitleSprite>();
 #pragma endregion
 
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
@@ -71,6 +75,19 @@ void TitleScene::Initialize() {
 	playerModel_.emplace_back(Model::Create("playerLegLeft", true));
 	playerModel_.emplace_back(Model::Create("playerLegRight", true));
 	player_->Initialize(playerModel_);
+
+	// スプライト
+	auto tex = TextureManager::Load("Resources/Images/title.png");
+	titleSpriteModel_.emplace_back(Sprite::Create(tex, { 640.0f,190.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }));
+	tex = TextureManager::Load("Resources/Images/arrow.png");
+	titleSpriteModel_.emplace_back(Sprite::Create(tex, { 1110.0f,400.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }));
+	titleSpriteModel_.emplace_back(Sprite::Create(tex, { 1110.0f,400.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }));
+	titleSpriteModel_.emplace_back(Sprite::Create(tex, { 1110.0f,400.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }));
+	tex = TextureManager::Load("Resources/Images/ikamoveSheet.png");
+	titleSpriteModel_.emplace_back(Sprite::Create(tex, { 1110.0f,400.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }));
+	//titleSpriteModel_.emplace_back(Sprite::Create(tex, { 1110.0f,400.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.5f,0.5f }));
+	titleSprite_->SetTitleBoss(titleBoss_.get());
+	titleSprite_->Initialize(titleSpriteModel_);
 }
 
 void TitleScene::Update() {
@@ -88,7 +105,7 @@ void TitleScene::Update() {
 	frame_->Update();
 	player_->Update();
 	titleBoss_->Update();
-
+	titleSprite_->Update(viewProjection_);
 	if (fade_->GetColor(0) > 1.0f) {
 		sceneNumber_ = GAME_SCENE;
 		audio_->SoundPlayLoopEnd(soundHandle_);
@@ -111,7 +128,7 @@ void TitleScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 	backGround_->Draw();
-
+	titleSprite_->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	DirectXCommon::GetInstance()->ClearDepthBuffer();
@@ -150,7 +167,6 @@ void TitleScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
-
 	fade_->FadeInDraw();
 	
 	// スプライト描画後処理

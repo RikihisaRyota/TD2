@@ -9,7 +9,9 @@
 #include "Frame.h"
 #include "FollowCamera.h"
 #include "TitleBoss.h"
+#include "TitleSprite.h"
 #include "TitlePlayer.h"
+
 
 class TitleScene : public IScene {
 public:
@@ -39,6 +41,8 @@ private:
 	std::unique_ptr<FollowCamera> followCamera_;
 	std::unique_ptr<TitleBoss> titleBoss_;
 	std::vector<Model*> titleBossModel_;
+	std::unique_ptr<TitleSprite> titleSprite_;
+	std::vector<Sprite*> titleSpriteModel_;
 	std::unique_ptr<TitlePlayer> player_;
 	std::vector<Model*> playerModel_;
 };

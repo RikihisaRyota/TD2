@@ -36,6 +36,7 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 
 	void SetTitlePlayer(TitlePlayer* titlePlayer) {titlePlayer_ = titlePlayer;}
+	Matrix4x4 GetWorldMat() { return  worldTransform_.matWorld_; }
 	bool GetSceneChangeFlag() {	return sceneChange_; }
 private:
 	TitlePlayer* titlePlayer_;
