@@ -15,7 +15,7 @@ void FollowCamera::Initialize(bool flg) {
 	delayInterpolationLate_ = 0.5f;
 	dropDelayInterpolationLate_ = 0.8f;
 	viewProjection_.translation_ = Vector3(80.0f, 0.0f, 0.0f) + nowOffset_;
-	interTarget_ = Vector3(80.0f, 0.0f, -250.0);
+	interTarget_ = Vector3(80.0f, 0.0f, 0.0);
 	isInGame_ = flg;
 	animationTime_ = 0.0f;
 }
@@ -59,6 +59,7 @@ void FollowCamera::Update() {
 			const float kRadian = 0.02f;
 			viewProjection_.rotation_.y += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * kRadian;
 		}
+		viewProjection_.UpdateMatrix();
 	}
 	else {
 		if (treasureBox_->GetState() == TreasureBox::State::kOpen) {
