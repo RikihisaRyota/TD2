@@ -1,10 +1,13 @@
 ﻿#pragma once
 
 #include "Sprite.h"
+#include "Input.h"
 #include "ImGuiManager.h"
 #include "TextureManager.h"
 
 #include <memory>
+#include <iostream>
+#include <vector>
 
 class Player;
 class Boss;
@@ -19,10 +22,13 @@ public:
 	
 	void SetObject(Player* player, Boss* boss) { player_ = player; boss_ = boss; }
 	
+	std::vector<int> SeparateDigits(int number);
+
 private:
 #pragma region インクルード
 	Player* player_;
 	Boss* boss_;
+	Input* input_ = nullptr;
 #pragma endregion
 
 #pragma region スプライト
@@ -35,7 +41,7 @@ private:
 	Sprite* ikaHP_[3];
 	Sprite* ikaMove_;
 	Sprite* ikaPower_;
-	Sprite* numberSheet_;
+	Sprite* numberSheet_[2];
 	Sprite* ikaMoveSheet_;
 
 	Sprite* route_;
@@ -67,10 +73,10 @@ private:
 
 	// 食べた数のアニメーション
 	Vector2 eatSize_;
-	int eatAnimation_;
-	int eatDigit;
+	std::vector<int> eatAnimation_;
+	int eatDigit_;
 
-	// 
-	int drawCount_;
+	// ボスの体力バー
+	Vector2 bossLifeRect_;
 #pragma endregion
 };
