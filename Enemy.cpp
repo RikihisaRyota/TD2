@@ -202,6 +202,7 @@ void Enemy::SetMatWorld() {
 	worldTransform_type1_Prick_.UpdateMatrix();
 
 	worldTrasnform_type2_.translation_ = worldTransform_.translation_;
+	worldTrasnform_type2_.UpdateMatrix();
 }
 
 void Enemy::OnCollision(uint32_t type, Sphere* sphere) {
