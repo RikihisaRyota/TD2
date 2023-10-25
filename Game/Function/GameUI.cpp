@@ -30,8 +30,9 @@ void GameUI::Initialize() {
 	moveSheetAnimation_ = 5.0f;
 
 	animationTimer_ = 0;
+	bossDigit_ = 0;
 
-	bossLifeRect_ = { 640.0f,64.0f };
+	bossLifeRect_ = { 0.0f,64.0f };
 
 	eatSize_ = { 96.0f,96.0f };
 
@@ -86,8 +87,9 @@ void GameUI::Update() {
 	if (moveSheetAnimation_ >= 5.0f) {
 		moveSheetAnimation_ = 0.0f;
 	}
-	
-	bossLifeRect_.x -= bossLifeRect_.x / boss_->GetBossHP();
+
+	bossDigit_ = 640 / boss_->GetBossHP();
+	bossLifeRect_.x = (float)bossDigit_ * (float)boss_->GetBossHP();
 }
 
 void GameUI::Draw() {
@@ -130,17 +132,17 @@ void GameUI::Draw() {
 	eatDigit_ = player_->GetWeightNum();
 	eatAnimation_ = SeparateDigits(eatDigit_);
 
-	numberSheet_[0]->SetTextureRect({eatSize_.x * eatAnimation_[1],0.0f}, {eatSize_});
+	numberSheet_[0]->SetTextureRect({eatSize_.x * eatAnimation_[0],0.0f}, {eatSize_});
 	numberSheet_[0]->Draw();
-	numberSheet_[1]->SetTextureRect({ eatSize_.x * eatAnimation_[0],0.0f}, {eatSize_});
+	numberSheet_[1]->SetTextureRect({ eatSize_.x * eatAnimation_[1],0.0f}, {eatSize_});
 	numberSheet_[1]->Draw();
 }
 
 std::vector<int> GameUI::SeparateDigits(int number) {
 	std::vector<int> digits;
 
-	int tensDigits = number / 10;
-	int onesDigits = number % 10;
+	int tensDigits = number % 10;
+	int onesDigits = number / 10;
 
 	digits.push_back(tensDigits);
 	digits.push_back(onesDigits);

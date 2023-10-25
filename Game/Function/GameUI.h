@@ -78,5 +78,6 @@ private:
 
 	// ボスの体力バー
 	Vector2 bossLifeRect_;
+	int bossDigit_;
 #pragma endregion
 };
