@@ -4,6 +4,7 @@
 
 #include "CollisionManager.h"
 #include "Draw.h"
+#include "FollowCamera.h"
 #include "ImGuiManager.h"
 #include "MyMath.h"
 #include "Player.h"
@@ -58,6 +59,7 @@ void Boss::Update() {
 				player_->SetTranslation(player_->GetInitialPosition());
 				player_->SetBehavior(Player::Behavior::kMove);
 				HP_ -= player_->GetWeightNum();
+				followCamera_->SetIsFirst(true);
 			}
 			else {
 				player_->SetTranslation(Vector3(0.0f, -15.0f, 0.0f));

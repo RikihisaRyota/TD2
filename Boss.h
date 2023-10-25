@@ -6,6 +6,7 @@
 #include "ViewProjection.h"
 #include "Random.h"
 
+class FollowCamera;
 class Player;
 class Boss : public Collider {
 public:
@@ -64,10 +65,12 @@ public:
 
 	uint32_t GetBossHP() {return HP_;}
 	Type GetBossType() { return bossType_; }
+	void SetFollowCamera(FollowCamera* followCamera) { followCamera_ = followCamera; }
 private:
 	void UpdateMatrix();
 	void DeathAnimation();
 	void AttackAnimation();
+	FollowCamera* followCamera_;
 	uint32_t kFirstBossHP_ = 4;
 	uint32_t kMiddleBossHP_ = 10;
 	uint32_t kLastBossHP_ = 15;
