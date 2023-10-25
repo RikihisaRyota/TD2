@@ -11,6 +11,12 @@
 #include "PlaneRenderer.h"
 #pragma endregion
 
+GameClear::~GameClear() {
+	for (auto& model : frameModel_) {
+		delete model;
+	}
+}
+
 void GameClear::Initialize() {
 	input_ = Input::GetInstance();
 
@@ -18,6 +24,21 @@ void GameClear::Initialize() {
 	fade_->Initialize();
 
 	isStart_ = true;
+
+	viewProjection_.Initialize();
+#pragma region 生成
+	backGround_ = std::make_unique<BackGround>();
+	frame_ = std::make_unique<Frame>();
+#pragma endregion
+
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround.png"));
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
+	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
+	backGround_->Initialize(backGroundTextureHandles_,false);
+	// 枠組み
+	frameModel_.emplace_back(Model::Create("rockBlock2", true));
+	frame_->SetViewProjection(&viewProjection_);
+	frame_->Initialize(frameModel_,false);
 }
 
 void GameClear::Update() {
@@ -26,6 +47,7 @@ void GameClear::Update() {
 	ImGui::Text("GameClear Scene");
 	ImGui::End();
 
+	//frame_->Update();
 	fade_->FadeOutUpdate();
 
 	if (fade_->GetColor(1) < 0.0f) {
@@ -52,6 +74,7 @@ void GameClear::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
+	backGround_->Draw();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
@@ -70,6 +93,8 @@ void GameClear::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	frame_->Draw(viewProjection_);
+
 
 	// 3Dオブジェクト描画後処理
 	PlaneRenderer::PostDraw();

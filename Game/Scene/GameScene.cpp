@@ -62,13 +62,13 @@ void GameScene::Initialize() {
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround2.png"));
 	backGroundTextureHandles_.emplace_back(TextureManager::Load("Resources/Images/backGround1.png"));
 	backGround_->SetPlayer(player_.get());
-	backGround_->Initialize(backGroundTextureHandles_);
+	backGround_->Initialize(backGroundTextureHandles_,true);
 	// 枠組み
 	frameModel_.emplace_back(Model::Create("rockBlock2",true));
 	frame_->SetPlayer(player_.get());
 	frame_->SetUvula(uvula_.get());
 	frame_->SetViewProjection(&viewProjection_);
-	frame_->Initialize(frameModel_);
+	frame_->Initialize(frameModel_,true);
 	// カメラ
 	followCamera_->SetTarget(&player_->GetWorldTransform());
 	followCamera_->SetPlayer(player_.get());

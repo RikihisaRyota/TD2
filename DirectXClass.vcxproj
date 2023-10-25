@@ -152,6 +152,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="SpriteGraphicsPipline.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="ToonGraphicsPipline.cpp" />
+    <ClCompile Include="TreasureBox.cpp" />
     <ClCompile Include="Uvula.cpp" />
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
@@ -230,6 +231,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="SpriteGraphicsPipline.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="ToonGraphicsPipline.h" />
+    <ClInclude Include="TreasureBox.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Uvula.h" />
     <ClInclude Include="Vector2.h" />

@@ -16,7 +16,7 @@ public:
 
 public:
 	~Frame();
-	void Initialize(std::vector<Model*>model);
+	void Initialize(std::vector<Model*>model,bool isInGame);
 	void Update();
 	void Draw(const ViewProjection& viewProjection);
 	void SetPlayer(Player* player) { player_ = player; }
@@ -33,5 +33,7 @@ private:
 	ViewProjection* viewProjection_;
 	std::vector<Wall*> topWalls_;
 	std::vector<Wall*> bottomWalls_;
+
+	bool isInGame_;
 };
 

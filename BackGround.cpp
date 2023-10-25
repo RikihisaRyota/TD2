@@ -18,8 +18,8 @@ BackGround::~BackGround() {
 	frontSprite_.clear();
 }
 
-void BackGround::Initialize(std::vector<uint32_t> textureHandle) {
-
+void BackGround::Initialize(std::vector<uint32_t> textureHandle, bool isIngame) {
+	isInGame_ = isIngame;
 	for (size_t i = 0; i < static_cast<size_t>(Type::kCount); i++) {
 		Vector2 pos = { 1280.0f * 0.5f ,720.0f * 0.5f };
 		position_.emplace_back(pos);
@@ -53,30 +53,32 @@ void BackGround::Initialize(std::vector<uint32_t> textureHandle) {
 }
 
 void BackGround::Update() {
-	Vector3 playerPos = player_->GetTranslation();
-	float const screenWidth = 1280.0f;
-	for (size_t i = 0; i < static_cast<size_t>(Type::kCount); i++) {
-		switch (i) {
-		case BackGround::kBack:
-			break;
-		case BackGround::kMiddle:
-			position_.at(i).x = std::fmodf(playerPos.x * -1.5f, screenWidth);
-			if (position_.at(i).x < 0.0f) {
-				position_.at(i).x += screenWidth;
+	if (isInGame_) {
+		Vector3 playerPos = player_->GetTranslation();
+		float const screenWidth = 1280.0f;
+		for (size_t i = 0; i < static_cast<size_t>(Type::kCount); i++) {
+			switch (i) {
+			case BackGround::kBack:
+				break;
+			case BackGround::kMiddle:
+				position_.at(i).x = std::fmodf(playerPos.x * -1.5f, screenWidth);
+				if (position_.at(i).x < 0.0f) {
+					position_.at(i).x += screenWidth;
+				}
+				middleSprite_.at(0)->SetPosition({ position_.at(i).x - 1280.0f,position_.at(i).y });
+				middleSprite_.at(1)->SetPosition(position_.at(i));
+				middleSprite_.at(2)->SetPosition({ position_.at(i).x + 1280.0f,position_.at(i).y });
+				break;
+			case BackGround::kFront:
+				position_.at(i).x = std::fmodf(playerPos.x * -3.5f, screenWidth);
+				if (position_.at(i).x < 0.0f) {
+					position_.at(i).x += screenWidth;
+				}
+				frontSprite_.at(0)->SetPosition({ position_.at(i).x - 1280.0f,position_.at(i).y });
+				frontSprite_.at(1)->SetPosition(position_.at(i));
+				frontSprite_.at(2)->SetPosition({ position_.at(i).x + 1280.0f,position_.at(i).y });
+				break;
 			}
-			middleSprite_.at(0)->SetPosition({ position_.at(i).x - 1280.0f,position_.at(i).y });
-			middleSprite_.at(1)->SetPosition(position_.at(i));
-			middleSprite_.at(2)->SetPosition({ position_.at(i).x + 1280.0f,position_.at(i).y });
-			break;
-		case BackGround::kFront:
-			position_.at(i).x = std::fmodf(playerPos.x * -3.5f, screenWidth);
-			if (position_.at(i).x < 0.0f) {
-				position_.at(i).x += screenWidth;
-			}
-			frontSprite_.at(0)->SetPosition({ position_.at(i).x - 1280.0f,position_.at(i).y });
-			frontSprite_.at(1)->SetPosition(position_.at(i));
-			frontSprite_.at(2)->SetPosition({ position_.at(i).x + 1280.0f,position_.at(i).y });
-			break;
 		}
 	}
 }

@@ -18,9 +18,10 @@ Frame::~Frame() {
 	}
 }
 
-void Frame::Initialize(std::vector<Model*>model) {
+void Frame::Initialize(std::vector<Model*>model, bool isInGame) {
 	width_ = 1000.0f;
 	height_ = 50.0f;
+	isInGame_ = isInGame;
 	// 床
 	for (size_t i = 0; i < width_ / 15.0f; i++) {
 		Wall* topWall = new Wall();
@@ -39,8 +40,9 @@ void Frame::Initialize(std::vector<Model*>model) {
 		bottomWall->isAlive_ = true;
 		bottomWalls_.emplace_back(bottomWall);
 	}
-
-	UpdateMatrix();
+	if (isInGame_) {
+		UpdateMatrix();
+	}
 }
 
 void Frame::Update() {
@@ -54,7 +56,9 @@ void Frame::Update() {
 			bottomWalls_.at(i)->isAlive_ = true;
 		}
 	}
-	Debug();
+	if (isInGame_) {
+		Debug();
+	}
 }
 
 void Frame::Draw(const ViewProjection& viewProjection) {

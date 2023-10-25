@@ -83,6 +83,7 @@
     <ClCompile Include="ViewProjection.cpp" />
     <ClCompile Include="WinApp.cpp" />
     <ClCompile Include="WorldTransform.cpp" />
+    <ClCompile Include="TreasureBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="WinApp.h" />
     <ClInclude Include="WorldTransform.h" />
     <ClInclude Include="cVertexPos.h" />
+    <ClInclude Include="TreasureBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Basic.hlsli" />

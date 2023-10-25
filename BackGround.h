@@ -19,7 +19,7 @@ public:
 	};
 public:
 	~BackGround();
-	void Initialize(std::vector<uint32_t> textureHandle);
+	void Initialize(std::vector<uint32_t> textureHandle,bool isIngame);
 	void Update();
 	void Draw();
 	void SetPlayer(Player* player) { player_=player; }
@@ -30,5 +30,7 @@ private:
 	std::vector<Sprite*> middleSprite_;
 	std::vector<Sprite*> frontSprite_;
 	uint32_t textureHandle_;
+
+	bool isInGame_;
 };
 
