@@ -26,6 +26,7 @@
 #include "Fade.h"
 #include "FollowCamera.h"
 #include "Frame.h"
+#include "GameUI.h"
 #include "IScene.h"
 #include "Player.h"
 #include "PlayerBulletManager.h"
@@ -106,6 +107,7 @@ private: // メンバ変数
 	std::unique_ptr<Uvula> uvula_;
 	std::unique_ptr<Model> uvulaHead_;
 	std::unique_ptr<Model> uvulaBody_;
+	std::unique_ptr<GameUI> gameUI_;
 
 	std::vector<Model*> enemyModels_Type0_;
 	std::vector<Model*> enemyModels_Type1_;

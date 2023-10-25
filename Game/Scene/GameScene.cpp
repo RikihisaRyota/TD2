@@ -59,6 +59,7 @@ void GameScene::Initialize() {
 	uvulaHead_ = std::make_unique<Model>();
 	uvulaBody_= std::make_unique<Model>();
 	fade_ = std::make_unique<Fade>();
+	gameUI_ = std::make_unique<GameUI>();
 #pragma endregion
 
 #pragma region 初期化
@@ -144,6 +145,7 @@ void GameScene::Initialize() {
 	boss_->Initialize(bossModel_);
 
 	fade_->Initialize();
+	gameUI_->Initialize();
 
 	isGameStart_ = false;
 	isClear_ = false;
@@ -172,6 +174,7 @@ void GameScene::Update() {
 				frame_->Update();
 				player_->Update();
 				fade_->FadeInUpdate();
+				gameUI_->Update();
 				// デバック
 				enemyManager_->SetIsDebug(IsDebugCamera_);
 				//
@@ -249,6 +252,7 @@ void GameScene::Draw() {
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
 	backGround_->Draw();
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
@@ -291,6 +295,8 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	Sprite::SetBlendState(Sprite::BlendState::kNormal);
+
+	gameUI_->Draw();
 
 	if (isGameStart_ == false) {
 		fade_->FadeOutFlagSet(true);

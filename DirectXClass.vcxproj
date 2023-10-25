@@ -119,6 +119,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="FollowCamera.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Game\Function\Fade.cpp" />
+    <ClCompile Include="Game\Function\GameUI.cpp" />
     <ClCompile Include="Game\Manager\SceneManager.cpp" />
     <ClCompile Include="Game\Scene\GameClear.cpp" />
     <ClCompile Include="Game\Scene\GameOver.cpp" />
@@ -191,6 +192,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="FollowCamera.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="Game\Function\Fade.h" />
+    <ClInclude Include="Game\Function\GameUI.h" />
     <ClInclude Include="Game\Manager\SceneManager.h" />
     <ClInclude Include="Game\Scene\GameClear.h" />
     <ClInclude Include="Game\Scene\GameOver.h" />
