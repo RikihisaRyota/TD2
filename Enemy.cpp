@@ -108,24 +108,6 @@ void Enemy::Update() {
 			}
 		}
 
-		if (input_->PushKey(DIK_0)) {
-			behaviorRequest_ = Behavior::kStandby;
-		}
-		if (input_->PushKey(DIK_1)) {
-			behaviorRequest_ = Behavior::kShot;
-		}
-		if (input_->ExitKey(DIK_2)) {
-			behaviorRequest_ = Behavior::kSplit;
-		}
-		if (input_->PushKey(DIK_3)) {
-			behaviorRequest_ = Behavior::kDamage;
-		}
-		if (input_->PushKey(DIK_4)) {
-			behaviorRequest_ = Behavior::kCling;
-		}
-		if (input_->ExitKey(DIK_5)) {
-			behaviorRequest_ = Behavior::kGrow;
-		}
 		BehaviorRequestCheck();
 		switch (behavior_) {
 		case Behavior::kStandby:
@@ -149,10 +131,10 @@ void Enemy::Update() {
 		}
 
 		if (!IsInsideFrustum(sphere_, *viewProjection_)) {
-			isDrawing_ = false;
+ 			isDrawing_ = false;
 		}
 		else {
-			isDrawing_ = true;
+ 			isDrawing_ = true;
 		}
 	}
 
@@ -364,8 +346,8 @@ void Enemy::GrowInitialize() {
 
 void Enemy::StandbyUpdate() {
 	if (type_ == static_cast<uint32_t>(EnemyType::kOctopus)) {
-		if (isDrawing_) {
-			times_[Behavior::kStandby]++;
+    		if (isDrawing_) {
+     			times_[Behavior::kStandby]++;
 			if (times_[Behavior::kStandby] >= shotTime_ * radius_) {
 				behaviorRequest_ = Behavior::kShot;
 				times_[Behavior::kStandby] = 0;

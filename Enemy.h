@@ -142,7 +142,7 @@ private:
 	float easeMax_[2] = {0};
 
 	// 時間管理用の変数
-	int shotTime_ = 60;
+	int shotTime_ = 30;
 	const uint32_t DamageTime_ = 60;
 	std::vector<uint32_t> times_;
 
