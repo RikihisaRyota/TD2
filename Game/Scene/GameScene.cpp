@@ -111,7 +111,7 @@ void GameScene::Initialize() {
 		Model::Create("spikeBody",true), Model::Create("spikePrick",true)
 	};
 	enemyModels_Type2_ = {
-		Model::Create("feed")
+		Model::Create("feed",true)
 	};
 	enemyBulletManager_->SetViewProjection(&viewProjection_);
 	enemyBulletManager_->SetPlayer(player_.get());
@@ -132,7 +132,7 @@ void GameScene::Initialize() {
 
 	// ベロ
 	uvulaHead_.reset(Model::Create("uvulaHead", true));
-	uvulaBody_.reset(Model::Create("uvulaBody", true));
+	uvulaBody_.reset(Model::Create("uvulaBody"));
 	uvula_->SetPlayer(player_.get());
 	uvula_->Initialize(uvulaHead_.get(), uvulaBody_.get());
 	

@@ -66,7 +66,7 @@ void Boss::Update() {
 			}
 			isLanding_ = true;
 		}
-		if (player_->GetWeightNum() >= HP_) {
+		if (HP_ <= 0) {
 			DeathAnimation();
 		}
 		else {
@@ -76,7 +76,7 @@ void Boss::Update() {
 		HitBoxUpdate();
 		// アニメーション終わり
 		if (isAnimation_) {
-			if (player_->GetWeightNum() >= HP_) {
+			if (HP_ <= 0) {
 				player_->SetTranslation(player_->GetInitialPosition());
 				player_->SetBehavior(Player::Behavior::kMove);
 				followCamera_->SetIsFirst(true);
